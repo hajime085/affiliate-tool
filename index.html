@@ -283,11 +283,40 @@ textarea{resize:vertical}
       </div>
     </div>
 
+    <!-- 関連商品入力 -->
+    <div class="card">
+      <div class="card-title">🔗 関連商品（アクセサリー・合わせ買い）<span style="font-size:11px;font-weight:400;color:var(--mu);margin-left:8px">任意・最大3件</span></div>
+      <div class="hint" style="margin-bottom:12px">💡 本体商品に合わせて紹介したいアクセサリーなどのASINと商品名を入力してください。記事末尾に「合わせて買いたい」セクションとして自動生成されます。</div>
+      <div id="relItems">
+        <div class="rel-row" id="relRow0">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">①</span>
+            <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
+            <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
+          </div>
+        </div>
+        <div class="rel-row" id="relRow1">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">②</span>
+            <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
+            <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
+          </div>
+        </div>
+        <div class="rel-row" id="relRow2">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">③</span>
+            <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
+            <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- タイトル候補生成 -->
     <div class="card">
       <div class="card-title">🏷️ 記事タイトル候補</div>
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 タイトル候補を生成</button>
+        <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 AIでタイトル候補を生成</button>
         <span style="font-size:11px;color:var(--mu)">クリックして記事タイトルに使うタイトルを選択</span>
       </div>
       <div id="titleGrid" class="title-grid" style="display:none"></div>
@@ -319,8 +348,8 @@ textarea{resize:vertical}
     <!-- ブログ記事 -->
     <div class="card" id="blCard" style="display:none">
       <div class="card-title">📝 はてなブログ用 Markdown記事</div>
-      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="blCount">0文字</span></div>
-      <div class="out" id="blOut" style="max-height:420px;overflow-y:auto"></div>
+      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ（直接編集できます）</span><span class="cc" id="blCount">0文字</span></div>
+      <div class="out" id="blOut" style="max-height:420px;overflow-y:auto" contenteditable="true" oninput="updBl()"></div>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
         <button class="btn bs" style="flex:1;justify-content:center" onclick="copyBl()">📋 記事をコピー</button>
         <button class="btn bs" onclick="dlBl()">💾 保存</button>
@@ -759,40 +788,62 @@ function saveLastInput() {
 }
 
 /* ===== タイトル候補生成 ===== */
-function genTitles() {
+async function genTitles() {
   var name = document.getElementById('qName').value.trim();
   var orig = parseFloat(document.getElementById('qOrig').value) || 0;
   var sale = parseFloat(document.getElementById('qSale').value) || 0;
   var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
-  var cat  = guessCategory(name);
+  var cat  = getSelectedCat();
+  var year = new Date().getFullYear();
 
-  // テンプレートから自動生成（AI不要）
-  var templates = [
-    disc > 0 ? '【'+disc+'%OFF】' + (name || '商品名')                                   : null,
-    '【Amazonセール】' + (name || '商品名') + ' 最安値で買う方法',
-    '【タイムセール】' + (name || '商品名') + ' 今すぐ買うべき理由',
-    '【特価】' + (name || '商品名') + ' 価格比較・おすすめポイント',
-    sale > 0 ? '【\u00a5'+fmt(sale)+'】' + (name || '商品名') + ' レビュー・評判まとめ' : null,
-    cat !== 'その他' ? '【'+cat+'】' + (name || '商品名') + ' 徹底レビュー'               : null,
-    '【2024年最新】' + (name || '商品名') + ' おすすめな理由',
-    '【買って後悔しない】' + (name || '商品名') + ' 嬉しいポイントまとめ',
-  ].filter(Boolean);
+  if (!name && !sale) { toast('商品名または価格を入力してください', 1); return; }
 
-  var grid = document.getElementById('titleGrid');
-  grid.style.display = 'flex';
-  grid.innerHTML = '';
-  templates.forEach(function(t) {
-    var div = document.createElement('div');
-    div.className = 'title-chip';
-    div.innerHTML = '<span class="title-chip-text">'+t+'</span><span class="title-use-btn">クリックして使用 →</span>';
-    div.addEventListener('click', function() {
-      document.querySelectorAll('.title-chip').forEach(function(c){ c.classList.remove('selected'); });
-      div.classList.add('selected');
-      document.getElementById('selectedTitle').value = t;
-      document.getElementById('selectedTitleRow').style.display = 'block';
+  var btn = document.getElementById('titleBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="sp"></span> AI生成中...';
+
+  var promptLines = [
+    'Amazonアフィリエイトブログの記事タイトルを8案生成してください。',
+    '',
+    '【商品情報】',
+    '商品名: ' + (name || '（未入力）'),
+    'カテゴリ: ' + cat,
+    '販売価格: ' + (sale > 0 ? '\u00a5' + fmt(sale) : '不明'),
+    (disc > 0 ? '割引率: ' + disc + '%OFF' : ''),
+    '対象年: ' + year,
+    '',
+    '【条件】',
+    '・8案すべて異なるアプローチで（価格訴求・レビュー系・セール系・初心者向け・比較系・使用感系など多様に）',
+    '・SEOを意識して検索されやすいキーワードを含める',
+    '・【】でバッジを先頭に付ける（例: 【' + (disc > 0 ? disc + '%OFF' : 'セール') + '】【' + year + '年最新】【レビュー】など）',
+    '・商品名は長すぎる場合は重要キーワードを残して省略してよい',
+    '・1案ずつ改行で区切り、番号や説明文は不要。タイトル本文のみを出力する',
+  ];
+
+  try {
+    var result = await callAI(promptLines.join('\n'));
+    var titles = result.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+
+    var grid = document.getElementById('titleGrid');
+    grid.style.display = 'flex';
+    grid.innerHTML = '';
+    titles.forEach(function(t) {
+      var div = document.createElement('div');
+      div.className = 'title-chip';
+      div.innerHTML = '<span class="title-chip-text">'+t+'</span><span class="title-use-btn">クリックして使用 →</span>';
+      div.addEventListener('click', function() {
+        document.querySelectorAll('.title-chip').forEach(function(c){ c.classList.remove('selected'); });
+        div.classList.add('selected');
+        document.getElementById('selectedTitle').value = t;
+        document.getElementById('selectedTitleRow').style.display = 'block';
+      });
+      grid.appendChild(div);
     });
-    grid.appendChild(div);
-  });
+    toast('AIがSEO最適タイトルを生成しました！');
+  } catch(e) {
+    toast('生成失敗: '+e.message, 1);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '💡 AIでタイトル候補を生成';
+  }
 }
 
 /* ===== 記事一括生成 ===== */
@@ -837,16 +888,28 @@ async function genAll() {
   try {
     var results = await Promise.all([makeTw(cur), makeBl(cur)]);
     document.getElementById('twOut').textContent = results[0];
-    document.getElementById('blOut').textContent = results[1];
+    var blText = results[1];
+
+    // 関連商品セクションの生成・追加
+    var relItems = getRelItems();
+    if (relItems.length > 0) {
+      btn.innerHTML = '<span class="sp"></span>関連商品セクション生成中...';
+      try {
+        var relSection = await genRelSection(cur, relItems);
+        if (relSection) blText = blText + '\n\n' + relSection;
+      } catch(re) { /* 関連商品生成失敗は無視して続行 */ }
+    }
+
+    document.getElementById('blOut').textContent = blText;
     document.getElementById('twCard').style.display = 'block';
     document.getElementById('blCard').style.display = 'block';
     updTw();
-    document.getElementById('blCount').textContent = results[1].length + '文字';
+    document.getElementById('blCount').textContent = blText.length + '文字';
 
     // 自動でまとめストックに追加
     addToMtStock(cur);
     // 自動で記事ストックに保存
-    autoSaveArticle(cur, results[1]);
+    autoSaveArticle(cur, blText);
 
     toast('生成完了！🎉');
     document.getElementById('twCard').scrollIntoView({behavior:'smooth'});
@@ -907,6 +970,62 @@ function makeBl(p) {
     '<a href="'+p.link+'" target="_blank" rel="noopener">🛒 Amazonで今すぐ購入する（\u00a5'+fmt(p.sale)+'）</a>\n\n' +
     '【ルール】タイトルをそのまま使うこと。Markdownのみ。HTMLタグはdivのみ使用可。'
   );
+}
+
+/* ===== ブログ記事文字数カウント ===== */
+function updBl() {
+  var t = document.getElementById('blOut').textContent;
+  document.getElementById('blCount').textContent = t.length + '文字';
+}
+
+/* ===== 関連商品セクション生成 ===== */
+function getRelItems() {
+  var items = [];
+  for (var i = 0; i < 3; i++) {
+    var asin = (document.getElementById('relAsin' + i).value || '').trim();
+    var name = (document.getElementById('relName' + i).value || '').trim();
+    if (asin || name) items.push({ asin: asin, name: name });
+  }
+  return items;
+}
+
+async function genRelSection(mainProduct, relItems) {
+  if (!relItems.length) return '';
+  var assocId = document.getElementById('assocId') ? document.getElementById('assocId').value.trim() : 'popo1215-22';
+
+  var promptLines = [
+    'Amazonアフィリエイト記事の「合わせて買いたい関連商品」セクションを作成してください。',
+    '',
+    '【本体商品】',
+    mainProduct.name || mainProduct.asin,
+    '',
+    '【紹介する関連商品】',
+  ];
+
+  relItems.forEach(function(item, i) {
+    var link = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
+    var imgSrc = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.jpg';
+    promptLines.push((i+1) + '. ' + (item.name || item.asin) + '（ASIN: ' + item.asin + '）');
+    promptLines.push('   リンク（変更禁止）: ' + link);
+    promptLines.push('   画像URL（変更禁止）: ' + imgSrc);
+  });
+
+  promptLines = promptLines.concat([
+    '',
+    '【条件】',
+    '・各商品について3文以上の紹介文を書く',
+    '・本体商品との相性・組み合わせのメリットを具体的に説明する',
+    '・「' + (mainProduct.name || '本体商品') + 'をお使いの方にとくにおすすめ」という文脈で書く',
+    '・各商品の画像はHTMLのimgタグで表示し、リンクはaタグ（target="_blank" rel="noopener"）で囲む',
+    '・imgタグのスタイル: style="max-width:200px;height:200px;object-fit:contain;background:#fff;border-radius:8px;display:block;margin:8px auto"',
+    '・出力形式はMarkdown（## 見出し + HTML混在OK）',
+    '・セクション全体の冒頭に「## 📦 合わせて買いたいアクセサリー」という見出しを付ける',
+    '・各商品の小見出しは「### 商品名」の形式',
+    '・リンクと画像URLは絶対に変更・改変しないこと',
+    '・余計な説明なしに本文のみ出力する',
+  ]);
+
+  return await callAI(promptLines.join('\n'));
 }
 
 /* ===== X投稿 ===== */
