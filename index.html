@@ -97,7 +97,7 @@ textarea{resize:vertical}
 .cc{font-size:11px;color:var(--mu)}.cc.over{color:var(--re);font-weight:700}
 
 /* ===== サムネイル ===== */
-.thumb{width:100%;max-width:160px;height:160px;object-fit:contain;background:#fff;border-radius:10px;padding:8px;display:none;margin:0 auto 12px;border:2px solid var(--am)}
+.thumb{width:100%;max-width:160px;height:160px;object-fit:contain;background:#fff;border-radius:10px;padding:8px;display:none;margin:0 auto 12px;border:1px solid var(--bd)}
 
 /* ===== 記事ストック ===== */
 .stock-empty{text-align:center;padding:40px 20px;color:var(--mu);font-size:13px}
@@ -299,27 +299,66 @@ textarea{resize:vertical}
     <!-- 関連商品入力 -->
     <div class="card">
       <div class="card-title">🔗 関連商品（アクセサリー・合わせ買い）<span style="font-size:11px;font-weight:400;color:var(--mu);margin-left:8px">任意・最大3件</span></div>
-      <div class="hint" style="margin-bottom:12px">💡 本体商品に合わせて紹介したいアクセサリーなどのASINと商品名を入力してください。記事末尾に「合わせて買いたい」セクションとして自動生成されます。</div>
+      <div class="hint" style="margin-bottom:12px">💡 ASINを入力すると画像プレビューを自動確認します。取得できない場合のみ画像URLの入力欄が表示されます。</div>
       <div id="relItems">
-        <div class="rel-row" id="relRow0">
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">①</span>
-            <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
-            <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
+        <!-- ① -->
+        <div class="rel-row" id="relRow0" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div id="relThumbWrap0" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox0" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default" title="ASINを入力すると自動プレビュー">
+              <span id="relThumbTxt0">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg0" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">①</span>
+              <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(0)">
+              <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
+            </div>
+            <div id="relImgRow0" style="display:none">
+              <input id="relImg0" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(0)">
+            </div>
+            <div id="relImgStatus0" style="font-size:10px;color:var(--mu)"></div>
           </div>
         </div>
-        <div class="rel-row" id="relRow1">
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">②</span>
-            <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
-            <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
+        <!-- ② -->
+        <div class="rel-row" id="relRow1" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div id="relThumbWrap1" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox1" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+              <span id="relThumbTxt1">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg1" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">②</span>
+              <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(1)">
+              <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
+            </div>
+            <div id="relImgRow1" style="display:none">
+              <input id="relImg1" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(1)">
+            </div>
+            <div id="relImgStatus1" style="font-size:10px;color:var(--mu)"></div>
           </div>
         </div>
-        <div class="rel-row" id="relRow2">
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-            <span style="font-size:11px;font-weight:700;color:var(--mu);min-width:14px">③</span>
-            <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:160px;flex-shrink:0">
-            <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
+        <!-- ③ -->
+        <div class="rel-row" id="relRow2" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:4px">
+          <div id="relThumbWrap2" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox2" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+              <span id="relThumbTxt2">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg2" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">③</span>
+              <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(2)">
+              <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
+            </div>
+            <div id="relImgRow2" style="display:none">
+              <input id="relImg2" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(2)">
+            </div>
+            <div id="relImgStatus2" style="font-size:10px;color:var(--mu)"></div>
           </div>
         </div>
       </div>
@@ -340,7 +379,7 @@ textarea{resize:vertical}
       <div class="card-title">🤖 記事生成</div>
       <div class="f" id="selectedTitleRow" style="display:none">
         <span class="lbl">選択中のタイトル</span>
-        <input id="selectedTitle" style="border-color:var(--am)" readonly>
+        <input id="selectedTitle" style="border-color:var(--am)">
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bp btn-full" id="genBtn" onclick="genAll()" style="flex:2">🤖 X投稿文・ブログ記事を一括生成</button>
@@ -828,6 +867,7 @@ async function genTitles() {
   var name = document.getElementById('qName').value.trim();
   var orig = parseFloat(document.getElementById('qOrig').value) || 0;
   var sale = parseFloat(document.getElementById('qSale').value) || 0;
+  var note = document.getElementById('qNote').value.trim();
   var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
   var cat  = getSelectedCat();
   var year = new Date().getFullYear();
@@ -846,14 +886,17 @@ async function genTitles() {
     '販売価格: ' + (sale > 0 ? '\u00a5' + fmt(sale) : '不明'),
     (disc > 0 ? '割引率: ' + disc + '%OFF' : ''),
     '対象年: ' + year,
+    (note ? '補足情報: ' + note : ''),
     '',
     '【条件】',
-    '・8案すべて異なるアプローチで（価格訴求・レビュー系・セール系・初心者向け・比較系・使用感系など多様に）',
+    '・8案すべて異なるアプローチで（価格訴求・セール情報・スペック解説・おすすめ理由・比較・初心者向けガイドなど多様に）',
+    '・「実機レビュー」「使用感」「使ってみた」「レポート」「感想」など実際に使用した体験を示す表現は絶対に使わない',
     '・SEOを意識して検索されやすいキーワードを含める',
     '・【】でバッジを先頭に付ける（例: 【' + (disc > 0 ? disc + '%OFF' : 'セール') + '】【' + year + '年最新】【レビュー】など）',
+    (note ? '・補足情報「' + note + '」の内容を活かしたタイトルを少なくとも2〜3案含めること（例：予約受付中なら【予約受付中】などのバッジや「予約開始」「発売前に確認」などの表現を使う）' : ''),
     '・商品名は長すぎる場合は重要キーワードを残して省略してよい',
     '・1案ずつ改行で区切り、番号や説明文は不要。タイトル本文のみを出力する',
-  ];
+  ].filter(function(l){ return l !== ''; });
 
   try {
     var result = await callAI(promptLines.join('\n'));
@@ -919,7 +962,7 @@ async function genAll() {
   var btn = document.getElementById('genBtn');
   btn.disabled = true; btn.innerHTML = '<span class="sp"></span>AIが生成中...';
 
-  cur = { asin:asin, name:name, orig:orig, sale:sale, disc:disc, save:save, pt:pt, eff:eff, link:link, iUrl:iUrl, note:note, selTitle:selTitle, cat:getSelectedCat(), date:new Date().toLocaleDateString('ja-JP') };
+  cur = { asin:asin, name:name, orig:orig, sale:sale, disc:disc, save:save, pt:pt, eff:eff, link:link, iUrl:iUrl, note:note, selTitle:selTitle, cat:getSelectedCat(), badge:getSelectedBadge(), date:new Date().toLocaleDateString('ja-JP') };
 
   try {
     var results = await Promise.all([makeTw(cur), makeBl(cur)]);
@@ -989,12 +1032,11 @@ function makeBl(p) {
     '【記事タイトル】\n' + title + '\n\n' +
     '【必須構成】\n' +
     '# '+title+'\n\n' +
-    '<a href="'+p.link+'" target="_blank" rel="noopener"><img src="'+p.iUrl+'" alt="商品画像" style="max-width:300px;display:block;margin:12px auto"></a>\n\n' +
-    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
+    '<a href="'+p.link+'" target="_blank" rel="noopener" style="display:block;background:none!important;border:none!important;padding:0!important;margin:16px auto!important;max-width:500px;text-decoration:none"><img src="'+p.iUrl+'" alt="'+p.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:8px;background:#fff"></a>\n\n' +
     '（リード文：読者が得する理由を120文字で）\n\n' +
     '## 💰 価格情報\n\n' +
     '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">' +
-    '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.disc>0?'-'+p.disc+'%':'SALE')+'</span>' +
+    '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.badge||'SALE')+'</span>' +
     '<span style="font-size:26px;font-weight:bold;color:#e53935">\u00a5'+fmt(p.sale)+'</span></div>' +
     (p.orig>0?'<div style="margin-top:6px"><span style="color:#888;text-decoration:line-through">\u00a5'+fmt(p.orig)+'</span></div>':'') +
     (p.save>0?'<div style="margin-top:6px;color:#00897b;font-weight:bold">\u2705 \u00a5'+fmt(p.save)+'お得！</div>':'') +
@@ -1003,8 +1045,9 @@ function makeBl(p) {
     '## スペック・特徴\n\n（箇条書き）\n\n' +
     '## 😊 ここが嬉しいポイント\n\n（購入して良かったと感じるセリングポイントを5点。読者が「買いたい」と思えるよう前向きな表現で書くこと。ネガティブな情報は含めない）\n\n' +
     '## まとめ\n\n（まとめ2〜3文。購入を後押しする文章）\n\n' +
-    '<a href="'+p.link+'" target="_blank" rel="noopener">🛒 Amazonで今すぐ購入する（\u00a5'+fmt(p.sale)+'）</a>\n\n' +
-    '【ルール】タイトルをそのまま使うこと。Markdownのみ。HTMLタグはdivのみ使用可。'
+    '<a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:16px;padding:14px 32px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a>\n\n' +
+    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
+    '【ルール】タイトルをそのまま使うこと。Markdownのみ。HTMLタグはdivとaのみ使用可。'
   );
 }
 
@@ -1014,13 +1057,113 @@ function updBl() {
   document.getElementById('blCount').textContent = t.length + '文字';
 }
 
+/* ===== 関連商品 画像プレビュー ===== */
+var REL_IMG_CANDIDATES = function(asin) {
+  return [
+    'https://m.media-amazon.com/images/P/' + asin + '._SL200_.jpg',
+    'https://images-na.ssl-images-amazon.com/images/P/' + asin + '.01._SL200_.jpg',
+    'https://m.media-amazon.com/images/P/' + asin + '.jpg',
+  ];
+};
+
+// タイマーID保持（連続入力のデバウンス用）
+var relPreviewTimers = [null, null, null];
+
+function previewRelImg(idx) {
+  clearTimeout(relPreviewTimers[idx]);
+  var asin = (document.getElementById('relAsin' + idx).value || '').trim().toUpperCase();
+  var txt  = document.getElementById('relThumbTxt' + idx);
+  var img  = document.getElementById('relThumbImg' + idx);
+  var row  = document.getElementById('relImgRow' + idx);
+  var st   = document.getElementById('relImgStatus' + idx);
+
+  if (!asin || asin.length < 8) {
+    img.style.display = 'none';
+    img.src = '';
+    txt.style.display = 'block';
+    txt.innerHTML = 'ASIN<br>入力で<br>確認';
+    row.style.display = 'none';
+    st.textContent = '';
+    return;
+  }
+
+  txt.innerHTML = '確認中...';
+  relPreviewTimers[idx] = setTimeout(function() {
+    tryRelImgUrls(idx, asin, REL_IMG_CANDIDATES(asin), 0);
+  }, 600);
+}
+
+function tryRelImgUrls(idx, asin, urls, attempt) {
+  var txt = document.getElementById('relThumbTxt' + idx);
+  var img = document.getElementById('relThumbImg' + idx);
+  var row = document.getElementById('relImgRow' + idx);
+  var st  = document.getElementById('relImgStatus' + idx);
+
+  if (attempt >= urls.length) {
+    // 全URL失敗 → 手動入力欄を表示
+    img.style.display = 'none';
+    txt.style.display = 'block';
+    txt.innerHTML = '画像なし';
+    row.style.display = 'block';
+    st.innerHTML = '<span style="color:#e07b00">⚠ 自動取得できませんでした。画像URLを貼り付けてください。</span>';
+    return;
+  }
+
+  var testImg = new Image();
+  testImg.onload = function() {
+    if (testImg.naturalWidth < 5) {
+      tryRelImgUrls(idx, asin, urls, attempt + 1);
+      return;
+    }
+    img.src = urls[attempt];
+    img.style.display = 'block';
+    txt.style.display = 'none';
+    row.style.display = 'none';
+    // 画像表示時は枠を消す
+    var box = document.getElementById('relThumbBox' + idx);
+    if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
+    st.innerHTML = '<span style="color:var(--gr)">✓ 画像を自動取得しました</span>';
+    // 手動URL欄をクリア
+    var manualEl = document.getElementById('relImg' + idx);
+    if (manualEl) manualEl.value = '';
+  };
+  testImg.onerror = function() {
+    tryRelImgUrls(idx, asin, urls, attempt + 1);
+  };
+  testImg.src = urls[attempt];
+}
+
+function applyManualRelImg(idx) {
+  var url = (document.getElementById('relImg' + idx).value || '').trim();
+  var img = document.getElementById('relThumbImg' + idx);
+  var txt = document.getElementById('relThumbTxt' + idx);
+  var box = document.getElementById('relThumbBox' + idx);
+  var st  = document.getElementById('relImgStatus' + idx);
+  if (!url) {
+    img.style.display = 'none'; txt.style.display = 'block'; txt.innerHTML = '画像なし';
+    if (box) { box.style.border = '1.5px dashed var(--bd)'; box.style.background = 'var(--s2)'; }
+    return;
+  }
+  img.src = url;
+  img.style.display = 'block';
+  txt.style.display = 'none';
+  if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
+  st.innerHTML = '<span style="color:var(--gr)">✓ 手動URLを適用しました</span>';
+}
+
 /* ===== 関連商品セクション生成 ===== */
 function getRelItems() {
   var items = [];
   for (var i = 0; i < 3; i++) {
-    var asin = (document.getElementById('relAsin' + i).value || '').trim();
-    var name = (document.getElementById('relName' + i).value || '').trim();
-    if (asin || name) items.push({ asin: asin, name: name });
+    var asin    = (document.getElementById('relAsin' + i).value || '').trim();
+    var name    = (document.getElementById('relName' + i).value || '').trim();
+    var imgEl   = document.getElementById('relImg' + i);
+    var manualImg = imgEl ? imgEl.value.trim() : '';
+    // プレビュー確認済みのsrcを優先、なければ手動URL
+    var thumbImg  = document.getElementById('relThumbImg' + i);
+    var confirmedImg = (thumbImg && thumbImg.style.display !== 'none' && thumbImg.src) ? thumbImg.src : '';
+    var img = confirmedImg || manualImg;
+    if (asin || name) items.push({ asin: asin, name: name, img: img });
   }
   return items;
 }
@@ -1066,26 +1209,30 @@ async function genRelSection(mainProduct, relItems) {
   // HTML直接構築（左画像・右テキスト横並びカード）
   var cards = relItems.map(function(item, i) {
     var link      = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
-    // Amazon標準の画像URL（SL200）
-    var imgSrc    = 'https://m.media-amazon.com/images/P/' + item.asin + '.jpg';
+    // 画像URL優先順: ①手動入力 ②m.media-amazon（SL200）③images-na（フォールバック）
+    var imgSrc    = item.img
+      ? item.img
+      : 'https://m.media-amazon.com/images/P/' + item.asin + '._SL200_.jpg';
+    var fallback  = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.01._SL200_.jpg';
     var shortName = (items[i] && items[i].shortTitle) || (item.name ? item.name.substring(0, 20) : item.asin);
     var desc      = (items[i] && items[i].desc) || '';
 
     return (
       '<div style="display:flex;gap:14px;align-items:flex-start;background:#fafafa;' +
       'border:1px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:12px;overflow:hidden">' +
-        // 左：画像
-        '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0;display:block">' +
+        // 左：画像（リンクあり）
+        '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0;display:block;background:none!important;border:none!important;padding:0!important;margin:0!important;box-shadow:none!important">' +
           '<img src="' + imgSrc + '" alt="' + shortName + '" ' +
+          'onerror="this.onerror=null;this.src=\'' + fallback + '\'" ' +
           'style="width:90px;height:90px;object-fit:contain;background:#fff;' +
           'border-radius:6px;border:1px solid #e8e8e8;display:block">' +
         '</a>' +
         // 右：テキスト
         '<div style="flex:1;min-width:0;overflow:hidden">' +
-          '<div style="font-size:13px;font-weight:700;color:#c45c00;margin-bottom:5px;' +
+          // タイトルはプレーンテキスト（リンクなし）
+          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:6px;' +
           'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
-            '<a href="' + link + '" target="_blank" rel="noopener" ' +
-            'style="color:#c45c00;text-decoration:none">' + shortName + '</a>' +
+            shortName +
           '</div>' +
           '<div style="font-size:12px;line-height:1.7;color:#555;' +
           'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">' +
@@ -1094,7 +1241,7 @@ async function genRelSection(mainProduct, relItems) {
           '<div style="margin-top:8px">' +
             '<a href="' + link + '" target="_blank" rel="noopener" ' +
             'style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;' +
-            'font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで購入を見る →</a>' +
+            'font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで詳細を見る →</a>' +
           '</div>' +
         '</div>' +
       '</div>'
@@ -1572,21 +1719,21 @@ async function genRanking() {
     '【ランキング商品リスト（順位は固定）】\n'+itemsTxt+'\n\n' +
     '【必須構成】\n' +
     '# '+rankTitle+'【'+rankItems.length+'選】\n\n' +
-    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
     '（リード文120文字：このランキングを読む価値を伝える）\n\n' +
     '## 選び方のポイント\n\n（3点）\n\n' +
     rankItems.map(function(item,i){
       var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅';
       return '## '+(i+1)+'位 '+medal+' （商品名を簡潔に）\n\n' +
-        '<a href="'+item.link+'" target="_blank" rel="noopener"><img src="'+item.iUrl+'" alt="商品画像" style="max-width:240px;display:block;margin:8px auto"></a>\n\n' +
+        '<a href="'+item.link+'" target="_blank" rel="noopener" style="display:block;background:none!important;border:none!important;padding:0!important;margin:12px auto!important;max-width:400px;text-decoration:none"><img src="'+item.iUrl+'" alt="'+item.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:6px;background:#fff"></a>\n\n' +
         '| 項目 | 内容 |\n|------|------|\n' +
         '| 💰 価格 | \u00a5'+fmt(item.sale)+(item.disc>0?' (-'+item.disc+'%)':'')+' |\n' +
         '| ✅ おすすめ度 | ★★★★☆ |\n\n' +
         '（この商品のおすすめポイントを2〜3文で）\n\n' +
-        '<a href="'+item.link+'" target="_blank" rel="noopener">🛒 Amazonで購入する</a>';
+        '<a href="'+item.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:15px;padding:12px 28px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a>';
     }).join('\n\n---\n\n') +
     '\n\n---\n\n## まとめ\n\n（ランキングの総括・購入を後押しする文章を3文で）\n\n' +
-    '【ルール】各（商品名を簡潔に）は実際の商品名に置き換えること。Markdownのみ。';
+    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
+    '【ルール】各（商品名を簡潔に）は実際の商品名に置き換えること。Markdownのみ。HTMLタグはdivとaのみ使用可。';
 
   try {
     var result = await callAI(prompt);
