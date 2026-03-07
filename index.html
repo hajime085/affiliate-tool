@@ -1029,65 +1029,79 @@ async function genRelSection(mainProduct, relItems) {
   if (!relItems.length) return '';
   var assocId = 'popo1215-22';
 
-  // 各関連商品の紹介文をAIで一括生成（テキストのみ）
+  // AIに短縮タイトル＋2〜3行説明をJSON形式で一括生成させる
   var promptLines = [
-    'Amazonアフィリエイト記事用に、以下の関連商品の紹介文を生成してください。',
+    'Amazonアフィリエイト記事用の関連商品紹介データをJSON形式で生成してください。',
     '',
     '【本体商品】',
     mainProduct.name || mainProduct.asin,
     '',
     '【紹介する関連商品】',
   ];
-
   relItems.forEach(function(item, i) {
     promptLines.push((i+1) + '. ' + (item.name || ('ASIN: ' + item.asin)));
   });
-
   promptLines = promptLines.concat([
     '',
     '【出力ルール】',
-    '・各商品の紹介文を3〜4文で書く',
-    '・本体商品「' + (mainProduct.name || '本体商品') + '」との相性・組み合わせメリットを具体的に書く',
-    '・「この商品をお使いの方にとくにおすすめ」という視点で、読者が購入したくなる文章にする',
-    '・各商品の紹介文を「---」で区切って出力する（番号・見出し不要、本文のみ）',
-    '・出力は紹介文のみ。説明や前置き不要',
+    '・必ずJSON配列のみを出力すること。前置き・説明・コードブロック記号は一切不要',
+    '・各商品を1オブジェクトとして以下のキーで出力:',
+    '  "shortTitle": 商品名を20文字以内に短縮（型番・長い修飾語は省略してOK）',
+    '  "desc": 本体商品との相性・おすすめ理由を2〜3文、合計80文字以内でまとめる',
+    '・出力例: [{"shortTitle":"ケース（MagSafe対応）","desc":"MagSafe充電に対応し..."},...]',
   ]);
 
-  var rawText = await callAI(promptLines.join('\n'));
-  var descriptions = rawText.split(/\n?---\n?/).map(function(s){ return s.trim(); }).filter(Boolean);
+  var items = [];
+  try {
+    var raw = await callAI(promptLines.join('\n'));
+    var cleaned = raw.replace(/```json|```/g, '').trim();
+    items = JSON.parse(cleaned);
+  } catch(e) {
+    // JSON失敗時はフォールバック
+    relItems.forEach(function(item) {
+      items.push({ shortTitle: item.name ? item.name.substring(0, 20) : item.asin, desc: '' });
+    });
+  }
 
-  // HTML直接構築（左画像・右テキスト横並びレイアウト）
-  var sectionLines = [
-    '',
-    '## 📦 合わせて買いたいアクセサリー',
-    '',
-  ];
+  // HTML直接構築（左画像・右テキスト横並びカード）
+  var cards = relItems.map(function(item, i) {
+    var link      = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
+    // Amazon標準の画像URL（SL200）
+    var imgSrc    = 'https://m.media-amazon.com/images/P/' + item.asin + '.jpg';
+    var shortName = (items[i] && items[i].shortTitle) || (item.name ? item.name.substring(0, 20) : item.asin);
+    var desc      = (items[i] && items[i].desc) || '';
 
-  relItems.forEach(function(item, i) {
-    var link   = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
-    var imgSrc = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.01._SL160_.jpg';
-    var desc   = descriptions[i] || '';
-    var name   = item.name || item.asin;
-
-    sectionLines.push(
-      '<div style="display:flex;gap:16px;align-items:flex-start;background:#fafafa;border:1px solid #e8e8e8;border-radius:10px;padding:14px;margin-bottom:14px">' +
-        '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0">' +
-          '<img src="' + imgSrc + '" alt="' + name + '" style="width:120px;height:120px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid #eee;display:block">' +
+    return (
+      '<div style="display:flex;gap:14px;align-items:flex-start;background:#fafafa;' +
+      'border:1px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:12px;overflow:hidden">' +
+        // 左：画像
+        '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0;display:block">' +
+          '<img src="' + imgSrc + '" alt="' + shortName + '" ' +
+          'style="width:90px;height:90px;object-fit:contain;background:#fff;' +
+          'border-radius:6px;border:1px solid #e8e8e8;display:block">' +
         '</a>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div style="font-weight:700;font-size:14px;margin-bottom:6px">' +
-            '<a href="' + link + '" target="_blank" rel="noopener" style="color:#c45c00;text-decoration:none">' + name + '</a>' +
+        // 右：テキスト
+        '<div style="flex:1;min-width:0;overflow:hidden">' +
+          '<div style="font-size:13px;font-weight:700;color:#c45c00;margin-bottom:5px;' +
+          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+            '<a href="' + link + '" target="_blank" rel="noopener" ' +
+            'style="color:#c45c00;text-decoration:none">' + shortName + '</a>' +
           '</div>' +
-          '<div style="font-size:13px;line-height:1.8;color:#444">' + desc + '</div>' +
-          '<div style="margin-top:10px">' +
-            '<a href="' + link + '" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;font-size:12px;padding:6px 16px;border-radius:6px;text-decoration:none">Amazonで購入を見る</a>' +
+          '<div style="font-size:12px;line-height:1.7;color:#555;' +
+          'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">' +
+            desc +
+          '</div>' +
+          '<div style="margin-top:8px">' +
+            '<a href="' + link + '" target="_blank" rel="noopener" ' +
+            'style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;' +
+            'font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで購入を見る →</a>' +
           '</div>' +
         '</div>' +
       '</div>'
     );
   });
 
-  return sectionLines.join('\n');
+  return '\n## 📦 合わせて買いたいアクセサリー\n\n' + cards.join('\n');
 }
 
 /* ===== X投稿 ===== */
