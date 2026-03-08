@@ -530,7 +530,7 @@ textarea { resize: vertical; }
       <div id="form-a" style="display:none">
         <div class="hint">
           <strong>ブログ告知ツイート</strong>とは：書いた記事をXでシェアするための投稿です。<br>
-          記事タイトルとURLを入力すると、読みたくなる告知文を生成します。
+          記事タイトル・URL・カテゴリを入力すると、ジャンルに合った告知文を生成します。
         </div>
         <div class="f">
           <span class="lbl">記事タイトル ※必須</span>
@@ -538,7 +538,20 @@ textarea { resize: vertical; }
         </div>
         <div class="f">
           <span class="lbl">記事URL ※必須</span>
-          <input id="blogUrl" placeholder="例：https://popo-1215.hatenablog.com/entry/...">
+          <input id="blogUrl" placeholder="例：https://www.otkspot.com/entry/...">
+        </div>
+        <div class="f">
+          <span class="lbl">カテゴリ ※必須</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px" id="blogCategoryTags">
+            <span class="theme-tag cat-tag" data-cat="ガジェット・家電" onclick="selectCat(this)">📱 ガジェット・家電</span>
+            <span class="theme-tag cat-tag" data-cat="日用品・生活雑貨" onclick="selectCat(this)">🧴 日用品・生活雑貨</span>
+            <span class="theme-tag cat-tag" data-cat="食品・飲料" onclick="selectCat(this)">🍜 食品・飲料</span>
+            <span class="theme-tag cat-tag" data-cat="美容・健康" onclick="selectCat(this)">💊 美容・健康</span>
+            <span class="theme-tag cat-tag" data-cat="ファッション・アパレル" onclick="selectCat(this)">👕 ファッション</span>
+            <span class="theme-tag cat-tag" data-cat="本・電子書籍" onclick="selectCat(this)">📚 本・電子書籍</span>
+            <span class="theme-tag cat-tag" data-cat="スポーツ・アウトドア" onclick="selectCat(this)">🏕️ スポーツ・アウトドア</span>
+            <span class="theme-tag cat-tag" data-cat="その他" onclick="selectCat(this)">📦 その他</span>
+          </div>
         </div>
         <div class="f">
           <span class="lbl">一言補足<span class="lbl-hint">任意</span></span>
@@ -848,6 +861,16 @@ async function callAI(prompt) {
   return d.text || '';
 }
 
+/* ===== カテゴリタグ選択 ===== */
+let selectedCategory = '';
+function selectCat(el) {
+  document.querySelectorAll('.cat-tag').forEach(function(t) {
+    t.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  selectedCategory = el.getAttribute('data-cat');
+}
+
 /* ===== 投稿タイプ切り替え ===== */
 function selectType(type) {
   currentType = type;
@@ -940,27 +963,43 @@ function buildPrompt(type) {
     var title = document.getElementById('blogTitle').value.trim();
     var url   = document.getElementById('blogUrl').value.trim();
     var note  = document.getElementById('blogNote').value.trim();
+    var cat   = selectedCategory || 'その他';
     if (!title || !url) throw new Error('記事タイトルとURLを入力してください');
+    if (!selectedCategory) throw new Error('カテゴリを選択してください');
+
+    // カテゴリ別トーン定義
+    var catTone = {
+      'ガジェット・家電':     'スペック・性能・コスパに興味がある読者向け。「自分もスペック気になって調べた」「買う前に確認しておきたかった」系の切り口が刺さる。技術的な納得感を与えるトーンで。',
+      '日用品・生活雑貨':     '毎日使うものだからこそコスパが大事という読者向け。「これ定価で買ってたの損してた」「まとめ買いのタイミング逃したくない」系の切り口が刺さる。生活感のある親しみやすいトーンで。',
+      '食品・飲料':           '価格と品質のバランスを重視する読者向け。「これ安すぎて逆に不安だったけど買ってみた」「リピート買いしてるやつ」系の切り口が刺さる。食欲・生活感を刺激するトーンで。',
+      '美容・健康':           '効果と価格の両方を気にする読者向け。「ドラッグストアより全然安かった」「続けやすい価格かどうか気になってた」系の切り口が刺さる。共感しやすい等身大のトーンで。',
+      'ファッション・アパレル':'ブランドよりコスパを重視する読者向け。「これ定価で買う必要なかった」「セールで買うかどうか迷ってる人向け」系の切り口が刺さる。お得感を強調するトーンで。',
+      '本・電子書籍':         '知識・情報収集に積極的な読者向け。「これ読んでおけばよかった」「電子書籍で安く手に入る今がチャンス」系の切り口が刺さる。知的好奇心を刺激するトーンで。',
+      'スポーツ・アウトドア': '機能性とコスパを両立したい読者向け。「これの性能でこの価格は普通にやばい」「シーズン前に揃えておきたいやつ」系の切り口が刺さる。テンション高めのアクティブなトーンで。',
+      'その他':               '幅広い読者向け。「知らないと損する」「自分も最近まで気づいてなかった」系の普遍的な切り口で。'
+    };
+    var toneGuide = catTone[cat] || catTone['その他'];
+
     return base +
       '以下のブログ記事をXで告知するツイートを3パターン作成してください。\n\n' +
       '記事タイトル：' + title + '\n' +
       'URL：' + url + '\n' +
+      'カテゴリ：' + cat + '\n' +
       (note ? '補足：' + note + '\n' : '') +
-      '\n【このツイートの目的】\n' +
+      '\n【カテゴリ別トーンガイド】\n' +
+      toneGuide + '\n\n' +
+      '【このツイートの目的】\n' +
       'フォロワーにブログ記事をクリックしてもらうこと。「宣伝」ではなく「価値ある情報を教えてくれる友達の一言」として読まれること。\n\n' +
       '【人間心理を活用した3パターンを1つずつ作ること】\n\n' +
       'パターン1：【損失回避の心理】\n' +
       '「知らないと損する」「これを見ずに買うのはもったいない」という切り口。\n' +
-      '人は「得する」より「損したくない」という感情の方が強く動く。\n' +
-      '例：「これ読まずに買うと後悔するやつかもしれない。自分が調べてまとめた。」\n\n' +
+      '人は「得する」より「損したくない」という感情の方が強く動く。\n\n' +
       'パターン2：【自己開示＋共感の心理】\n' +
       '「自分も気になって調べた」「昔の自分が知りたかった情報」という自虐・自己開示の切り口。\n' +
-      '発信者が弱みを見せることで読者が親近感を持ち、記事への信頼感が生まれる。\n' +
-      '例：「自分がこれ調べるのに結構時間かかったので、まとめておいた。」\n\n' +
+      '発信者が弱みを見せることで読者が親近感を持ち、記事への信頼感が生まれる。\n\n' +
       'パターン3：【好奇心・情報ギャップの心理】\n' +
       '「意外と知られていない事実」「ほとんどの人が気づいていないこと」という切り口。\n' +
-      '「え、そうなの？」と思わせることで続きを読みたくなる衝動を作る。\n' +
-      '例：「これ、意外と知らない人多い。自分も最近まで気づいてなかった。」\n\n' +
+      '「え、そうなの？」と思わせることで続きを読みたくなる衝動を作る。\n\n' +
       '【共通ルール】\n' +
       '・URLを含めて140文字以内\n' +
       '・冒頭の1文でクリックするかどうかが決まる。最初の一言に全力を注ぐこと\n' +
