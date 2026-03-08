@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>🛒 Amazon アフィリエイト記事作成ツール</title>
 <style>
 /* ===== CSS変数・リセット ===== */
@@ -12,20 +13,21 @@
   --pu:#9b59b6;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.6;min-height:100vh}
+html{overflow-x:hidden;width:100%}
+body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;width:100%}
 
 /* ===== ヘッダー ===== */
-header{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
+header{background:var(–s1);border-bottom:1px solid var(–bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
 .logo{font-size:17px;font-weight:800;background:linear-gradient(90deg,#FF9900,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
 .header-settings{display:flex;align-items:center;gap:8px}
-.assoc-label{font-size:11px;color:var(--mu);white-space:nowrap}
-.assoc-input{background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);padding:6px 10px;font-size:12px;font-family:inherit;width:160px}
-.assoc-input:focus{outline:none;border-color:var(--am)}
+.assoc-label{font-size:11px;color:var(–mu);white-space:nowrap}
+.assoc-input{background:var(–s2);border:1px solid var(–bd);border-radius:6px;color:var(–tx);padding:6px 10px;font-size:12px;font-family:inherit;width:160px}
+.assoc-input:focus{outline:none;border-color:var(–am)}
 
 /* ===== タブナビ ===== */
-.tab-nav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;gap:4px}
-.tab-btn{padding:12px 18px;border:none;background:transparent;color:var(--mu);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
-.tab-btn.active{color:var(--am);border-bottom-color:var(--am)}
+.tab-nav{background:var(–s1);border-bottom:1px solid var(–bd);padding:0 20px;display:flex;gap:4px}
+.tab-btn{padding:12px 18px;border:none;background:transparent;color:var(–mu);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
+.tab-btn.active{color:var(–am);border-bottom-color:var(–am)}
 .tab{display:none}.tab.active{display:block}
 
 /* ===== レイアウト ===== */
@@ -33,115 +35,115 @@ header{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 20px;
 .main-wide{max-width:1060px;margin:0 auto;padding:24px 20px}
 
 /* ===== フォーム要素 ===== */
-input,select,textarea{background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--tx);padding:10px 14px;font-size:13px;font-family:inherit;transition:border-color .15s;width:100%}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--am)}
+input,select,textarea{background:var(–s2);border:1px solid var(–bd);border-radius:8px;color:var(–tx);padding:10px 14px;font-size:13px;font-family:inherit;transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(–am)}
 textarea{resize:vertical}
-.lbl{font-size:11px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
-.lbl-hint{font-size:10px;color:var(--mu);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
+.lbl{font-size:11px;color:var(–mu);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
+.lbl-hint{font-size:10px;color:var(–mu);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
 .f{margin-bottom:14px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
 /* ===== ボタン ===== */
 .btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
-.bp{background:var(--am);color:#000}.bp:hover:not(:disabled){background:var(--amd);transform:translateY(-1px)}
-.bs{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}.bs:hover:not(:disabled){border-color:var(--am);color:var(--am)}
-.btw{background:var(--tw);color:#fff}.btw:hover:not(:disabled){background:#0d8fd9;transform:translateY(-1px)}
-.bgr{background:var(--gr);color:#000}.bgr:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
-.bpu{background:var(--pu);color:#fff}.bpu:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
-.bre{background:rgba(255,77,109,.15);color:var(--re);border:1px solid rgba(255,77,109,.3)}.bre:hover{background:rgba(255,77,109,.25)}
+.bp{background:var(–am);color:#000}.bp:hover:not(:disabled){background:var(–amd);transform:translateY(-1px)}
+.bs{background:var(–s2);color:var(–tx);border:1px solid var(–bd)}.bs:hover:not(:disabled){border-color:var(–am);color:var(–am)}
+.btw{background:var(–tw);color:#fff}.btw:hover:not(:disabled){background:#0d8fd9;transform:translateY(-1px)}
+.bgr{background:var(–gr);color:#000}.bgr:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+.bpu{background:var(–pu);color:#fff}.bpu:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+.bre{background:rgba(255,77,109,.15);color:var(–re);border:1px solid rgba(255,77,109,.3)}.bre:hover{background:rgba(255,77,109,.25)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
 .btn-full{width:100%;justify-content:center;padding:12px;font-size:14px}
 .btn-sm{padding:6px 12px;font-size:12px}
 
 /* ===== カード ===== */
-.card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
-.card-title{font-size:13px;font-weight:700;color:var(--am);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.hint{background:rgba(255,153,0,.07);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--mu);line-height:1.7}
-.hint strong{color:var(--am)}
-.divider{border:none;border-top:1px solid var(--bd);margin:8px 0 20px}
+.card{background:var(–s1);border:1px solid var(–bd);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(–am);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.hint{background:rgba(255,153,0,.07);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(–mu);line-height:1.7}
+.hint strong{color:var(–am)}
+.divider{border:none;border-top:1px solid var(–bd);margin:8px 0 20px}
 
 /* ===== 価格パネル ===== */
 .pp{border-radius:12px;padding:14px 18px;margin-bottom:14px;display:none;background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.3)}
 .pp.show{display:block}
 .pp-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .pp-badge-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:4px;width:100%}
-.pp-badge-btn{padding:3px 10px;border-radius:20px;border:1.5px solid rgba(255,77,109,.35);background:transparent;color:var(--re);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.pp-badge-btn{padding:3px 10px;border-radius:20px;border:1.5px solid rgba(255,77,109,.35);background:transparent;color:var(–re);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
 .pp-badge-btn:hover{background:rgba(255,77,109,.1)}
-.pp-badge-btn.selected{background:var(--re);color:#fff;border-color:var(--re)}
-.pp-badge-btn.none-btn{border-color:var(--bd);color:var(--mu)}
-.pp-badge-btn.none-btn.selected{background:var(--mu);color:#fff;border-color:var(--mu)}
-.pp-badge{font-size:18px;font-weight:800;padding:3px 12px;border-radius:20px;background:var(--re);color:#fff}
+.pp-badge-btn.selected{background:var(–re);color:#fff;border-color:var(–re)}
+.pp-badge-btn.none-btn{border-color:var(–bd);color:var(–mu)}
+.pp-badge-btn.none-btn.selected{background:var(–mu);color:#fff;border-color:var(–mu)}
+.pp-badge{font-size:18px;font-weight:800;padding:3px 12px;border-radius:20px;background:var(–re);color:#fff}
 .pp-sale{font-size:22px;font-weight:800}
-.pp-orig{font-size:13px;text-decoration:line-through;color:var(--mu)}
-.pp-save{font-size:12px;color:var(--gr);font-weight:700}
+.pp-orig{font-size:13px;text-decoration:line-through;color:var(–mu)}
+.pp-save{font-size:12px;color:var(–gr);font-weight:700}
 .pp-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
-.pp-lbl{color:var(--mu)}.pp-val{font-weight:700}
+.pp-lbl{color:var(–mu)}.pp-val{font-weight:700}
 .pp-eff{background:rgba(0,214,143,.12);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
-.pp-eff .pp-lbl{color:var(--tx);font-weight:700}.pp-eff .pp-val{color:var(--gr);font-size:20px}
-.pp-sum{font-size:11px;color:var(--gr);margin-top:8px}
+.pp-eff .pp-lbl{color:var(–tx);font-weight:700}.pp-eff .pp-val{color:var(–gr);font-size:20px}
+.pp-sum{font-size:11px;color:var(–gr);margin-top:8px}
 
 /* ===== タイトル候補 ===== */
 .title-grid{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.title-chip{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;transition:all .15s;font-size:13px}
-.title-chip:hover{border-color:var(--am);color:var(--am)}
-.title-chip.selected{border-color:var(--am);background:rgba(255,153,0,.1);color:var(--am);font-weight:700}
+.title-chip{background:var(–s2);border:1px solid var(–bd);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;transition:all .15s;font-size:13px}
+.title-chip:hover{border-color:var(–am);color:var(–am)}
+.title-chip.selected{border-color:var(–am);background:rgba(255,153,0,.1);color:var(–am);font-weight:700}
 .title-chip-text{flex:1}
-.title-use-btn{font-size:11px;color:var(--mu);white-space:nowrap}
-.title-chip:hover .title-use-btn{color:var(--am)}
+.title-use-btn{font-size:11px;color:var(–mu);white-space:nowrap}
+.title-chip:hover .title-use-btn{color:var(–am)}
 
 /* ===== 出力エリア ===== */
-.out{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;min-height:80px;margin-top:8px}
+.out{background:var(–s2);border:1px solid var(–bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;min-height:80px;margin-top:8px}
 .out-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.out-lbl{font-size:11px;font-weight:700;color:var(--mu)}
-.cc{font-size:11px;color:var(--mu)}.cc.over{color:var(--re);font-weight:700}
+.out-lbl{font-size:11px;font-weight:700;color:var(–mu)}
+.cc{font-size:11px;color:var(–mu)}.cc.over{color:var(–re);font-weight:700}
 
 /* ===== サムネイル ===== */
-.thumb{width:100%;max-width:160px;height:160px;object-fit:contain;background:#fff;border-radius:10px;padding:8px;display:none;margin:0 auto 12px;border:1px solid var(--bd)}
+.thumb{width:100%;max-width:160px;height:160px;object-fit:contain;background:#fff;border-radius:10px;padding:8px;display:none;margin:0 auto 12px;border:1px solid var(–bd)}
 
 /* ===== 記事ストック ===== */
-.stock-empty{text-align:center;padding:40px 20px;color:var(--mu);font-size:13px}
+.stock-empty{text-align:center;padding:40px 20px;color:var(–mu);font-size:13px}
 .stock-list{display:flex;flex-direction:column;gap:10px}
-.stock-card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
-.stock-card:hover{border-color:var(--bd)}
+.stock-card{background:var(–s2);border:1px solid var(–bd);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.stock-card:hover{border-color:var(–bd)}
 .stock-thumb{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:8px;padding:4px;flex-shrink:0}
 .stock-info{flex:1;min-width:0}
 .stock-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.stock-meta{font-size:11px;color:var(--mu);display:flex;gap:10px;flex-wrap:wrap}
+.stock-meta{font-size:11px;color:var(–mu);display:flex;gap:10px;flex-wrap:wrap}
 .stock-badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700}
-.badge-disc{background:rgba(255,77,109,.2);color:var(--re)}
-.badge-asin{background:rgba(136,136,170,.15);color:var(--mu)}
+.badge-disc{background:rgba(255,77,109,.2);color:var(–re)}
+.badge-asin{background:rgba(136,136,170,.15);color:var(–mu)}
 .stock-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
 
 /* ===== ランキング ===== */
-.rank-slot{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
-.rank-num{font-size:22px;font-weight:900;color:var(--am);width:32px;flex-shrink:0;text-align:center}
+.rank-slot{background:var(–s2);border:1px solid var(–bd);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.rank-num{font-size:22px;font-weight:900;color:var(–am);width:32px;flex-shrink:0;text-align:center}
 .rank-num.gold{color:#FFD700}
 .rank-num.silver{color:#C0C0C0}
 .rank-num.bronze{color:#CD7F32}
 .rank-info{flex:1;min-width:0}
 .rank-name{font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-price{font-size:12px;color:var(--mu)}
-.rank-del{background:none;border:none;color:var(--mu);cursor:pointer;font-size:16px;padding:4px}
-.rank-del:hover{color:var(--re)}
+.rank-price{font-size:12px;color:var(–mu)}
+.rank-del{background:none;border:none;color:var(–mu);cursor:pointer;font-size:16px;padding:4px}
+.rank-del:hover{color:var(–re)}
 .rank-thumb{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;flex-shrink:0}
 
 /* ===== モーダル ===== */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal.show{display:flex}
-.modal-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:24px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
-.modal-title{font-size:15px;font-weight:700;color:var(--am);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.modal-close{background:none;border:none;color:var(--mu);cursor:pointer;font-size:20px;line-height:1}
-.modal-close:hover{color:var(--tx)}
-.modal-out{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;max-height:55vh;overflow-y:auto}
+.modal-box{background:var(–s1);border:1px solid var(–bd);border-radius:16px;padding:24px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;color:var(–am);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(–mu);cursor:pointer;font-size:20px;line-height:1}
+.modal-close:hover{color:var(–tx)}
+.modal-out{background:var(–s2);border:1px solid var(–bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;max-height:55vh;overflow-y:auto}
 
 /* ===== セール品検索 ===== */
-.sw{background:var(--s1);border-bottom:1px solid var(--bd);padding:14px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.sw{background:var(–s1);border-bottom:1px solid var(–bd);padding:14px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .sf{display:flex;flex-direction:column;gap:4px}
-.sf label{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase}
-.empty-st{text-align:center;padding:60px 20px;color:var(--mu)}
+.sf label{font-size:10px;color:var(–mu);font-weight:700;text-transform:uppercase}
+.empty-st{text-align:center;padding:60px 20px;color:var(–mu)}
 .empty-ic{font-size:52px;margin-bottom:14px}
-.empty-ti{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--tx)}
+.empty-ti{font-size:15px;font-weight:700;margin-bottom:8px;color:var(–tx)}
 
 /* ===== スピナー・トースト ===== */
 .sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
@@ -152,10 +154,12 @@ textarea{resize:vertical}
 /* ===== レスポンシブ ===== */
 @media(max-width:600px){.r2,.r3{grid-template-columns:1fr}.stock-actions{flex-direction:column}}
 </style>
+
 </head>
 <body>
 
 <!-- ===== ヘッダー ===== -->
+
 <header>
   <div style="display:flex;align-items:center;gap:10px">
     <span>🛒</span>
@@ -168,6 +172,7 @@ textarea{resize:vertical}
 </header>
 
 <!-- ===== タブナビ ===== -->
+
 <div class="tab-nav">
   <button class="tab-btn active" id="btn-post"   onclick="swTab('post',this)">⚡ 記事作成</button>
   <button class="tab-btn"        id="btn-stock"  onclick="swTab('stock',this)">📦 記事ストック</button>
@@ -178,286 +183,289 @@ textarea{resize:vertical}
 <!-- ========================================
      タブ①：記事作成
      ======================================== -->
+
 <div class="tab active" id="tab-post">
   <div class="main">
 
-    <!-- 商品情報入力 -->
-    <div class="card">
-      <div class="card-title">📦 商品情報を入力</div>
-      <div class="hint">
-        💡 <strong>Amazon URLを貼り付けると ASINを自動抽出</strong>します。<br>
-        定価・ご請求額・獲得ポイントを入力すると価格が自動計算されます。
-      </div>
+```
+<!-- 商品情報入力 -->
+<div class="card">
+  <div class="card-title">📦 商品情報を入力</div>
+  <div class="hint">
+    💡 <strong>Amazon URLを貼り付けると ASINを自動抽出</strong>します。<br>
+    定価・ご請求額・獲得ポイントを入力すると価格が自動計算されます。
+  </div>
 
-      <!-- URL入力 → ASIN自動抽出 -->
-      <div class="f">
-        <span class="lbl">Amazon URL または ASIN ※必須</span>
-        <input id="qUrl" placeholder="https://www.amazon.co.jp/dp/B07XK6Z87X  または  B07XK6Z87X" oninput="onUrlInput()">
-      </div>
+  <!-- URL入力 → ASIN自動抽出 -->
+  <div class="f">
+    <span class="lbl">Amazon URL または ASIN ※必須</span>
+    <input id="qUrl" placeholder="https://www.amazon.co.jp/dp/B07XK6Z87X  または  B07XK6Z87X" oninput="onUrlInput()">
+  </div>
 
-      <!-- ASIN表示 + サムネ -->
-      <div id="asinRow" style="display:none;margin-bottom:14px">
-        <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+  <!-- ASIN表示 + サムネ -->
+  <div id="asinRow" style="display:none;margin-bottom:14px">
+    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
 
-          <!-- ドロップゾーン兼プレビュー -->
-          <div id="imgDropZone"
-            style="flex-shrink:0;width:110px;height:110px;border-radius:12px;border:2px dashed var(--bd);background:var(--s2);cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s"
-            onclick="document.getElementById('imgFileInput').click()"
-            ondragover="onImgDragOver(event)"
-            ondragleave="onImgDragLeave(event)"
-            ondrop="onImgDrop(event)">
-            <!-- プレビュー画像 -->
-            <img id="thumbImg"
-              style="width:100%;height:100%;object-fit:contain;background:#fff;border-radius:10px;padding:6px;display:block"
-              alt="">
-            <!-- ドロップ誘導オーバーレイ（画像なし時） -->
-            <div id="dropOverlay"
-              style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none">
-              <div style="font-size:22px">📷</div>
-              <div style="font-size:9px;color:var(--mu);text-align:center;line-height:1.4">クリックまたは<br>ドロップ</div>
-            </div>
-          </div>
-          <!-- 隠しファイル入力 -->
-          <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="onImgFileSelect(event)">
-
-          <!-- ASIN情報 + URL入力 -->
-          <div style="flex:1;min-width:200px">
-            <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:2px">ASIN</div>
-            <div id="asinDisplay" style="font-size:16px;font-weight:800;color:var(--am);letter-spacing:1px;margin-bottom:2px"></div>
-            <div style="font-size:11px;color:var(--mu);margin-bottom:10px" id="affLinkDisplay"></div>
-
-            <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:5px">📷 商品画像の設定方法（3通り）</div>
-            <div style="font-size:11px;color:var(--mu);margin-bottom:8px;line-height:1.8">
-              ① 自動取得（URL貼り付け時に自動）<br>
-              ② <strong style="color:var(--tx)">左の枠に画像をドラッグ＆ドロップ</strong>またはクリックして選択<br>
-              ③ AmazonページでURLを右クリックコピーして↓に貼り付け
-            </div>
-            <div style="display:flex;gap:6px">
-              <input id="qImgUrl" placeholder="https://m.media-amazon.com/images/I/..." style="font-size:12px;padding:7px 10px" oninput="onManualImgInput()">
-              <button class="btn bs" style="font-size:11px;padding:7px 10px;white-space:nowrap" onclick="applyManualImg()">✓ 適用</button>
-            </div>
-            <div id="imgSourceLabel" style="font-size:10px;color:var(--gr);margin-top:5px;display:none"></div>
-          </div>
+      <!-- ドロップゾーン兼プレビュー -->
+      <div id="imgDropZone"
+        style="flex-shrink:0;width:110px;height:110px;border-radius:12px;border:2px dashed var(--bd);background:var(--s2);cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s"
+        onclick="document.getElementById('imgFileInput').click()"
+        ondragover="onImgDragOver(event)"
+        ondragleave="onImgDragLeave(event)"
+        ondrop="onImgDrop(event)">
+        <!-- プレビュー画像 -->
+        <img id="thumbImg"
+          style="width:100%;height:100%;object-fit:contain;background:#fff;border-radius:10px;padding:6px;display:block"
+          alt="">
+        <!-- ドロップ誘導オーバーレイ（画像なし時） -->
+        <div id="dropOverlay"
+          style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none">
+          <div style="font-size:22px">📷</div>
+          <div style="font-size:9px;color:var(--mu);text-align:center;line-height:1.4">クリックまたは<br>ドロップ</div>
         </div>
       </div>
+      <!-- 隠しファイル入力 -->
+      <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="onImgFileSelect(event)">
 
-      <div class="r3">
-        <div class="f"><span class="lbl">定価（円）<span class="lbl-hint">参考価格</span></span><input type="number" id="qOrig"  placeholder="例: 1949" oninput="calcQ()"></div>
-        <div class="f"><span class="lbl">ご請求額（円）※必須</span><input type="number" id="qSale"  placeholder="例: 1501" oninput="calcQ()"></div>
-        <div class="f"><span class="lbl">獲得ポイント（pt）<span class="lbl-hint">任意</span></span><input type="number" id="qPoint" placeholder="例: 125"  oninput="calcQ()"></div>
-      </div>
+      <!-- ASIN情報 + URL入力 -->
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:2px">ASIN</div>
+        <div id="asinDisplay" style="font-size:16px;font-weight:800;color:var(--am);letter-spacing:1px;margin-bottom:2px"></div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:10px" id="affLinkDisplay"></div>
 
-      <!-- 価格パネル -->
-      <div class="pp" id="pp">
-        <div class="pp-top">
-          <div class="pp-badge-group" id="ppBadgeGroup">
-            <button class="pp-badge-btn selected" data-label="SALE" onclick="selectBadge(this)">SALE</button>
-            <button class="pp-badge-btn" data-label="値下げ" onclick="selectBadge(this)">値下げ</button>
-            <button class="pp-badge-btn" data-label="激安" onclick="selectBadge(this)">激安</button>
-            <button class="pp-badge-btn" data-label="予約受付中" onclick="selectBadge(this)">予約受付中</button>
-            <button class="pp-badge-btn none-btn" data-label="" onclick="selectBadge(this)">なし</button>
-          </div>
-          <span class="pp-badge" id="ppBadge">SALE</span>
-          <span class="pp-sale"  id="ppSale"></span>
-          <span class="pp-orig"  id="ppOrig"></span>
-          <span class="pp-save"  id="ppSave"></span>
+        <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:5px">📷 商品画像の設定方法（3通り）</div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:8px;line-height:1.8">
+          ① 自動取得（URL貼り付け時に自動）<br>
+          ② <strong style="color:var(--tx)">左の枠に画像をドラッグ＆ドロップ</strong>またはクリックして選択<br>
+          ③ AmazonページでURLを右クリックコピーして↓に貼り付け
         </div>
-        <div class="pp-row" id="ppPtRow" style="display:none">
-          <span class="pp-lbl">🪙 獲得ポイント</span>
-          <span class="pp-val" style="color:var(--am)" id="ppPt"></span>
+        <div style="display:flex;gap:6px">
+          <input id="qImgUrl" placeholder="https://m.media-amazon.com/images/I/..." style="font-size:12px;padding:7px 10px" oninput="onManualImgInput()">
+          <button class="btn bs" style="font-size:11px;padding:7px 10px;white-space:nowrap" onclick="applyManualImg()">✓ 適用</button>
         </div>
-        <div class="pp-eff" id="ppEffRow" style="display:none">
-          <span class="pp-lbl">💰 実質価格（ポイント込み）</span>
-          <span class="pp-val" id="ppEff"></span>
-        </div>
-        <div class="pp-sum" id="ppSum"></div>
-      </div>
-
-      <div class="r2">
-        <div class="f"><span class="lbl">商品名<span class="lbl-hint">空欄でAIが自動推測</span></span><input id="qName" placeholder="例: ビオスリーHi錠 180錠" oninput="onNameInput()"></div>
-        <div class="f"><span class="lbl">ひとこと補足<span class="lbl-hint">任意</span></span><input id="qNote" placeholder="例: タイムセール！在庫わずか"></div>
-      </div>
-      <!-- カテゴリー自動判定 + 手動変更 -->
-      <div class="f">
-        <span class="lbl">カテゴリー<span class="lbl-hint">商品名から自動判定・手動変更可</span></span>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <select id="qCat" style="flex:1;min-width:160px">
-            <option value="食品・日用品">食品・日用品</option>
-            <option value="家電・ガジェット">家電・ガジェット</option>
-            <option value="ファッション">ファッション</option>
-            <option value="生活用品">生活用品</option>
-            <option value="美容・健康">美容・健康</option>
-            <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
-            <option value="セール情報">セール情報</option>
-            <option value="その他">その他</option>
-          </select>
-          <span id="catAutoLabel" style="font-size:11px;color:var(--gr)"></span>
-        </div>
+        <div id="imgSourceLabel" style="font-size:10px;color:var(--gr);margin-top:5px;display:none"></div>
       </div>
     </div>
+  </div>
 
-    <!-- 関連商品入力 -->
-    <div class="card">
-      <div class="card-title">🔗 関連商品（アクセサリー・合わせ買い）<span style="font-size:11px;font-weight:400;color:var(--mu);margin-left:8px">任意・最大3件</span></div>
-      <div class="hint" style="margin-bottom:12px">💡 ASINを入力すると画像プレビューを自動確認します。取得できない場合のみ画像URLの入力欄が表示されます。</div>
-      <div id="relItems">
-        <!-- ① -->
-        <div class="rel-row" id="relRow0" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
-          <div id="relThumbWrap0" style="width:64px;flex-shrink:0">
-            <div id="relThumbBox0" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default" title="ASINを入力すると自動プレビュー">
-              <span id="relThumbTxt0">ASIN<br>入力で<br>確認</span>
-              <img id="relThumbImg0" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
-            </div>
-          </div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;gap:6px;align-items:center">
-              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">①</span>
-              <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(0)">
-              <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
-            </div>
-            <div id="relImgRow0" style="display:none">
-              <input id="relImg0" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(0)">
-            </div>
-            <div id="relImgStatus0" style="font-size:10px;color:var(--mu)"></div>
-          </div>
-        </div>
-        <!-- ② -->
-        <div class="rel-row" id="relRow1" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
-          <div id="relThumbWrap1" style="width:64px;flex-shrink:0">
-            <div id="relThumbBox1" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
-              <span id="relThumbTxt1">ASIN<br>入力で<br>確認</span>
-              <img id="relThumbImg1" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
-            </div>
-          </div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;gap:6px;align-items:center">
-              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">②</span>
-              <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(1)">
-              <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
-            </div>
-            <div id="relImgRow1" style="display:none">
-              <input id="relImg1" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(1)">
-            </div>
-            <div id="relImgStatus1" style="font-size:10px;color:var(--mu)"></div>
-          </div>
-        </div>
-        <!-- ③ -->
-        <div class="rel-row" id="relRow2" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:4px">
-          <div id="relThumbWrap2" style="width:64px;flex-shrink:0">
-            <div id="relThumbBox2" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
-              <span id="relThumbTxt2">ASIN<br>入力で<br>確認</span>
-              <img id="relThumbImg2" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
-            </div>
-          </div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;gap:6px;align-items:center">
-              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">③</span>
-              <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(2)">
-              <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
-            </div>
-            <div id="relImgRow2" style="display:none">
-              <input id="relImg2" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(2)">
-            </div>
-            <div id="relImgStatus2" style="font-size:10px;color:var(--mu)"></div>
-          </div>
-        </div>
+  <div class="r3">
+    <div class="f"><span class="lbl">定価（円）<span class="lbl-hint">参考価格</span></span><input type="number" id="qOrig"  placeholder="例: 1949" oninput="calcQ()"></div>
+    <div class="f"><span class="lbl">ご請求額（円）※必須</span><input type="number" id="qSale"  placeholder="例: 1501" oninput="calcQ()"></div>
+    <div class="f"><span class="lbl">獲得ポイント（pt）<span class="lbl-hint">任意</span></span><input type="number" id="qPoint" placeholder="例: 125"  oninput="calcQ()"></div>
+  </div>
+
+  <!-- 価格パネル -->
+  <div class="pp" id="pp">
+    <div class="pp-top">
+      <div class="pp-badge-group" id="ppBadgeGroup">
+        <button class="pp-badge-btn selected" data-label="SALE" onclick="selectBadge(this)">SALE</button>
+        <button class="pp-badge-btn" data-label="値下げ" onclick="selectBadge(this)">値下げ</button>
+        <button class="pp-badge-btn" data-label="激安" onclick="selectBadge(this)">激安</button>
+        <button class="pp-badge-btn" data-label="予約受付中" onclick="selectBadge(this)">予約受付中</button>
+        <button class="pp-badge-btn none-btn" data-label="" onclick="selectBadge(this)">なし</button>
       </div>
+      <span class="pp-badge" id="ppBadge">SALE</span>
+      <span class="pp-sale"  id="ppSale"></span>
+      <span class="pp-orig"  id="ppOrig"></span>
+      <span class="pp-save"  id="ppSave"></span>
     </div>
-
-    <!-- タイトル候補生成 -->
-    <div class="card">
-      <div class="card-title">🏷️ 記事タイトル候補</div>
-      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 AIでタイトル候補を生成</button>
-        <span style="font-size:11px;color:var(--mu)">クリックして記事タイトルに使うタイトルを選択</span>
-      </div>
-      <div id="titleGrid" class="title-grid" style="display:none"></div>
+    <div class="pp-row" id="ppPtRow" style="display:none">
+      <span class="pp-lbl">🪙 獲得ポイント</span>
+      <span class="pp-val" style="color:var(--am)" id="ppPt"></span>
     </div>
-
-    <!-- 記事生成 -->
-    <div class="card">
-      <div class="card-title">🤖 記事生成</div>
-      <div class="f" id="selectedTitleRow" style="display:none">
-        <span class="lbl">選択中のタイトル</span>
-        <input id="selectedTitle" style="border-color:var(--am)">
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn bp btn-full" id="genBtn" onclick="genAll()" style="flex:2">🤖 X投稿文・ブログ記事を一括生成</button>
-      </div>
+    <div class="pp-eff" id="ppEffRow" style="display:none">
+      <span class="pp-lbl">💰 実質価格（ポイント込み）</span>
+      <span class="pp-val" id="ppEff"></span>
     </div>
+    <div class="pp-sum" id="ppSum"></div>
+  </div>
 
-    <!-- X投稿文 -->
-    <div class="card" id="twCard" style="display:none">
-      <div class="card-title">🐦 X（Twitter）投稿文</div>
-      <div class="out-hdr"><span class="out-lbl">#PR #AD 含む</span><span class="cc" id="twCount">0文字</span></div>
-      <div class="out" id="twOut" contenteditable="true" oninput="updTw()"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btw" style="flex:1;justify-content:center" onclick="copyX()">📋 コピーしてXを開く</button>
-        <button class="btn bs" onclick="regenTw(this)">🔄 再生成</button>
-      </div>
+  <div class="r2">
+    <div class="f"><span class="lbl">商品名<span class="lbl-hint">空欄でAIが自動推測</span></span><input id="qName" placeholder="例: ビオスリーHi錠 180錠" oninput="onNameInput()"></div>
+    <div class="f"><span class="lbl">ひとこと補足<span class="lbl-hint">任意</span></span><input id="qNote" placeholder="例: タイムセール！在庫わずか"></div>
+  </div>
+  <!-- カテゴリー自動判定 + 手動変更 -->
+  <div class="f">
+    <span class="lbl">カテゴリー<span class="lbl-hint">商品名から自動判定・手動変更可</span></span>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="qCat" style="flex:1;min-width:160px">
+        <option value="食品・日用品">食品・日用品</option>
+        <option value="家電・ガジェット">家電・ガジェット</option>
+        <option value="ファッション">ファッション</option>
+        <option value="生活用品">生活用品</option>
+        <option value="美容・健康">美容・健康</option>
+        <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
+        <option value="セール情報">セール情報</option>
+        <option value="その他">その他</option>
+      </select>
+      <span id="catAutoLabel" style="font-size:11px;color:var(--gr)"></span>
     </div>
+  </div>
+</div>
 
-    <!-- ブログ記事 -->
-    <div class="card" id="blCard" style="display:none">
-      <div class="card-title">📝 はてなブログ用 Markdown記事</div>
-      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ（直接編集できます）</span><span class="cc" id="blCount">0文字</span></div>
-      <div class="out" id="blOut" style="max-height:420px;overflow-y:auto" contenteditable="true" oninput="updBl()"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyBl()">📋 記事をコピー</button>
-        <button class="btn bs" onclick="dlBl()">💾 保存</button>
-        <button class="btn bs" onclick="regenBl(this)">🔄 再生成</button>
-        <button class="btn bgr" style="flex:1;justify-content:center" onclick="saveToStock()">📦 ストックに保存</button>
-        <button class="btn bp" style="flex:1;justify-content:center" id="hatBtn" onclick="postHatena()">📝 はてなブログに投稿</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- まとめ記事ストック -->
-    <div class="card">
-      <div class="card-title">🗂️ まとめ記事ストック <span id="stCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
-      <div class="hint">💡 上で記事を生成すると自動でストックされます。<strong>📦 ストックに保存</strong>ボタンで明示保存もできます。</div>
-      <div id="stList" class="stock-list"></div>
-    </div>
-
-    <!-- まとめ記事生成 -->
-    <div class="card">
-      <div class="card-title">📋 まとめ記事を生成</div>
-      <div class="mt-opts r3" style="margin-bottom:14px">
-        <div class="f">
-          <span class="lbl">記事スタイル</span>
-          <select id="mtStyle"><option value="daily">今日のお得まとめ</option><option value="category">カテゴリ別まとめ</option></select>
-        </div>
-        <div class="f">
-          <span class="lbl">カテゴリ<span class="lbl-hint">カテゴリ別の場合</span></span>
-          <select id="mtCat">
-            <option value="">すべて混合</option>
-            <option value="家電・ガジェット">家電・ガジェット</option>
-            <option value="美容・健康">美容・健康</option>
-            <option value="食品・日用品">食品・日用品</option>
-            <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
-            <option value="ファッション">ファッション</option>
-          </select>
-        </div>
-        <div class="f">
-          <span class="lbl">含める商品数</span>
-          <select id="mtMax"><option value="5">5件</option><option value="7" selected>7件</option><option value="10">10件</option></select>
+<!-- 関連商品入力 -->
+<div class="card">
+  <div class="card-title">🔗 関連商品（アクセサリー・合わせ買い）<span style="font-size:11px;font-weight:400;color:var(--mu);margin-left:8px">任意・最大3件</span></div>
+  <div class="hint" style="margin-bottom:12px">💡 ASINを入力すると画像プレビューを自動確認します。取得できない場合のみ画像URLの入力欄が表示されます。</div>
+  <div id="relItems">
+    <!-- ① -->
+    <div class="rel-row" id="relRow0" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+      <div id="relThumbWrap0" style="width:64px;flex-shrink:0">
+        <div id="relThumbBox0" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default" title="ASINを入力すると自動プレビュー">
+          <span id="relThumbTxt0">ASIN<br>入力で<br>確認</span>
+          <img id="relThumbImg0" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
         </div>
       </div>
-      <button class="btn bp btn-full" id="mtBtn" onclick="genMatome()">📋 まとめ記事を生成</button>
-    </div>
-
-    <!-- まとめ記事結果 -->
-    <div class="card" id="mtResult" style="display:none">
-      <div class="card-title">📄 生成されたまとめ記事</div>
-      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="mtCount">0文字</span></div>
-      <div class="out" id="mtOut" style="max-height:500px;overflow-y:auto"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyMt()">📋 コピー</button>
-        <button class="btn bs" onclick="dlMt()">💾 保存</button>
-        <button class="btn bp" style="flex:1;justify-content:center" onclick="postMt()">📝 はてなブログに投稿</button>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">①</span>
+          <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(0)">
+          <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
+        </div>
+        <div id="relImgRow0" style="display:none">
+          <input id="relImg0" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(0)">
+        </div>
+        <div id="relImgStatus0" style="font-size:10px;color:var(--mu)"></div>
       </div>
     </div>
+    <!-- ② -->
+    <div class="rel-row" id="relRow1" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+      <div id="relThumbWrap1" style="width:64px;flex-shrink:0">
+        <div id="relThumbBox1" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+          <span id="relThumbTxt1">ASIN<br>入力で<br>確認</span>
+          <img id="relThumbImg1" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+        </div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">②</span>
+          <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(1)">
+          <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
+        </div>
+        <div id="relImgRow1" style="display:none">
+          <input id="relImg1" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(1)">
+        </div>
+        <div id="relImgStatus1" style="font-size:10px;color:var(--mu)"></div>
+      </div>
+    </div>
+    <!-- ③ -->
+    <div class="rel-row" id="relRow2" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:4px">
+      <div id="relThumbWrap2" style="width:64px;flex-shrink:0">
+        <div id="relThumbBox2" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+          <span id="relThumbTxt2">ASIN<br>入力で<br>確認</span>
+          <img id="relThumbImg2" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+        </div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">③</span>
+          <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(2)">
+          <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
+        </div>
+        <div id="relImgRow2" style="display:none">
+          <input id="relImg2" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(2)">
+        </div>
+        <div id="relImgStatus2" style="font-size:10px;color:var(--mu)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- タイトル候補生成 -->
+<div class="card">
+  <div class="card-title">🏷️ 記事タイトル候補</div>
+  <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+    <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 AIでタイトル候補を生成</button>
+    <span style="font-size:11px;color:var(--mu)">クリックして記事タイトルに使うタイトルを選択</span>
+  </div>
+  <div id="titleGrid" class="title-grid" style="display:none"></div>
+</div>
+
+<!-- 記事生成 -->
+<div class="card">
+  <div class="card-title">🤖 記事生成</div>
+  <div class="f" id="selectedTitleRow" style="display:none">
+    <span class="lbl">選択中のタイトル</span>
+    <input id="selectedTitle" style="border-color:var(--am)">
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn bp btn-full" id="genBtn" onclick="genAll()" style="flex:2">🤖 X投稿文・ブログ記事を一括生成</button>
+  </div>
+</div>
+
+<!-- X投稿文 -->
+<div class="card" id="twCard" style="display:none">
+  <div class="card-title">🐦 X（Twitter）投稿文</div>
+  <div class="out-hdr"><span class="out-lbl">#PR #AD 含む</span><span class="cc" id="twCount">0文字</span></div>
+  <div class="out" id="twOut" contenteditable="true" oninput="updTw()"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn btw" style="flex:1;justify-content:center" onclick="copyX()">📋 コピーしてXを開く</button>
+    <button class="btn bs" onclick="regenTw(this)">🔄 再生成</button>
+  </div>
+</div>
+
+<!-- ブログ記事 -->
+<div class="card" id="blCard" style="display:none">
+  <div class="card-title">📝 はてなブログ用 Markdown記事</div>
+  <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ（直接編集できます）</span><span class="cc" id="blCount">0文字</span></div>
+  <div class="out" id="blOut" style="max-height:420px;overflow-y:auto" contenteditable="true" oninput="updBl()"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn bs" style="flex:1;justify-content:center" onclick="copyBl()">📋 記事をコピー</button>
+    <button class="btn bs" onclick="dlBl()">💾 保存</button>
+    <button class="btn bs" onclick="regenBl(this)">🔄 再生成</button>
+    <button class="btn bgr" style="flex:1;justify-content:center" onclick="saveToStock()">📦 ストックに保存</button>
+    <button class="btn bp" style="flex:1;justify-content:center" id="hatBtn" onclick="postHatena()">📝 はてなブログに投稿</button>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- まとめ記事ストック -->
+<div class="card">
+  <div class="card-title">🗂️ まとめ記事ストック <span id="stCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
+  <div class="hint">💡 上で記事を生成すると自動でストックされます。<strong>📦 ストックに保存</strong>ボタンで明示保存もできます。</div>
+  <div id="stList" class="stock-list"></div>
+</div>
+
+<!-- まとめ記事生成 -->
+<div class="card">
+  <div class="card-title">📋 まとめ記事を生成</div>
+  <div class="mt-opts r3" style="margin-bottom:14px">
+    <div class="f">
+      <span class="lbl">記事スタイル</span>
+      <select id="mtStyle"><option value="daily">今日のお得まとめ</option><option value="category">カテゴリ別まとめ</option></select>
+    </div>
+    <div class="f">
+      <span class="lbl">カテゴリ<span class="lbl-hint">カテゴリ別の場合</span></span>
+      <select id="mtCat">
+        <option value="">すべて混合</option>
+        <option value="家電・ガジェット">家電・ガジェット</option>
+        <option value="美容・健康">美容・健康</option>
+        <option value="食品・日用品">食品・日用品</option>
+        <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
+        <option value="ファッション">ファッション</option>
+      </select>
+    </div>
+    <div class="f">
+      <span class="lbl">含める商品数</span>
+      <select id="mtMax"><option value="5">5件</option><option value="7" selected>7件</option><option value="10">10件</option></select>
+    </div>
+  </div>
+  <button class="btn bp btn-full" id="mtBtn" onclick="genMatome()">📋 まとめ記事を生成</button>
+</div>
+
+<!-- まとめ記事結果 -->
+<div class="card" id="mtResult" style="display:none">
+  <div class="card-title">📄 生成されたまとめ記事</div>
+  <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="mtCount">0文字</span></div>
+  <div class="out" id="mtOut" style="max-height:500px;overflow-y:auto"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn bs" style="flex:1;justify-content:center" onclick="copyMt()">📋 コピー</button>
+    <button class="btn bs" onclick="dlMt()">💾 保存</button>
+    <button class="btn bp" style="flex:1;justify-content:center" onclick="postMt()">📝 はてなブログに投稿</button>
+  </div>
+</div>
+```
 
   </div>
 </div>
@@ -465,6 +473,7 @@ textarea{resize:vertical}
 <!-- ========================================
      タブ②：記事ストック
      ======================================== -->
+
 <div class="tab" id="tab-stock">
   <div class="main-wide">
     <div class="card">
@@ -480,43 +489,46 @@ textarea{resize:vertical}
 <!-- ========================================
      タブ③：ランキング記事
      ======================================== -->
+
 <div class="tab" id="tab-rank">
   <div class="main">
 
-    <!-- ランキング設定 -->
-    <div class="card">
-      <div class="card-title">🏆 ランキング記事を作成</div>
-      <div class="hint">💡 <strong>記事ストックから商品を追加</strong>してランキングを組み、AIがランキング記事を生成します。</div>
-      <div class="r2">
-        <div class="f"><span class="lbl">ランキングタイトル</span><input id="rankTitle" placeholder="例: おすすめ目覚まし時計ランキング"></div>
-        <div class="f"><span class="lbl">カテゴリ / テーマ</span><input id="rankTheme" placeholder="例: 一人暮らし向け、コスパ重視"></div>
-      </div>
-      <button class="btn bs" onclick="swTab('stock', document.getElementById('btn-stock'))">📦 ストックから商品を追加する →</button>
-    </div>
+```
+<!-- ランキング設定 -->
+<div class="card">
+  <div class="card-title">🏆 ランキング記事を作成</div>
+  <div class="hint">💡 <strong>記事ストックから商品を追加</strong>してランキングを組み、AIがランキング記事を生成します。</div>
+  <div class="r2">
+    <div class="f"><span class="lbl">ランキングタイトル</span><input id="rankTitle" placeholder="例: おすすめ目覚まし時計ランキング"></div>
+    <div class="f"><span class="lbl">カテゴリ / テーマ</span><input id="rankTheme" placeholder="例: 一人暮らし向け、コスパ重視"></div>
+  </div>
+  <button class="btn bs" onclick="swTab('stock', document.getElementById('btn-stock'))">📦 ストックから商品を追加する →</button>
+</div>
 
-    <!-- ランキングスロット -->
-    <div class="card">
-      <div class="card-title">📋 ランキング構成 <span id="rankCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
-      <div id="rankSlots">
-        <div class="stock-empty">まだ商品がありません。ストックから追加してください。</div>
-      </div>
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn bp btn-full" id="rankGenBtn" onclick="genRanking()" style="flex:2">🏆 ランキング記事を生成（AI）</button>
-        <button class="btn bre" onclick="clearRank()">🗑️ クリア</button>
-      </div>
-    </div>
+<!-- ランキングスロット -->
+<div class="card">
+  <div class="card-title">📋 ランキング構成 <span id="rankCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
+  <div id="rankSlots">
+    <div class="stock-empty">まだ商品がありません。ストックから追加してください。</div>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn bp btn-full" id="rankGenBtn" onclick="genRanking()" style="flex:2">🏆 ランキング記事を生成（AI）</button>
+    <button class="btn bre" onclick="clearRank()">🗑️ クリア</button>
+  </div>
+</div>
 
-    <!-- ランキング記事結果 -->
-    <div class="card" id="rankResult" style="display:none">
-      <div class="card-title">📄 生成されたランキング記事</div>
-      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="rankCount2">0文字</span></div>
-      <div class="out" id="rankOut" style="max-height:500px;overflow-y:auto"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyRank()">📋 コピー</button>
-        <button class="btn bs" onclick="dlRank()">💾 保存</button>
-        <button class="btn bp" style="flex:1;justify-content:center" onclick="postRank()">📝 はてなブログに投稿</button>
-      </div>
-    </div>
+<!-- ランキング記事結果 -->
+<div class="card" id="rankResult" style="display:none">
+  <div class="card-title">📄 生成されたランキング記事</div>
+  <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="rankCount2">0文字</span></div>
+  <div class="out" id="rankOut" style="max-height:500px;overflow-y:auto"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn bs" style="flex:1;justify-content:center" onclick="copyRank()">📋 コピー</button>
+    <button class="btn bs" onclick="dlRank()">💾 保存</button>
+    <button class="btn bp" style="flex:1;justify-content:center" onclick="postRank()">📝 はてなブログに投稿</button>
+  </div>
+</div>
+```
 
   </div>
 </div>
@@ -524,6 +536,7 @@ textarea{resize:vertical}
 <!-- ========================================
      タブ④：セール品検索（PA-API）
      ======================================== -->
+
 <div class="tab" id="tab-search">
   <div class="sw">
     <div class="sf" style="flex:1;min-width:200px"><label>キーワード検索</label><input id="kw" placeholder="例: モバイルバッテリー..." style="width:100%" onkeydown="if(event.key==='Enter')doSearch()"></div>
@@ -539,6 +552,7 @@ textarea{resize:vertical}
 </div>
 
 <!-- ===== 記事閲覧モーダル ===== -->
+
 <div class="modal" id="viewModal">
   <div class="modal-box">
     <div class="modal-title">
@@ -558,6 +572,7 @@ textarea{resize:vertical}
 <!-- ========================================
      JavaScript
      ======================================== -->
+
 <script>
 /* ===== 定数・グローバル変数 ===== */
 const WK  = 'https://amazon-sale-api.bulibuli-mushi.workers.dev';
@@ -1791,5 +1806,6 @@ async function doSearch() {
   }
 }
 </script>
+
 </body>
 </html>
