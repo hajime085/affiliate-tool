@@ -1037,7 +1037,7 @@ function makeBl(p) {
     '【必須構成】\n' +
     '# '+title+'\n\n' +
     '<a href="'+p.link+'" target="_blank" rel="noopener" style="display:block;background:none!important;border:none!important;padding:0!important;margin:16px auto!important;max-width:500px;text-decoration:none"><img src="'+p.iUrl+'" alt="'+p.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:8px;background:#fff"></a>\n\n' +
-    '（リード文：読者が得する理由を120文字で）\n\n' +
+    '（リード文：読者が得する理由を120文字で）\n\n<!--more-->\n\n' +
     '## 💰 価格情報\n\n' +
     '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">' +
     '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.badge||'SALE')+'</span>' +
@@ -1728,7 +1728,7 @@ async function genRanking() {
     '【ランキング商品リスト（順位は固定）】\n'+itemsTxt+'\n\n' +
     '【必須構成】\n' +
     '# '+rankTitle+'【'+rankItems.length+'選】\n\n' +
-    '（リード文120文字：このランキングを読む価値を伝える）\n\n' +
+    '（リード文120文字：このランキングを読む価値を伝える）\n\n<!--more-->\n\n' +
     '## 選び方のポイント\n\n（3点）\n\n' +
     rankItems.map(function(item,i){
       var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅';
