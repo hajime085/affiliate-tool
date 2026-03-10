@@ -2,1266 +2,1796 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>X投稿ツール｜お得情報アカウント運用</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>🛒 Amazon アフィリエイト記事作成ツール</title>
 <style>
-/* ===== Google Fonts ===== */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
-
-/* ===== CSS変数 ===== */
+/* ===== CSS変数・リセット ===== */
 :root {
-  --bg:    #f5f4f0;
-  --s1:    #ffffff;
-  --s2:    #f0ede8;
-  --bd:    #e0dbd3;
-  --tx:    #1a1a18;
-  --mu:    #888880;
-  --acc:   #2a6496;   /* 落ち着いたネイビーブルー */
-  --accs:  #1a4a72;
-  --tw:    #1DA1F2;
-  --gr:    #2d7a4f;
-  --am:    #c45c00;
-  --re:    #c0392b;
-  --tip:   #7c6a52;
-  --knowledge: #2a6496;
-  --empathy:   #2d7a4f;
-  --announce:  #c45c00;
-  --radius: 12px;
+  --am:#FF9900; --amd:#e47911; --bg:#0f0f13; --s1:#1a1a22; --s2:#22222e;
+  --bd:#2e2e3e; --tx:#e8e8f0; --mu:#8888aa; --gr:#00d68f; --re:#ff4d6d; --tw:#1DA1F2;
+  --pu:#9b59b6;
 }
-
-/* ===== リセット・基本 ===== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Noto Sans JP', sans-serif;
-  background: var(--bg);
-  color: var(--tx);
-  font-size: 14px;
-  line-height: 1.7;
-  min-height: 100vh;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;width:100%}
+body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;width:100%}
 
 /* ===== ヘッダー ===== */
-header {
-  background: var(--tx);
-  color: #fff;
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.logo {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: .02em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.logo-sub { font-size: 11px; color: rgba(255,255,255,.5); font-weight: 400; }
+header{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
+.logo{font-size:17px;font-weight:800;background:linear-gradient(90deg,#FF9900,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.header-settings{display:flex;align-items:center;gap:8px}
+.assoc-label{font-size:11px;color:var(--mu);white-space:nowrap}
+.assoc-input{background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);padding:6px 10px;font-size:12px;font-family:inherit;width:160px}
+.assoc-input:focus{outline:none;border-color:var(--am)}
 
-/* ===== 今日のサマリーバー ===== */
-.summary-bar {
-  background: var(--acc);
-  color: #fff;
-  padding: 10px 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  font-size: 12px;
-}
-.summary-bar-title { font-weight: 700; font-size: 13px; white-space: nowrap; }
-.progress-group { display: flex; gap: 14px; flex-wrap: wrap; }
-.prog-item { display: flex; align-items: center; gap: 6px; }
-.prog-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.prog-label { opacity: .85; }
-.prog-count { font-weight: 700; font-family: 'DM Mono', monospace; }
-.summary-advice {
-  margin-left: auto;
-  background: rgba(255,255,255,.15);
-  border-radius: 20px;
-  padding: 4px 14px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-}
+/* ===== タブナビ ===== */
+.tab-nav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;gap:4px}
+.tab-btn{padding:12px 18px;border:none;background:transparent;color:var(--mu);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
+.tab-btn.active{color:var(--am);border-bottom-color:var(--am)}
+.tab{display:none}.tab.active{display:block}
 
-/* ===== メインレイアウト ===== */
-.layout {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 24px 20px;
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 20px;
-  align-items: start;
-}
-@media (max-width: 740px) {
-  .layout { grid-template-columns: 1fr; }
-}
+/* ===== レイアウト ===== */
+.main{max-width:860px;margin:0 auto;padding:24px 20px}
+.main-wide{max-width:1060px;margin:0 auto;padding:24px 20px}
 
-/* ===== カード ===== */
-.card {
-  background: var(--s1);
-  border: 1px solid var(--bd);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-}
-.card:last-child { margin-bottom: 0; }
-.card-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--mu);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ===== 投稿タイプ選択 ===== */
-.type-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.type-btn {
-  border: 2px solid var(--bd);
-  border-radius: 10px;
-  padding: 14px 10px;
-  text-align: center;
-  cursor: pointer;
-  background: var(--s1);
-  transition: all .15s;
-  position: relative;
-}
-.type-btn:hover { border-color: var(--acc); background: #f0f5fa; }
-.type-btn.active { background: var(--acc); border-color: var(--acc); color: #fff; }
-.type-btn.active .type-icon { filter: brightness(0) invert(1); }
-.type-btn.active .type-name { color: #fff; }
-.type-btn.active .type-desc { color: rgba(255,255,255,.75); }
-.type-btn.k.active { background: var(--knowledge); border-color: var(--knowledge); }
-.type-btn.e.active { background: var(--empathy);   border-color: var(--empathy); }
-.type-btn.a.active { background: var(--announce);  border-color: var(--announce); }
-.type-icon { font-size: 22px; margin-bottom: 5px; display: block; }
-.type-name { font-size: 12px; font-weight: 700; display: block; color: var(--tx); }
-.type-desc { font-size: 10px; color: var(--mu); display: block; margin-top: 2px; line-height: 1.4; }
-
-/* ===== フォーム ===== */
-.f { margin-bottom: 14px; }
-.lbl { font-size: 11px; font-weight: 700; color: var(--mu); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
-.lbl-hint { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 4px; }
-input, select, textarea {
-  width: 100%;
-  background: var(--s2);
-  border: 1px solid var(--bd);
-  border-radius: 8px;
-  color: var(--tx);
-  padding: 10px 14px;
-  font-size: 13px;
-  font-family: inherit;
-  transition: border-color .15s;
-}
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--acc); background: #fff; }
-textarea { resize: vertical; }
-
-/* ===== テーマタグ ===== */
-.theme-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.theme-tag {
-  background: var(--s2);
-  border: 1px solid var(--bd);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all .15s;
-  color: var(--tx);
-}
-.theme-tag:hover { border-color: var(--acc); color: var(--acc); }
-.theme-tag.selected { background: var(--acc); border-color: var(--acc); color: #fff; }
+/* ===== フォーム要素 ===== */
+input,select,textarea{background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--tx);padding:10px 14px;font-size:13px;font-family:inherit;transition:border-color .15s;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--am)}
+textarea{resize:vertical}
+.lbl{font-size:11px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
+.lbl-hint{font-size:10px;color:var(--mu);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px}
+.f{margin-bottom:14px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
 /* ===== ボタン ===== */
-.btn {
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-  font-family: inherit;
-  transition: all .15s;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-.btn-primary { background: var(--acc); color: #fff; }
-.btn-primary:hover:not(:disabled) { background: var(--accs); transform: translateY(-1px); }
-.btn-tw { background: var(--tw); color: #fff; }
-.btn-tw:hover:not(:disabled) { opacity: .85; }
-.btn-ghost { background: transparent; color: var(--mu); border: 1px solid var(--bd); }
-.btn-ghost:hover:not(:disabled) { border-color: var(--acc); color: var(--acc); }
-.btn-danger { background: rgba(192,57,43,.1); color: var(--re); border: 1px solid rgba(192,57,43,.2); }
-.btn-full { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
-.btn-sm { padding: 5px 10px; font-size: 11px; }
-.btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+.btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.bp{background:var(--am);color:#000}.bp:hover:not(:disabled){background:var(--amd);transform:translateY(-1px)}
+.bs{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}.bs:hover:not(:disabled){border-color:var(--am);color:var(--am)}
+.btw{background:var(--tw);color:#fff}.btw:hover:not(:disabled){background:#0d8fd9;transform:translateY(-1px)}
+.bgr{background:var(--gr);color:#000}.bgr:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+.bpu{background:var(--pu);color:#fff}.bpu:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+.bre{background:rgba(255,77,109,.15);color:var(--re);border:1px solid rgba(255,77,109,.3)}.bre:hover{background:rgba(255,77,109,.25)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-full{width:100%;justify-content:center;padding:12px;font-size:14px}
+.btn-sm{padding:6px 12px;font-size:12px}
 
-/* ===== 生成結果エリア ===== */
-.result-area { display: none; }
-.result-area.show { display: block; }
-.tweet-box {
-  background: var(--s2);
-  border: 1px solid var(--bd);
-  border-radius: 10px;
-  padding: 16px;
-  font-size: 14px;
-  line-height: 1.8;
-  min-height: 80px;
-  white-space: pre-wrap;
-  margin-bottom: 10px;
-  position: relative;
-  font-family: 'Noto Sans JP', sans-serif;
-}
-.tweet-box[contenteditable="true"]:focus { outline: 2px solid var(--acc); outline-offset: 2px; background: #fff; }
-.tweet-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.char-count { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--mu); }
-.char-count.over { color: var(--re); font-weight: 700; }
-.tweet-actions { display: flex; gap: 6px; }
+/* ===== カード ===== */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--am);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.hint{background:rgba(255,153,0,.07);border:1px solid rgba(255,153,0,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--mu);line-height:1.7}
+.hint strong{color:var(--am)}
+.divider{border:none;border-top:1px solid var(--bd);margin:8px 0 20px}
 
-/* ===== バリエーション ===== */
-.variations { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-.variation-item {
-  background: var(--s2);
-  border: 1px solid var(--bd);
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-size: 13px;
-  line-height: 1.7;
-  cursor: pointer;
-  transition: all .15s;
-  position: relative;
-}
-.variation-item:hover { border-color: var(--acc); background: #f0f5fa; }
-.variation-item.selected { border-color: var(--acc); background: #e8f0f8; }
-.var-num {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 10px;
-  font-family: 'DM Mono', monospace;
-  color: var(--mu);
-}
+/* ===== 価格パネル ===== */
+.pp{border-radius:12px;padding:14px 18px;margin-bottom:14px;display:none;background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.3)}
+.pp.show{display:block}
+.pp-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.pp-badge-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:4px;width:100%}
+.pp-badge-btn{padding:3px 10px;border-radius:20px;border:1.5px solid rgba(255,77,109,.35);background:transparent;color:var(--re);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.pp-badge-btn:hover{background:rgba(255,77,109,.1)}
+.pp-badge-btn.selected{background:var(--re);color:#fff;border-color:var(--re)}
+.pp-badge-btn.none-btn{border-color:var(--bd);color:var(--mu)}
+.pp-badge-btn.none-btn.selected{background:var(--mu);color:#fff;border-color:var(--mu)}
+.pp-badge{font-size:18px;font-weight:800;padding:3px 12px;border-radius:20px;background:var(--re);color:#fff}
+.pp-sale{font-size:22px;font-weight:800}
+.pp-orig{font-size:13px;text-decoration:line-through;color:var(--mu)}
+.pp-save{font-size:12px;color:var(--gr);font-weight:700}
+.pp-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
+.pp-lbl{color:var(--mu)}.pp-val{font-weight:700}
+.pp-eff{background:rgba(0,214,143,.12);border-radius:8px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.pp-eff .pp-lbl{color:var(--tx);font-weight:700}.pp-eff .pp-val{color:var(--gr);font-size:20px}
+.pp-sum{font-size:11px;color:var(--gr);margin-top:8px}
 
-/* ===== スケジュール（右カラム） ===== */
-.schedule-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.today-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--mu);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-.today-date {
-  font-size: 11px;
-  color: var(--mu);
-  font-family: 'DM Mono', monospace;
-}
-.slot-list { display: flex; flex-direction: column; gap: 8px; }
-.slot {
-  border: 1.5px solid var(--bd);
-  border-radius: 10px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: var(--s1);
-  transition: all .15s;
-}
-.slot.done { background: var(--s2); opacity: .6; }
-.slot.done .slot-text { text-decoration: line-through; color: var(--mu); }
-.slot-time {
-  font-size: 11px;
-  font-family: 'DM Mono', monospace;
-  color: var(--mu);
-  flex-shrink: 0;
-  padding-top: 1px;
-  width: 36px;
-}
-.slot-body { flex: 1; min-width: 0; }
-.slot-type {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  margin-bottom: 3px;
-}
-.slot-type.k { color: var(--knowledge); }
-.slot-type.e { color: var(--empathy); }
-.slot-type.a { color: var(--announce); }
-.slot-text { font-size: 12px; line-height: 1.6; color: var(--tx); word-break: break-all; }
-.slot-empty { font-size: 12px; color: var(--mu); font-style: italic; }
-.slot-check {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--bd);
-  flex-shrink: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  transition: all .15s;
-  background: none;
-}
-.slot-check:hover { border-color: var(--gr); background: rgba(45,122,79,.1); }
-.slot.done .slot-check { background: var(--gr); border-color: var(--gr); color: #fff; }
-.slot-save-btn {
-  font-size: 10px;
-  color: var(--acc);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px 0;
-  font-family: inherit;
-  white-space: nowrap;
-}
-.slot-save-btn:hover { text-decoration: underline; }
+/* ===== タイトル候補 ===== */
+.title-grid{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.title-chip{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;transition:all .15s;font-size:13px}
+.title-chip:hover{border-color:var(--am);color:var(--am)}
+.title-chip.selected{border-color:var(--am);background:rgba(255,153,0,.1);color:var(--am);font-weight:700}
+.title-chip-text{flex:1}
+.title-use-btn{font-size:11px;color:var(--mu);white-space:nowrap}
+.title-chip:hover .title-use-btn{color:var(--am)}
 
-/* ===== 履歴 ===== */
-.history-list { display: flex; flex-direction: column; gap: 10px; }
-.history-item {
-  border: 1px solid var(--bd);
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: var(--s1);
-}
-.history-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  flex-wrap: wrap;
-}
-.history-type {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-.history-type.k { background: rgba(42,100,150,.12); color: var(--knowledge); }
-.history-type.e { background: rgba(45,122,79,.12);  color: var(--empathy); }
-.history-type.a { background: rgba(196,92,0,.12);   color: var(--announce); }
-.history-date { font-size: 10px; color: var(--mu); font-family: 'DM Mono', monospace; }
-.history-text { font-size: 12px; line-height: 1.7; color: var(--tx); word-break: break-all; }
-.history-actions { display: flex; gap: 6px; margin-top: 8px; }
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  color: var(--mu);
-  font-size: 13px;
-}
-.empty-icon { font-size: 36px; margin-bottom: 8px; }
+/* ===== 出力エリア ===== */
+.out{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;min-height:80px;margin-top:8px}
+.out-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.out-lbl{font-size:11px;font-weight:700;color:var(--mu)}
+.cc{font-size:11px;color:var(--mu)}.cc.over{color:var(--re);font-weight:700}
 
-/* ===== ヒントボックス ===== */
-.hint {
-  background: #f0f5fa;
-  border-left: 3px solid var(--acc);
-  border-radius: 0 8px 8px 0;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: var(--tip);
-  margin-bottom: 14px;
-  line-height: 1.7;
-}
-.hint strong { color: var(--acc); }
+/* ===== サムネイル ===== */
+.thumb{width:100%;max-width:160px;height:160px;object-fit:contain;background:#fff;border-radius:10px;padding:8px;display:none;margin:0 auto 12px;border:1px solid var(--bd)}
+
+/* ===== 記事ストック ===== */
+.stock-empty{text-align:center;padding:40px 20px;color:var(--mu);font-size:13px}
+.stock-list{display:flex;flex-direction:column;gap:10px}
+.stock-card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.stock-card:hover{border-color:var(--bd)}
+.stock-thumb{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:8px;padding:4px;flex-shrink:0}
+.stock-info{flex:1;min-width:0}
+.stock-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.stock-meta{font-size:11px;color:var(--mu);display:flex;gap:10px;flex-wrap:wrap}
+.stock-badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-disc{background:rgba(255,77,109,.2);color:var(--re)}
+.badge-asin{background:rgba(136,136,170,.15);color:var(--mu)}
+.stock-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+
+/* ===== ランキング ===== */
+.rank-slot{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.rank-num{font-size:22px;font-weight:900;color:var(--am);width:32px;flex-shrink:0;text-align:center}
+.rank-num.gold{color:#FFD700}
+.rank-num.silver{color:#C0C0C0}
+.rank-num.bronze{color:#CD7F32}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-price{font-size:12px;color:var(--mu)}
+.rank-del{background:none;border:none;color:var(--mu);cursor:pointer;font-size:16px;padding:4px}
+.rank-del:hover{color:var(--re)}
+.rank-thumb{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;flex-shrink:0}
+
+/* ===== モーダル ===== */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:24px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;color:var(--am);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--mu);cursor:pointer;font-size:20px;line-height:1}
+.modal-close:hover{color:var(--tx)}
+.modal-out{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:Menlo,Monaco,monospace;max-height:55vh;overflow-y:auto}
+
+/* ===== セール品検索 ===== */
+.sw{background:var(--s1);border-bottom:1px solid var(--bd);padding:14px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.sf{display:flex;flex-direction:column;gap:4px}
+.sf label{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase}
+.empty-st{text-align:center;padding:60px 20px;color:var(--mu)}
+.empty-ic{font-size:52px;margin-bottom:14px}
+.empty-ti{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--tx)}
 
 /* ===== スピナー・トースト ===== */
-.sp {
-  width: 13px; height: 13px;
-  border: 2px solid rgba(255,255,255,.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-  display: inline-block;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.toast {
-  position: fixed; bottom: 24px; right: 24px;
-  padding: 11px 20px; border-radius: 10px;
-  font-weight: 700; font-size: 13px;
-  opacity: 0; transform: translateY(8px);
-  transition: all .25s; z-index: 9999;
-  pointer-events: none; max-width: 300px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.12);
-}
-.toast.show { opacity: 1; transform: translateY(0); }
+.sp{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;opacity:0;transform:translateY(8px);transition:all .25s;z-index:9999;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
 
-/* ===== スマホ対応 ===== */
-@media (max-width: 500px) {
-  .type-grid { grid-template-columns: 1fr; }
-  .summary-advice { display: none; }
-}
+/* ===== レスポンシブ ===== */
+@media(max-width:600px){.r2,.r3{grid-template-columns:1fr}.stock-actions{flex-direction:column}}
 </style>
 </head>
 <body>
 
 <!-- ===== ヘッダー ===== -->
 <header>
-  <div class="logo">
-    <span>🐦</span>
-    <div>
-      X 投稿ツール
-      <div class="logo-sub">Amazon・節約・お得情報アカウント用</div>
-    </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span>🛒</span>
+    <div class="logo">Amazon アフィリエイト記事作成ツール</div>
   </div>
-  <a href="./index.html" style="font-size:12px;color:rgba(255,255,255,.6);text-decoration:none">← 記事作成ツールへ</a>
+  <div class="header-settings">
+    <span class="assoc-label">アソシエイトID:</span>
+    <input class="assoc-input" id="assocId" placeholder="popo1215-22" oninput="saveAssocId()">
+  </div>
 </header>
 
-<!-- ===== 今日のサマリーバー ===== -->
-<div class="summary-bar">
-  <span class="summary-bar-title">📅 今日の投稿状況</span>
-  <div class="progress-group">
-    <div class="prog-item">
-      <span class="prog-dot" style="background:#fff"></span>
-      <span class="prog-label">合計</span>
-      <span class="prog-count" id="totalCount">0</span><span class="prog-label">/3</span>
-    </div>
-    <div class="prog-item">
-      <span class="prog-dot" style="background:#7eb8d4"></span>
-      <span class="prog-label">豆知識</span>
-      <span class="prog-count" id="kCount">0</span>
-    </div>
-    <div class="prog-item">
-      <span class="prog-dot" style="background:#7ec49a"></span>
-      <span class="prog-label">共感</span>
-      <span class="prog-count" id="eCount">0</span>
-    </div>
-    <div class="prog-item">
-      <span class="prog-dot" style="background:#e0a060"></span>
-      <span class="prog-label">告知</span>
-      <span class="prog-count" id="aCount">0</span>
-    </div>
-  </div>
-  <div class="summary-advice" id="adviceText">今日の投稿を始めましょう</div>
+<!-- ===== タブナビ ===== -->
+<div class="tab-nav">
+  <button class="tab-btn active" id="btn-post"   onclick="swTab('post',this)">⚡ 記事作成</button>
+  <button class="tab-btn"        id="btn-stock"  onclick="swTab('stock',this)">📦 記事ストック</button>
+  <button class="tab-btn"        id="btn-rank"   onclick="swTab('rank',this)">🏆 ランキング記事</button>
+  <button class="tab-btn"        id="btn-search" onclick="swTab('search',this)">🔍 セール品検索</button>
 </div>
 
-<!-- ===== メインレイアウト ===== -->
-<div class="layout">
+<!-- ========================================
+     タブ①：記事作成
+     ======================================== -->
+<div class="tab active" id="tab-post">
+  <div class="main">
 
-  <!-- ===== 左：生成エリア ===== -->
-  <div class="left-col">
-
-    <!-- 投稿タイプ選択 -->
+    <!-- 商品情報入力 -->
     <div class="card">
-      <div class="card-title">📝 投稿タイプを選ぶ</div>
-      <div class="type-grid">
-        <div class="type-btn k active" id="type-k" onclick="selectType('k')">
-          <span class="type-icon">📚</span>
-          <span class="type-name">豆知識</span>
-          <span class="type-desc">Amazon・節約・<br>お得の知識</span>
-        </div>
-        <div class="type-btn e" id="type-e" onclick="selectType('e')">
-          <span class="type-icon">💬</span>
-          <span class="type-name">共感・日常</span>
-          <span class="type-desc">買い物あるある<br>節約テク</span>
-        </div>
-        <div class="type-btn a" id="type-a" onclick="selectType('a')">
-          <span class="type-icon">📣</span>
-          <span class="type-name">ブログ告知</span>
-          <span class="type-desc">記事URLから<br>告知文を生成</span>
-        </div>
+      <div class="card-title">📦 商品情報を入力</div>
+      <div class="hint">
+        💡 <strong>Amazon URLを貼り付けると ASINを自動抽出</strong>します。<br>
+        定価・ご請求額・獲得ポイントを入力すると価格が自動計算されます。
       </div>
 
-      <!-- 豆知識エリア -->
-      <div id="form-k">
-        <div class="hint">
-          <strong>豆知識ツイート</strong>とは：Amazon・節約・お得情報に関する「実はこうすると得する」系の投稿です。<br>
-          テーマを選ぶか自由入力してください。AIが140字以内で生成します。
-        </div>
-        <div class="f">
-          <span class="lbl">テーマ<span class="lbl-hint">クリックで選択、または自由入力</span></span>
-          <div class="theme-tags" id="themeTags-k"></div>
-        </div>
-        <div class="f">
-          <span class="lbl">自由テーマ入力<span class="lbl-hint">任意</span></span>
-          <input id="freeTheme-k" placeholder="例：Amazonギフト券チャージでポイント還元">
-        </div>
+      <!-- URL入力 → ASIN自動抽出 -->
+      <div class="f">
+        <span class="lbl">Amazon URL または ASIN ※必須</span>
+        <input id="qUrl" placeholder="https://www.amazon.co.jp/dp/B07XK6Z87X  または  B07XK6Z87X" oninput="onUrlInput()">
       </div>
 
-      <!-- 共感・日常エリア -->
-      <div id="form-e" style="display:none">
-        <div class="hint">
-          <strong>共感・日常ツイート</strong>とは：「あるある」「わかる」と思ってもらえる、買い物・節約にまつわる日常の一言です。<br>
-          押しつけがましくなく、自然にフォロワーとつながれる投稿を生成します。
-        </div>
-        <div class="f">
-          <span class="lbl">テーマ</span>
-          <div class="theme-tags" id="themeTags-e"></div>
-        </div>
-        <div class="f">
-          <span class="lbl">自由テーマ入力<span class="lbl-hint">任意</span></span>
-          <input id="freeTheme-e" placeholder="例：深夜に衝動買いしそうになった話">
-        </div>
-      </div>
+      <!-- ASIN表示 + サムネ -->
+      <div id="asinRow" style="display:none;margin-bottom:14px">
+        <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
 
-      <!-- ブログ告知エリア -->
-      <div id="form-a" style="display:none">
-        <div class="hint">
-          <strong>ブログ告知ツイート</strong>とは：書いた記事をXでシェアするための投稿です。<br>
-          記事タイトル・URL・カテゴリを入力すると、ジャンルに合った告知文を生成します。
-        </div>
-        <div class="f">
-          <span class="lbl">記事タイトル ※必須</span>
-          <input id="blogTitle" placeholder="例：【43%OFF】強ミヤリサン錠 330錠 徹底レビュー">
-        </div>
-        <div class="f">
-          <span class="lbl">記事URL ※必須</span>
-          <input id="blogUrl" placeholder="例：https://www.otkspot.com/entry/...">
-        </div>
-        <div class="f">
-          <span class="lbl">カテゴリ ※必須</span>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px" id="blogCategoryTags">
-            <span class="theme-tag cat-tag" data-cat="ガジェット・家電" onclick="selectCat(this)">📱 ガジェット・家電</span>
-            <span class="theme-tag cat-tag" data-cat="日用品・生活雑貨" onclick="selectCat(this)">🧴 日用品・生活雑貨</span>
-            <span class="theme-tag cat-tag" data-cat="食品・飲料" onclick="selectCat(this)">🍜 食品・飲料</span>
-            <span class="theme-tag cat-tag" data-cat="美容・健康" onclick="selectCat(this)">💊 美容・健康</span>
-            <span class="theme-tag cat-tag" data-cat="ファッション・アパレル" onclick="selectCat(this)">👕 ファッション</span>
-            <span class="theme-tag cat-tag" data-cat="本・電子書籍" onclick="selectCat(this)">📚 本・電子書籍</span>
-            <span class="theme-tag cat-tag" data-cat="スポーツ・アウトドア" onclick="selectCat(this)">🏕️ スポーツ・アウトドア</span>
-            <span class="theme-tag cat-tag" data-cat="その他" onclick="selectCat(this)">📦 その他</span>
-          </div>
-        </div>
-        <div class="f">
-          <span class="lbl">一言補足<span class="lbl-hint">任意</span></span>
-          <input id="blogNote" placeholder="例：整腸剤探してる方にぜひ">
-        </div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="btn btn-primary btn-full" id="genBtn" onclick="generate()">✨ ツイート文を生成（3パターン）</button>
-      </div>
-    </div>
-
-    <!-- 生成結果 -->
-    <div class="card result-area" id="resultArea">
-      <div class="card-title">💡 生成されたツイート文</div>
-      <div class="hint" id="resultHint" style="font-size:11px"></div>
-
-      <!-- パターン選択 -->
-      <div class="variations" id="variationList"></div>
-
-      <!-- 編集・アクション -->
-      <div style="margin-top:14px">
-        <div class="f">
-          <span class="lbl">選択・編集エリア<span class="lbl-hint">直接編集できます</span></span>
-          <div class="tweet-box" id="editBox" contenteditable="true" oninput="updCount()"></div>
-          <div class="tweet-footer">
-            <span class="char-count" id="charCount">0文字</span>
-            <div class="tweet-actions">
-              <button class="btn btn-ghost btn-sm" onclick="copyTweet()">📋 コピー</button>
-              <button class="btn btn-tw btn-sm" onclick="openTwitter()">🐦 Xで投稿</button>
-              <button class="btn btn-ghost btn-sm" onclick="saveToHistory()">💾 履歴に保存</button>
-              <button class="btn btn-ghost btn-sm" onclick="addToSchedule()">📅 今日に追加</button>
+          <!-- ドロップゾーン兼プレビュー -->
+          <div id="imgDropZone"
+            style="flex-shrink:0;width:110px;height:110px;border-radius:12px;border:2px dashed var(--bd);background:var(--s2);cursor:pointer;position:relative;overflow:hidden;transition:border-color .15s"
+            onclick="document.getElementById('imgFileInput').click()"
+            ondragover="onImgDragOver(event)"
+            ondragleave="onImgDragLeave(event)"
+            ondrop="onImgDrop(event)">
+            <!-- プレビュー画像 -->
+            <img id="thumbImg"
+              style="width:100%;height:100%;object-fit:contain;background:#fff;border-radius:10px;padding:6px;display:block"
+              alt="">
+            <!-- ドロップ誘導オーバーレイ（画像なし時） -->
+            <div id="dropOverlay"
+              style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none">
+              <div style="font-size:22px">📷</div>
+              <div style="font-size:9px;color:var(--mu);text-align:center;line-height:1.4">クリックまたは<br>ドロップ</div>
             </div>
           </div>
+          <!-- 隠しファイル入力 -->
+          <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="onImgFileSelect(event)">
+
+          <!-- ASIN情報 + URL入力 -->
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:2px">ASIN</div>
+            <div id="asinDisplay" style="font-size:16px;font-weight:800;color:var(--am);letter-spacing:1px;margin-bottom:2px"></div>
+            <div style="font-size:11px;color:var(--mu);margin-bottom:10px" id="affLinkDisplay"></div>
+
+            <div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:5px">📷 商品画像の設定方法（3通り）</div>
+            <div style="font-size:11px;color:var(--mu);margin-bottom:8px;line-height:1.8">
+              ① 自動取得（URL貼り付け時に自動）<br>
+              ② <strong style="color:var(--tx)">左の枠に画像をドラッグ＆ドロップ</strong>またはクリックして選択<br>
+              ③ AmazonページでURLを右クリックコピーして↓に貼り付け
+            </div>
+            <div style="display:flex;gap:6px">
+              <input id="qImgUrl" placeholder="https://m.media-amazon.com/images/I/..." style="font-size:12px;padding:7px 10px" oninput="onManualImgInput()">
+              <button class="btn bs" style="font-size:11px;padding:7px 10px;white-space:nowrap" onclick="applyManualImg()">✓ 適用</button>
+            </div>
+            <div id="imgSourceLabel" style="font-size:10px;color:var(--gr);margin-top:5px;display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="r3">
+        <div class="f"><span class="lbl">定価（円）<span class="lbl-hint">参考価格</span></span><input type="number" id="qOrig"  placeholder="例: 1949" oninput="calcQ()"></div>
+        <div class="f"><span class="lbl">ご請求額（円）※必須</span><input type="number" id="qSale"  placeholder="例: 1501" oninput="calcQ()"></div>
+        <div class="f"><span class="lbl">獲得ポイント（pt）<span class="lbl-hint">任意</span></span><input type="number" id="qPoint" placeholder="例: 125"  oninput="calcQ()"></div>
+      </div>
+
+      <!-- 価格パネル -->
+      <div class="pp" id="pp">
+        <div class="pp-top">
+          <div class="pp-badge-group" id="ppBadgeGroup">
+            <button class="pp-badge-btn selected" data-label="SALE" onclick="selectBadge(this)">SALE</button>
+            <button class="pp-badge-btn" data-label="値下げ" onclick="selectBadge(this)">値下げ</button>
+            <button class="pp-badge-btn" data-label="激安" onclick="selectBadge(this)">激安</button>
+            <button class="pp-badge-btn" data-label="予約受付中" onclick="selectBadge(this)">予約受付中</button>
+            <button class="pp-badge-btn none-btn" data-label="" onclick="selectBadge(this)">なし</button>
+          </div>
+          <span class="pp-badge" id="ppBadge">SALE</span>
+          <span class="pp-sale"  id="ppSale"></span>
+          <span class="pp-orig"  id="ppOrig"></span>
+          <span class="pp-save"  id="ppSave"></span>
+        </div>
+        <div class="pp-row" id="ppPtRow" style="display:none">
+          <span class="pp-lbl">🪙 獲得ポイント</span>
+          <span class="pp-val" style="color:var(--am)" id="ppPt"></span>
+        </div>
+        <div class="pp-eff" id="ppEffRow" style="display:none">
+          <span class="pp-lbl">💰 実質価格（ポイント込み）</span>
+          <span class="pp-val" id="ppEff"></span>
+        </div>
+        <div class="pp-sum" id="ppSum"></div>
+      </div>
+
+      <div class="r2">
+        <div class="f"><span class="lbl">商品名<span class="lbl-hint">空欄でAIが自動推測</span></span><input id="qName" placeholder="例: ビオスリーHi錠 180錠" oninput="onNameInput()"></div>
+        <div class="f"><span class="lbl">ひとこと補足<span class="lbl-hint">任意</span></span><input id="qNote" placeholder="例: タイムセール！在庫わずか"></div>
+      </div>
+      <!-- カテゴリー自動判定 + 手動変更 -->
+      <div class="f">
+        <span class="lbl">カテゴリー<span class="lbl-hint">商品名から自動判定・手動変更可</span></span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="qCat" style="flex:1;min-width:160px">
+            <option value="食品・日用品">食品・日用品</option>
+            <option value="家電・ガジェット">家電・ガジェット</option>
+            <option value="ファッション">ファッション</option>
+            <option value="生活用品">生活用品</option>
+            <option value="美容・健康">美容・健康</option>
+            <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
+            <option value="セール情報">セール情報</option>
+            <option value="その他">その他</option>
+          </select>
+          <span id="catAutoLabel" style="font-size:11px;color:var(--gr)"></span>
         </div>
       </div>
     </div>
 
-  </div><!-- /left-col -->
-
-  <!-- ===== 右：スケジュール＋履歴 ===== -->
-  <div class="right-col">
-
-    <!-- 今日のスケジュール -->
+    <!-- 関連商品入力 -->
     <div class="card">
-      <div class="schedule-header">
-        <div>
-          <div class="today-label">📅 今日の投稿枠</div>
-          <div class="today-date" id="todayDateLabel"></div>
+      <div class="card-title">🔗 関連商品（アクセサリー・合わせ買い）<span style="font-size:11px;font-weight:400;color:var(--mu);margin-left:8px">任意・最大3件</span></div>
+      <div class="hint" style="margin-bottom:12px">💡 ASINを入力すると画像プレビューを自動確認します。取得できない場合のみ画像URLの入力欄が表示されます。</div>
+      <div id="relItems">
+        <!-- ① -->
+        <div class="rel-row" id="relRow0" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div id="relThumbWrap0" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox0" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default" title="ASINを入力すると自動プレビュー">
+              <span id="relThumbTxt0">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg0" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">①</span>
+              <input id="relAsin0" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(0)">
+              <input id="relName0" placeholder="商品名（例: iPhone 17e 対応ガラスフィルム）" style="flex:1">
+            </div>
+            <div id="relImgRow0" style="display:none">
+              <input id="relImg0" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(0)">
+            </div>
+            <div id="relImgStatus0" style="font-size:10px;color:var(--mu)"></div>
+          </div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="resetToday()">リセット</button>
+        <!-- ② -->
+        <div class="rel-row" id="relRow1" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div id="relThumbWrap1" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox1" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+              <span id="relThumbTxt1">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg1" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">②</span>
+              <input id="relAsin1" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(1)">
+              <input id="relName1" placeholder="商品名（例: iPhone 17e 対応ケース）" style="flex:1">
+            </div>
+            <div id="relImgRow1" style="display:none">
+              <input id="relImg1" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(1)">
+            </div>
+            <div id="relImgStatus1" style="font-size:10px;color:var(--mu)"></div>
+          </div>
+        </div>
+        <!-- ③ -->
+        <div class="rel-row" id="relRow2" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:4px">
+          <div id="relThumbWrap2" style="width:64px;flex-shrink:0">
+            <div id="relThumbBox2" style="width:64px;height:64px;border-radius:8px;border:1.5px dashed var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--mu);text-align:center;overflow:hidden;cursor:default">
+              <span id="relThumbTxt2">ASIN<br>入力で<br>確認</span>
+              <img id="relThumbImg2" style="display:none;width:100%;height:100%;object-fit:contain;background:#fff">
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:var(--mu);flex-shrink:0">③</span>
+              <input id="relAsin2" placeholder="ASIN（例: B0XXXXXX）" style="width:140px;flex-shrink:0" oninput="previewRelImg(2)">
+              <input id="relName2" placeholder="商品名（例: MagSafe充電器）" style="flex:1">
+            </div>
+            <div id="relImgRow2" style="display:none">
+              <input id="relImg2" placeholder="画像URLを貼り付け（Amazon商品画像を右クリック→画像アドレスをコピー）" style="width:100%;font-size:11px" oninput="applyManualRelImg(2)">
+            </div>
+            <div id="relImgStatus2" style="font-size:10px;color:var(--mu)"></div>
+          </div>
+        </div>
       </div>
-      <div class="slot-list" id="slotList"></div>
-      <div style="margin-top:12px;font-size:11px;color:var(--mu);line-height:1.7" id="balanceNote"></div>
     </div>
 
-    <!-- 履歴 -->
+    <!-- タイトル候補生成 -->
     <div class="card">
-      <div class="card-title">🗂 生成履歴</div>
-      <div id="historyList">
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          まだ履歴がありません
-        </div>
+      <div class="card-title">🏷️ 記事タイトル候補</div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 AIでタイトル候補を生成</button>
+        <span style="font-size:11px;color:var(--mu)">クリックして記事タイトルに使うタイトルを選択</span>
+      </div>
+      <div id="titleGrid" class="title-grid" style="display:none"></div>
+    </div>
+
+    <!-- 記事生成 -->
+    <div class="card">
+      <div class="card-title">🤖 記事生成</div>
+      <div class="f" id="selectedTitleRow" style="display:none">
+        <span class="lbl">選択中のタイトル</span>
+        <input id="selectedTitle" style="border-color:var(--am)">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bp btn-full" id="genBtn" onclick="genAll()" style="flex:2">🤖 X投稿文・ブログ記事を一括生成</button>
       </div>
     </div>
 
-  </div><!-- /right-col -->
+    <!-- X投稿文 -->
+    <div class="card" id="twCard" style="display:none">
+      <div class="card-title">🐦 X（Twitter）投稿文</div>
+      <div class="out-hdr"><span class="out-lbl">#PR #AD 含む</span><span class="cc" id="twCount">0文字</span></div>
+      <div class="out" id="twOut" contenteditable="true" oninput="updTw()"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btw" style="flex:1;justify-content:center" onclick="copyX()">📋 コピーしてXを開く</button>
+        <button class="btn bs" onclick="regenTw(this)">🔄 再生成</button>
+      </div>
+    </div>
 
-</div><!-- /layout -->
+    <!-- ブログ記事 -->
+    <div class="card" id="blCard" style="display:none">
+      <div class="card-title">📝 はてなブログ用 Markdown記事</div>
+      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ（直接編集できます）</span><span class="cc" id="blCount">0文字</span></div>
+      <div class="out" id="blOut" style="max-height:420px;overflow-y:auto" contenteditable="true" oninput="updBl()"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyBl()">📋 記事をコピー</button>
+        <button class="btn bs" onclick="dlBl()">💾 保存</button>
+        <button class="btn bs" onclick="regenBl(this)">🔄 再生成</button>
+        <button class="btn bgr" style="flex:1;justify-content:center" onclick="saveToStock()">📦 ストックに保存</button>
+        <button class="btn bp" style="flex:1;justify-content:center" id="hatBtn" onclick="postHatena()">📝 はてなブログに投稿</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- まとめ記事ストック -->
+    <div class="card">
+      <div class="card-title">🗂️ まとめ記事ストック <span id="stCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
+      <div class="hint">💡 上で記事を生成すると自動でストックされます。<strong>📦 ストックに保存</strong>ボタンで明示保存もできます。</div>
+      <div id="stList" class="stock-list"></div>
+    </div>
+
+    <!-- まとめ記事生成 -->
+    <div class="card">
+      <div class="card-title">📋 まとめ記事を生成</div>
+      <div class="mt-opts r3" style="margin-bottom:14px">
+        <div class="f">
+          <span class="lbl">記事スタイル</span>
+          <select id="mtStyle"><option value="daily">今日のお得まとめ</option><option value="category">カテゴリ別まとめ</option></select>
+        </div>
+        <div class="f">
+          <span class="lbl">カテゴリ<span class="lbl-hint">カテゴリ別の場合</span></span>
+          <select id="mtCat">
+            <option value="">すべて混合</option>
+            <option value="家電・ガジェット">家電・ガジェット</option>
+            <option value="美容・健康">美容・健康</option>
+            <option value="食品・日用品">食品・日用品</option>
+            <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
+            <option value="ファッション">ファッション</option>
+          </select>
+        </div>
+        <div class="f">
+          <span class="lbl">含める商品数</span>
+          <select id="mtMax"><option value="5">5件</option><option value="7" selected>7件</option><option value="10">10件</option></select>
+        </div>
+      </div>
+      <button class="btn bp btn-full" id="mtBtn" onclick="genMatome()">📋 まとめ記事を生成</button>
+    </div>
+
+    <!-- まとめ記事結果 -->
+    <div class="card" id="mtResult" style="display:none">
+      <div class="card-title">📄 生成されたまとめ記事</div>
+      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="mtCount">0文字</span></div>
+      <div class="out" id="mtOut" style="max-height:500px;overflow-y:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyMt()">📋 コピー</button>
+        <button class="btn bs" onclick="dlMt()">💾 保存</button>
+        <button class="btn bp" style="flex:1;justify-content:center" onclick="postMt()">📝 はてなブログに投稿</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================
+     タブ②：記事ストック
+     ======================================== -->
+<div class="tab" id="tab-stock">
+  <div class="main-wide">
+    <div class="card">
+      <div class="card-title">📦 記事ストック一覧 <span id="stockPageCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
+      <div class="hint">💡 記事作成タブで生成した記事が自動保存されます。ランキング記事に追加したい記事は「🏆 ランキングに追加」ボタンを使ってください。</div>
+      <div id="stockPageList">
+        <div class="stock-empty">まだ記事がありません。記事作成タブで記事を生成してください。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     タブ③：ランキング記事
+     ======================================== -->
+<div class="tab" id="tab-rank">
+  <div class="main">
+
+    <!-- ランキング設定 -->
+    <div class="card">
+      <div class="card-title">🏆 ランキング記事を作成</div>
+      <div class="hint">💡 <strong>記事ストックから商品を追加</strong>してランキングを組み、AIがランキング記事を生成します。</div>
+      <div class="r2">
+        <div class="f"><span class="lbl">ランキングタイトル</span><input id="rankTitle" placeholder="例: おすすめ目覚まし時計ランキング"></div>
+        <div class="f"><span class="lbl">カテゴリ / テーマ</span><input id="rankTheme" placeholder="例: 一人暮らし向け、コスパ重視"></div>
+      </div>
+      <button class="btn bs" onclick="swTab('stock', document.getElementById('btn-stock'))">📦 ストックから商品を追加する →</button>
+    </div>
+
+    <!-- ランキングスロット -->
+    <div class="card">
+      <div class="card-title">📋 ランキング構成 <span id="rankCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
+      <div id="rankSlots">
+        <div class="stock-empty">まだ商品がありません。ストックから追加してください。</div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bp btn-full" id="rankGenBtn" onclick="genRanking()" style="flex:2">🏆 ランキング記事を生成（AI）</button>
+        <button class="btn bre" onclick="clearRank()">🗑️ クリア</button>
+      </div>
+    </div>
+
+    <!-- ランキング記事結果 -->
+    <div class="card" id="rankResult" style="display:none">
+      <div class="card-title">📄 生成されたランキング記事</div>
+      <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="rankCount2">0文字</span></div>
+      <div class="out" id="rankOut" style="max-height:500px;overflow-y:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn bs" style="flex:1;justify-content:center" onclick="copyRank()">📋 コピー</button>
+        <button class="btn bs" onclick="dlRank()">💾 保存</button>
+        <button class="btn bp" style="flex:1;justify-content:center" onclick="postRank()">📝 はてなブログに投稿</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================
+     タブ④：セール品検索（PA-API）
+     ======================================== -->
+<div class="tab" id="tab-search">
+  <div class="sw">
+    <div class="sf" style="flex:1;min-width:200px"><label>キーワード検索</label><input id="kw" placeholder="例: モバイルバッテリー..." style="width:100%" onkeydown="if(event.key==='Enter')doSearch()"></div>
+    <div class="sf"><label>カテゴリ</label><select id="cat"><option value="All">すべて</option><option value="Electronics">家電・カメラ</option><option value="Computers">パソコン・周辺機器</option><option value="HomeAndKitchen">ホーム・キッチン</option><option value="Beauty">美容・健康</option><option value="Toys">おもちゃ・ゲーム</option><option value="Sports">スポーツ・アウトドア</option></select></div>
+    <div class="sf"><label>最低割引率</label><select id="disc"><option value="0">指定なし</option><option value="10">10%以上</option><option value="20">20%以上</option><option value="30" selected>30%以上</option><option value="50">50%以上</option></select></div>
+    <button class="btn bp" id="srchBtn" onclick="doSearch()">🔍 セール品を探す</button>
+  </div>
+  <div class="main" style="max-width:1100px">
+    <div id="srchResult">
+      <div class="empty-st"><div class="empty-ic">🏷️</div><div class="empty-ti">セール品を検索してみましょう</div><div style="font-size:13px;color:var(--mu)">PA-API有効化後に使えます</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 記事閲覧モーダル ===== -->
+<div class="modal" id="viewModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span id="modalTitle">記事を表示</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-out" id="modalOut"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn bs" style="flex:1;justify-content:center" onclick="copyModal()">📋 コピー</button>
+      <button class="btn bs" onclick="closeModal()">閉じる</button>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
-<!-- ===== JavaScript ===== -->
+<!-- ========================================
+     JavaScript
+     ======================================== -->
 <script>
-/* ===== 定数 ===== */
-const WK = 'https://amazon-sale-api.bulibuli-mushi.workers.dev';
+/* ===== 定数・グローバル変数 ===== */
+const WK  = 'https://amazon-sale-api.bulibuli-mushi.workers.dev';
+const HID = 'enjoy-box';
+const BID = 'popo-1215.hatenablog.com';
 
-// アカウントのコンテキスト（AIへの共通指示）
-const ACCOUNT_CONTEXT = [
-  'このXアカウントはAmazon・節約・お得情報を専門に発信しています。',
-  'ターゲットは節約意識の高い20〜40代の一般消費者です。',
-  '【キャラクター設定】',
-  '・「Amazonをちょっと使いこなしてる、ちょっと先に気づいた友達」というキャラクターです。',
-  '・自分も昔は知らなかった・損してたと認められる、自虐・自己開示ができるトーンです。',
-  '・「損してる人を見るとつい教えたくなる」スタンスで、上から目線にならず「一緒に賢くなろう」感を出します。',
-  '・ツッコミ・あるある・軽い毒舌を自然に混ぜます。ただし嫌味にならないサラッとしたトーンです。',
-  '・「半年前の自分がまさにそうだった」「昔の自分に教えてあげたい」系の自虐表現を適度に使います。',
-  '・一人称は必ず「自分」を使います。「俺」「私」「ワイ」「うち」は使いません。',
-  '・絵文字は使いすぎず、1〜2個程度でカジュアル感を出します。',
-  'アフィリエイトリンク投稿と自然に混ざるよう、同じアカウントの延長線上にある内容にしてください。',
-].join('\n');
-
-/* ===== テーマプール（豆知識・共感） ===== */
-// 季節・月次イベント・曜日を考慮してランダム表示する
-const THEME_POOL = {
-  k: {
-    // 通年
-    always: [
-      'Amazonポイント活用術',
-      'タイムセールの攻略法',
-      '定期おトク便で節約',
-      'Amazonカード活用術',
-      'ポイントアップキャンペーン',
-      '比較サイトとの使い分け',
-      'まとめ買い節約術',
-      'Primeの意外な特典',
-      '欲しいものリストの活用',
-      'Amazonギフト券チャージ',
-      '価格履歴チェックの方法',
-      '送料無料にする方法',
-      'レビューの見極め方',
-      '返品・交換のコツ',
-      'Alexa活用術',
-      '電子書籍を安く読む方法',
-      'お急ぎ便・日時指定の使い分け',
-      '購入履歴から節約パターンを見直す',
-    ],
-    // 月次・季節（月→テーマ）
-    monthly: {
-      1:  ['新年セールの狙い目', '初売りで得する商品カテゴリ', '年始の生活用品まとめ買い'],
-      2:  ['バレンタイン商品の賢い買い方', '冬物クリアランスの狙い目', '花粉シーズン前の準備買い'],
-      3:  ['新生活準備の節約術', '進学・就職前のAmazon活用', '春物の早期購入メリット'],
-      4:  ['新生活グッズをAmazonで揃える', 'GW前の備蓄買い', '季節の変わり目の衣替え節約'],
-      5:  ['母の日ギフトのコスパ重視選び', 'GW明けセールの活用', 'サマーセール先取り'],
-      6:  ['夏準備グッズの価格チェック', 'プライムデー前のウィッシュリスト作り', '梅雨時期に必要なグッズ'],
-      7:  ['プライムデー攻略法', '夏のまとめ買い節約', '猛暑対策グッズをお得に買う'],
-      8:  ['お盆セールの活用', '夏物在庫処分品を狙う', 'ふるさと納税×Amazon活用'],
-      9:  ['秋の新商品チェック方法', '年末に向けた価格監視の開始', '防災グッズをAmazonで揃える'],
-      10: ['ハロウィンセール攻略', 'ブラックフライデー前のリサーチ法', '冬物の早期購入メリット'],
-      11: ['ブラックフライデー完全攻略', 'サイバーマンデー狙い目商品', '年末に向けた家電の買い時'],
-      12: ['年末大掃除グッズお得に買う', 'クリスマスギフト節約術', '年末年始の備蓄買いのコツ'],
-    },
-    // 曜日（0=日, 1=月 ...）
-    weekday: {
-      1: ['月曜日のタイムセールチェック習慣', '週の始まりに欲しいものリスト整理'],
-      5: ['金曜日は週末セール狙い目', '週末前のまとめ買いタイミング'],
-      0: ['日曜日の価格チェック習慣', '翌週の消耗品を日曜に注文する理由'],
-    },
-  },
-  e: {
-    always: [
-      'セール前日のそわそわ感',
-      'カートに入れたまま放置してしまう',
-      'ポイントを貯めすぎて使えない',
-      'ついで買いで損した話',
-      '欲しいものリストが肥大化している',
-      '日用品のまとめ買いをしたとき',
-      '翌日配送が来たときの安心感',
-      'レビューを読みすぎて迷う',
-      '「限定特価」に弱い自覚がある',
-      '箱を開ける瞬間が好き',
-      'Amazonのダンボールが溜まっていく',
-      '安すぎて逆に不安になる',
-      '購入完了後に値下がりしているのを発見',
-      '送料のために余計なものを買ってしまう',
-      '比較した結果Amazonに戻ってくる',
-      'Prime会員費を回収できているか計算する',
-      '深夜にカートを覗いてしまう',
-      '1円でも安い方を選んでしまう性格',
-      '定期おトク便を解約し忘れたことがある',
-      '配達員さんへの感謝',
-    ],
-    monthly: {
-      1:  ['初売りで買いすぎた反省', '新年の買い物ルールを決めた話'],
-      2:  ['バレンタインのコスパ重視で選んだ話', '冬物をセールで買い逃した後悔'],
-      3:  ['新生活グッズを買いすぎた話', '春になって不要なものを断捨離した話'],
-      4:  ['新生活で想定外の出費があった話', 'GW中の衝動買いあるある'],
-      5:  ['母の日に何を贈るか毎年迷う', 'GW明けの節約モードに切り替わる話'],
-      6:  ['夏前に去年の日焼け止めが残ってた話', 'プライムデー前にウィッシュリストを整理した'],
-      7:  ['プライムデーで買いすぎた後悔', '夏の暑さ対策グッズを買いすぎた話'],
-      8:  ['お盆に実家でAmazon注文したら困った話', '夏の終わりに夏物を買うタイミングを逃す'],
-      9:  ['衣替えで昨年買ったもの出てきた話', '秋になると物欲が増す不思議'],
-      10: ['ハロウィン後のセールで買えばよかった', 'ブラックフライデーに向けて欲しいものリスト整理中'],
-      11: ['ブラックフライデーで予算オーバーした話', 'セール中に迷って買い逃した話'],
-      12: ['年末大掃除で不用品を断捨離した話', 'クリスマスプレゼントを直前に慌てて買う'],
-    },
-    weekday: {
-      1: ['月曜日は配達来るかなと待ちわびる', '週明けにまた何か注文してしまった'],
-      5: ['金曜夜にAmazonを見てしまう習慣', '週末に届くよう注文するのが好き'],
-      0: ['日曜日の夜にカートをチェックする習慣', '休日にAmazonが届くのが一番テンション上がる'],
-    },
-  },
-};
-
-/* ===== ランダムテーマ選定（季節・曜日考慮） ===== */
-function pickThemes(type, count) {
-  var now     = new Date();
-  var month   = now.getMonth() + 1;
-  var weekday = now.getDay();
-  var pool    = THEME_POOL[type];
-  if (!pool) return [];
-
-  // 候補を組み立て（通年 + 今月 + 今日の曜日）
-  var candidates = pool.always.slice();
-  if (pool.monthly && pool.monthly[month]) {
-    // 月次テーマは優先度を上げるために先頭に追加
-    candidates = pool.monthly[month].concat(candidates);
-  }
-  if (pool.weekday && pool.weekday[weekday]) {
-    candidates = pool.weekday[weekday].concat(candidates);
-  }
-
-  // 重複排除
-  candidates = candidates.filter(function(v, i, a) { return a.indexOf(v) === i; });
-
-  // シャッフル（その日のシードで固定：同じ日は同じ順）
-  var seed = now.getFullYear() * 10000 + month * 100 + now.getDate();
-  candidates = seededShuffle(candidates, seed);
-
-  return candidates.slice(0, count);
-}
-
-// シード付きシャッフル（同じ日は同じ並び）
-function seededShuffle(arr, seed) {
-  var a = arr.slice();
-  var s = seed;
-  for (var i = a.length - 1; i > 0; i--) {
-    s = (s * 1664525 + 1013904223) & 0xffffffff;
-    var j = Math.abs(s) % (i + 1);
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-  }
-  return a;
-}
-
-/* ===== テーマタグをDOMに描画 ===== */
-function renderThemeTags(type) {
-  var el = document.getElementById('themeTags-' + type);
-  if (!el) return;
-  var themes = pickThemes(type, 8);
-  el.innerHTML = '';
-  themes.forEach(function(theme) {
-    var span = document.createElement('span');
-    span.className = 'theme-tag';
-    span.textContent = theme;
-    span.onclick = function() { selectTheme(span, type); };
-    el.appendChild(span);
-  });
-}
-
-/* ===== 状態管理 ===== */
-let currentType    = 'k';
-let selectedThemes = { k: '', e: '', a: '' };
-let todayLog       = [];   // 今日の投稿済みデータ
-let history        = [];   // 全履歴
-let schedule       = [];   // 今日のスケジュール枠（3スロット）
+let cur = null;          // 現在生成中の商品情報
+let stockItems = [];     // まとめ用ストック（旧）
+let articleStock = [];   // 記事ストック（localStorage永続）
+let rankItems = [];      // ランキング構成
 
 /* ===== 初期化 ===== */
 window.addEventListener('DOMContentLoaded', function() {
-  // テーマタグをランダム表示（季節・曜日考慮）
-  renderThemeTags('k');
-  renderThemeTags('e');
+  // アソシエイトID復元
+  var id = localStorage.getItem('assocId') || 'popo1215-22';
+  document.getElementById('assocId').value = id;
 
-  var today = todayKey();
-  document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('ja-JP', { month:'long', day:'numeric', weekday:'short' });
+  // 記事ストック復元
+  try { articleStock = JSON.parse(localStorage.getItem('articleStock') || '[]'); } catch(e) { articleStock = []; }
 
-  // localStorage復元
-  try { history  = JSON.parse(localStorage.getItem('tweetHistory') || '[]'); } catch(e) { history = []; }
-  try {
-    var saved = JSON.parse(localStorage.getItem('tweetSchedule') || '{}');
-    schedule = (saved.date === today) ? saved.slots : defaultSchedule();
-  } catch(e) { schedule = defaultSchedule(); }
-  try {
-    var log = JSON.parse(localStorage.getItem('tweetLog') || '{}');
-    todayLog = (log.date === today) ? log.items : [];
-  } catch(e) { todayLog = []; }
+  // まとめ用ストック復元
+  try { stockItems = JSON.parse(localStorage.getItem('amzStock') || '[]'); } catch(e) { stockItems = []; }
 
-  renderSchedule();
-  renderHistory();
-  updateSummary();
+  // 最後の入力復元
+  var last = JSON.parse(localStorage.getItem('lastInput') || '{}');
+  if (last.url)   document.getElementById('qUrl').value   = last.url;
+  if (last.name)  document.getElementById('qName').value  = last.name;
+  if (last.orig)  document.getElementById('qOrig').value  = last.orig;
+  if (last.sale)  document.getElementById('qSale').value  = last.sale;
+  if (last.point) document.getElementById('qPoint').value = last.point;
+  if (last.url) { onUrlInput(); }
+
+  renderStockSidebar();
+  renderStockPage();
+  renderRankSlots();
 });
-
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function defaultSchedule() {
-  return [
-    { time: '08:00', type: 'k', text: '', done: false },
-    { time: '12:00', type: 'e', text: '', done: false },
-    { time: '19:00', type: 'a', text: '', done: false },
-  ];
-}
 
 /* ===== ユーティリティ ===== */
 function toast(msg, err) {
   var t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = err ? '#c0392b' : '#1a4a72';
-  t.style.color = '#fff';
+  t.style.background = err ? '#ff4d6d' : '#00d68f';
+  t.style.color      = err ? '#fff'    : '#000';
   t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3000);
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-function typeLabel(type) {
-  return { k: '豆知識', e: '共感・日常', a: 'ブログ告知' }[type] || type;
+function swTab(name, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
 }
 
-async function callAI(prompt) {
+function fmt(n) { return Number(n).toLocaleString('ja-JP'); }
+
+// ASIN抽出
+function getAsin(s) {
+  s = (s || '').trim();
+  if (/^[A-Z0-9]{10}$/i.test(s)) return s.toUpperCase();
+  var patterns = [
+    /\/dp\/([A-Z0-9]{10})/i,
+    /\/gp\/product\/([A-Z0-9]{10})/i,
+    /amazon\.co\.jp\/([A-Z0-9]{10})/i,
+    /([A-Z0-9]{10})(?:\?|$|\/)/i
+  ];
+  for (var i = 0; i < patterns.length; i++) {
+    var m = s.match(patterns[i]);
+    if (m) return m[1].toUpperCase();
+  }
+  return null;
+}
+
+function imgUrl(asin) {
+  return 'https://images-na.ssl-images-amazon.com/images/P/' + asin + '.jpg';
+}
+
+function affLink(asin) {
+  var id = (document.getElementById('assocId').value.trim() || 'popo1215-22');
+  return 'https://www.amazon.co.jp/dp/' + asin + '?tag=' + id;
+}
+
+// カテゴリー自動判定（拡充版）
+function guessCategory(name, disc) {
+  if (!name) return disc >= 30 ? 'セール情報' : 'その他';
+  if (/イヤホン|スピーカー|カメラ|パソコン|PC|タブレット|スマホ|スマートフォン|充電|バッテリー|マウス|キーボード|モニター|SSD|HDD|ゲーム|テレビ|冷蔵庫|洗濯機|掃除機|炊飯|電子レンジ|エアコン|ルーター|Wi-Fi|ドライヤー|電動/i.test(name)) return '家電・ガジェット';
+  if (/シャンプー|コスメ|美容|スキンケア|化粧|サプリ|ビタミン|プロテイン|薬|整腸|乳酸菌|美白|コラーゲン|ヒアルロン|アンチエイジング|健康/i.test(name)) return '美容・健康';
+  if (/食品|お菓子|スイーツ|飲料|コーヒー|お茶|緑茶|紅茶|米|麺|パスタ|調味料|醤油|味噌|肉|魚|野菜|果物|ジュース|ミネラルウォーター|アルコール|ビール|ワイン/i.test(name)) return '食品・日用品';
+  if (/日用品|洗剤|ティッシュ|ペットフード|トイレ|収納|掃除|キッチン用品|フライパン|鍋|タオル|洗濯|柔軟剤|ゴミ袋|ラップ/i.test(name)) return '生活用品';
+  if (/アウトドア|登山|キャンプ|テント|釣り|自転車|スポーツ|ヨガ|トレーニング|ランニング|ジム|ダンベル|プロテイン|ウェア/i.test(name)) return 'スポーツ・アウトドア';
+  if (/服|シャツ|パンツ|ジャケット|コート|バッグ|財布|靴|スニーカー|帽子|アクセサリー|ネックレス|時計|ベルト/i.test(name)) return 'ファッション';
+  if (disc >= 30) return 'セール情報';
+  return 'その他';
+}
+
+// 商品名入力時にカテゴリーを自動更新
+function onNameInput() {
+  saveLastInput();
+  var name = document.getElementById('qName').value.trim();
+  var orig = parseFloat(document.getElementById('qOrig').value) || 0;
+  var sale = parseFloat(document.getElementById('qSale').value) || 0;
+  var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
+  var cat  = guessCategory(name, disc);
+  var sel  = document.getElementById('qCat');
+  var lbl  = document.getElementById('catAutoLabel');
+  if (sel) {
+    sel.value = cat;
+    if (lbl) lbl.textContent = '🤖 自動判定: ' + cat;
+  }
+}
+
+// 現在選択中のカテゴリーを取得（手動変更があればそちら優先）
+function getSelectedCat() {
+  var sel = document.getElementById('qCat');
+  return sel ? sel.value : guessCategory(document.getElementById('qName').value.trim(), 0);
+}
+
+// Amazonリンクをtarget="_blank" rel="noopener" 付きで生成
+function affLinkMd(asin, label) {
+  var url = affLink(asin);
+  // Markdownリンクはそのまま（はてなブログ側でtargetは付与される）
+  // HTMLブロック内だけtargetを付与
+  return { url: url, html: '<a href="' + url + '" target="_blank" rel="noopener">' + (label||'Amazonで購入する') + '</a>' };
+}
+
+async function callAI(prompt, maxTokens) {
+  var body = {action: 'claude', prompt: prompt};
+  if (maxTokens) body.max_tokens = maxTokens;
   var r = await fetch(WK, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'claude', prompt: prompt })
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
   });
   var d = await r.json();
   if (d.error) throw new Error(d.error);
   return d.text || '';
 }
 
-/* ===== カテゴリタグ選択 ===== */
-let selectedCategory = '';
-function selectCat(el) {
-  document.querySelectorAll('.cat-tag').forEach(function(t) {
-    t.classList.remove('selected');
-  });
-  el.classList.add('selected');
-  selectedCategory = el.getAttribute('data-cat');
+/* ===== アソシエイトID保存 ===== */
+function saveAssocId() {
+  localStorage.setItem('assocId', document.getElementById('assocId').value.trim());
 }
 
-/* ===== 投稿タイプ切り替え ===== */
-function selectType(type) {
-  currentType = type;
-  ['k','e','a'].forEach(function(t) {
-    document.getElementById('type-' + t).classList.toggle('active', t === type);
-    document.getElementById('form-' + t).style.display = t === type ? 'block' : 'none';
-  });
-  document.getElementById('resultArea').classList.remove('show');
+/* ===== URL入力 → ASIN自動抽出 ===== */
+function onUrlInput() {
+  var val  = document.getElementById('qUrl').value;
+  var asin = getAsin(val);
+  var row  = document.getElementById('asinRow');
+  if (asin) {
+    row.style.display = 'block';
+    document.getElementById('asinDisplay').textContent    = asin;
+    document.getElementById('affLinkDisplay').textContent = affLink(asin);
+    // ローカル画像(base64)がセット済みなら上書きしない
+    var img = document.getElementById('thumbImg');
+    if (!img.dataset.localSet) {
+      // URL欄に手動入力がなければASINから自動セット
+      var manualUrl = document.getElementById('qImgUrl').value.trim();
+      if (!manualUrl) setThumb(imgUrl(asin), '自動取得');
+    }
+  } else {
+    row.style.display = 'none';
+  }
+  saveLastInput();
 }
 
-/* ===== テーマタグ選択 ===== */
-function selectTheme(el, type) {
-  document.querySelectorAll('#themeTags-' + type + ' .theme-tag').forEach(function(t) {
-    t.classList.remove('selected');
-  });
-  el.classList.add('selected');
-  selectedThemes[type] = el.textContent;
-  var freeInput = document.getElementById('freeTheme-' + type);
-  if (freeInput) freeInput.value = '';
+// ===== 画像セット共通 =====
+// url: 表示するsrc（http URL or base64）
+// source: ラベル文字列（表示用）
+function setThumb(url, source) {
+  var img = document.getElementById('thumbImg');
+  var overlay = document.getElementById('dropOverlay');
+  var lbl = document.getElementById('imgSourceLabel');
+  img.src = url;
+  img.dataset.localSet = (source === 'ローカルファイル') ? '1' : '';
+  overlay.style.display = 'none';
+  if (lbl) { lbl.textContent = '✓ ' + (source || ''); lbl.style.display = 'block'; }
+  document.getElementById('imgDropZone').style.borderColor = 'var(--am)';
 }
 
-/* ===== ツイート生成 ===== */
-async function generate() {
-  var btn = document.getElementById('genBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="sp"></span> 生成中...';
+// ===== ドラッグ＆ドロップ =====
+function onImgDragOver(e) {
+  e.preventDefault();
+  document.getElementById('imgDropZone').style.borderColor = 'var(--gr)';
+  document.getElementById('imgDropZone').style.background  = 'rgba(0,214,143,.08)';
+}
+function onImgDragLeave(e) {
+  document.getElementById('imgDropZone').style.borderColor = 'var(--bd)';
+  document.getElementById('imgDropZone').style.background  = 'var(--s2)';
+}
+function onImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('imgDropZone').style.borderColor = 'var(--bd)';
+  document.getElementById('imgDropZone').style.background  = 'var(--s2)';
+  var file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    readImgFile(file);
+  } else {
+    toast('画像ファイルをドロップしてください', 1);
+  }
+}
+
+// ===== ファイル選択（クリック） =====
+function onImgFileSelect(e) {
+  var file = e.target.files[0];
+  if (file) readImgFile(file);
+}
+
+// ===== ファイル→base64→プレビュー =====
+function readImgFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    setThumb(ev.target.result, 'ローカルファイル');
+    // URL欄はクリア（ローカル画像優先）
+    document.getElementById('qImgUrl').value = '';
+    toast('画像をセットしました！');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== 手動URL入力 =====
+function onManualImgInput() {
+  var url = document.getElementById('qImgUrl').value.trim();
+  if (!url) return;
+  // ローカルフラグをリセット
+  document.getElementById('thumbImg').dataset.localSet = '';
+  // URLだけ保持（srcへの反映はブラウザがブロックするため省略・適用ボタンで対応）
+}
+
+// 「✓ 適用」ボタン
+function applyManualImg() {
+  var url = document.getElementById('qImgUrl').value.trim();
+  if (!url) { toast('URLを入力してください', 1); return; }
+  document.getElementById('thumbImg').dataset.localSet = '';
+  setThumb(url, 'URL指定');
+  toast('URLをセットしました（ブラウザ制限により表示されない場合があります）');
+}
+
+/* ===== 価格計算 ===== */
+function calcQ() {
+  var orig = parseFloat(document.getElementById('qOrig').value)  || 0;
+  var sale = parseFloat(document.getElementById('qSale').value)  || 0;
+  var pt   = parseFloat(document.getElementById('qPoint').value) || 0;
+  var pp   = document.getElementById('pp');
+  if (!sale) { pp.classList.remove('show'); return; }
+  pp.classList.add('show');
+  var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
+  var save = (orig > 0 && sale < orig) ? orig - sale : 0;
+  var badge = document.getElementById('ppBadge');
+  var selectedBadgeLabel = getSelectedBadge();
+  if (selectedBadgeLabel) {
+    badge.textContent = selectedBadgeLabel;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  document.getElementById('ppSale').textContent = '\u00a5' + fmt(sale);
+  document.getElementById('ppOrig').textContent = orig > 0 ? '\u00a5'+fmt(orig) : '';
+  document.getElementById('ppSave').textContent = save > 0 ? '\u00a5'+fmt(save)+' お得！' : '';
+  if (pt > 0) {
+    document.getElementById('ppPtRow').style.display  = 'flex';
+    document.getElementById('ppPt').textContent       = '+'+fmt(pt)+'pt';
+    document.getElementById('ppEffRow').style.display = 'flex';
+    document.getElementById('ppEff').textContent      = '\u00a5'+fmt(sale-pt);
+  } else {
+    document.getElementById('ppPtRow').style.display  = 'none';
+    document.getElementById('ppEffRow').style.display = 'none';
+  }
+  var parts = [];
+  if (orig > 0) parts.push('定価\u00a5'+fmt(orig));
+  parts.push('\u2192 請求額\u00a5'+fmt(sale));
+  if (disc > 0) parts.push('('+disc+'%OFF \u00a5'+fmt(save)+'お得)');
+  if (pt > 0) parts.push('\u2192 '+fmt(pt)+'pt還元 \u2192 実質\u00a5'+fmt(sale-pt));
+  document.getElementById('ppSum').textContent = parts.join(' ');
+  // 割引率変化でカテゴリーを再判定（セール情報判定のため）
+  onNameInput();
+}
+
+/* ===== バッジ選択 ===== */
+function selectBadge(btn) {
+  document.querySelectorAll('.pp-badge-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  var label = btn.dataset.label;
+  var badge = document.getElementById('ppBadge');
+  if (label) {
+    badge.textContent = label;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+function getSelectedBadge() {
+  var btn = document.querySelector('.pp-badge-btn.selected');
+  return btn ? btn.dataset.label : 'SALE';
+}
+
+/* ===== 最後の入力保存 ===== */
+function saveLastInput() {
+  localStorage.setItem('lastInput', JSON.stringify({
+    url:   document.getElementById('qUrl').value,
+    name:  document.getElementById('qName').value,
+    orig:  document.getElementById('qOrig').value,
+    sale:  document.getElementById('qSale').value,
+    point: document.getElementById('qPoint').value
+  }));
+}
+
+/* ===== タイトル候補生成 ===== */
+async function genTitles() {
+  var name = document.getElementById('qName').value.trim();
+  var orig = parseFloat(document.getElementById('qOrig').value) || 0;
+  var sale = parseFloat(document.getElementById('qSale').value) || 0;
+  var note = document.getElementById('qNote').value.trim();
+  var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
+  var cat  = getSelectedCat();
+  var year = new Date().getFullYear();
+
+  if (!name && !sale) { toast('商品名または価格を入力してください', 1); return; }
+
+  var btn = document.getElementById('titleBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="sp"></span> AI生成中...';
+
+  var promptLines = [
+    'Amazonアフィリエイトブログの記事タイトルを8案生成してください。',
+    '',
+    '【商品情報】',
+    '商品名: ' + (name || '（未入力）'),
+    'カテゴリ: ' + cat,
+    '販売価格: ' + (sale > 0 ? '\u00a5' + fmt(sale) : '不明'),
+    (disc > 0 ? '割引率: ' + disc + '%OFF' : ''),
+    '対象年: ' + year,
+    (note ? '補足情報: ' + note : ''),
+    '',
+    '【条件】',
+    '・8案すべて異なるアプローチで（価格訴求・セール情報・スペック解説・おすすめ理由・初心者向けガイド・購入前チェックなど多様に）',
+    '・以下の表現は絶対に使わない：「実機レビュー」「使用感」「使ってみた」「レポート」「感想」「徹底検証」「実力を検証」「〇〇週間使って」「評判まとめ」「比較検証」など、実際に商品を手にして体験・評価したことを示す表現すべて',
+    '・書けるのは「スペック紹介」「価格・コスパ解説」「おすすめな人」「発売・予約情報」「カタログ上のスペック比較」のみ。アフィリエイターとして誠実に書ける内容に限定すること',
+    '・SEOを意識して検索されやすいキーワードを含める',
+    '・【】でバッジを先頭に付ける（例: 【' + (disc > 0 ? disc + '%OFF' : 'セール') + '】【' + year + '年最新】【スペック解説】【購入ガイド】など）',
+    (note ? '・補足情報「' + note + '」の内容を活かしたタイトルを少なくとも2〜3案含めること（例：予約受付中なら【予約受付中】などのバッジや「予約開始」「発売前に確認」などの表現を使う）' : ''),
+    '・商品名は長すぎる場合は重要キーワードを残して省略してよい',
+    '・1案ずつ改行で区切り、番号や説明文は不要。タイトル本文のみを出力する',
+  ].filter(function(l){ return l !== ''; });
 
   try {
-    var prompt = buildPrompt(currentType);
-    var result = await callAI(prompt);
-    renderVariations(result, currentType);
-    document.getElementById('resultArea').classList.add('show');
-    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    toast('3パターン生成しました！');
+    var result = await callAI(promptLines.join('\n'));
+    var titles = result.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+
+    var grid = document.getElementById('titleGrid');
+    grid.style.display = 'flex';
+    grid.innerHTML = '';
+    titles.forEach(function(t) {
+      var div = document.createElement('div');
+      div.className = 'title-chip';
+      div.innerHTML = '<span class="title-chip-text">'+t+'</span><span class="title-use-btn">クリックして使用 →</span>';
+      div.addEventListener('click', function() {
+        document.querySelectorAll('.title-chip').forEach(function(c){ c.classList.remove('selected'); });
+        div.classList.add('selected');
+        document.getElementById('selectedTitle').value = t;
+        document.getElementById('selectedTitleRow').style.display = 'block';
+      });
+      grid.appendChild(div);
+    });
+    toast('AIがSEO最適タイトルを生成しました！');
+  } catch(e) {
+    toast('生成失敗: '+e.message, 1);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '💡 AIでタイトル候補を生成';
+  }
+}
+
+/* ===== 記事一括生成 ===== */
+async function genAll() {
+  var urlVal = document.getElementById('qUrl').value.trim();
+  var orig   = parseFloat(document.getElementById('qOrig').value)  || 0;
+  var sale   = parseFloat(document.getElementById('qSale').value)  || 0;
+  var pt     = parseFloat(document.getElementById('qPoint').value) || 0;
+  var name   = document.getElementById('qName').value.trim();
+  var note   = document.getElementById('qNote').value.trim();
+  var selTitle = document.getElementById('selectedTitle').value.trim();
+
+  if (!urlVal) { toast('URLまたはASINを入力してください', 1); return; }
+  if (!sale)   { toast('ご請求額を入力してください', 1); return; }
+
+  var asin = getAsin(urlVal);
+  if (!asin) { toast('有効なAmazon URLまたはASINを入力してください', 1); return; }
+
+  var link = affLink(asin);
+  // 手動入力画像URLがあればそちらを優先、なければ現在表示中のsrcを使う
+  // 画像URL決定：① ローカルbase64 ② 手動URL ③ ASIN自動生成
+  var thumbEl   = document.getElementById('thumbImg');
+  var manualUrl = (document.getElementById('qImgUrl').value || '').trim();
+  var iUrl;
+  if (thumbEl.dataset.localSet === '1') {
+    // ローカルファイル → base64をそのまま使う（記事内のimgタグに直接埋め込み）
+    iUrl = thumbEl.src;
+  } else if (manualUrl) {
+    iUrl = manualUrl;
+  } else {
+    iUrl = imgUrl(asin);
+  }
+  var disc = (orig > 0 && sale < orig) ? Math.round((1 - sale/orig)*100) : 0;
+  var save = (orig > 0 && sale < orig) ? orig - sale : 0;
+  var eff  = pt > 0 ? sale - pt : null;
+
+  var btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="sp"></span>AIが生成中...';
+
+  cur = { asin:asin, name:name, orig:orig, sale:sale, disc:disc, save:save, pt:pt, eff:eff, link:link, iUrl:iUrl, note:note, selTitle:selTitle, cat:getSelectedCat(), badge:getSelectedBadge(), date:new Date().toLocaleDateString('ja-JP') };
+
+  try {
+    var results = await Promise.all([makeTw(cur), makeBl(cur)]);
+    document.getElementById('twOut').textContent = results[0];
+    var blText = results[1];
+
+    // 関連商品セクションの生成・追加
+    var relItems = getRelItems();
+    if (relItems.length > 0) {
+      btn.innerHTML = '<span class="sp"></span>関連商品セクション生成中...';
+      try {
+        var relSection = await genRelSection(cur, relItems);
+        if (relSection) blText = blText + '\n\n' + relSection;
+      } catch(re) { /* 関連商品生成失敗は無視して続行 */ }
+    }
+
+    document.getElementById('blOut').textContent = blText;
+    document.getElementById('twCard').style.display = 'block';
+    document.getElementById('blCard').style.display = 'block';
+    updTw();
+    document.getElementById('blCount').textContent = blText.length + '文字';
+
+    // 自動でまとめストックに追加
+    addToMtStock(cur);
+    // 自動で記事ストックに保存
+    autoSaveArticle(cur, blText);
+
+    toast('生成完了！🎉');
+    document.getElementById('twCard').scrollIntoView({behavior:'smooth'});
   } catch(e) {
     toast('生成失敗: ' + e.message, 1);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '✨ ツイート文を生成（3パターン）';
+    btn.innerHTML = '🤖 X投稿文・ブログ記事を一括生成';
   }
 }
 
-/* ===== プロンプト生成 ===== */
-function buildPrompt(type) {
-  var base = ACCOUNT_CONTEXT + '\n\n';
-
-  if (type === 'k') {
-    var theme = document.getElementById('freeTheme-k').value.trim()
-      || selectedThemes.k
-      || 'Amazonでお得に買い物する方法';
-    return base +
-      '以下のテーマについて、Xに投稿する豆知識ツイートを3パターン作成してください。\n\n' +
-      'テーマ：' + theme + '\n\n' +
-      '【条件】\n' +
-      '・各パターンは140文字以内\n' +
-      '・「実はこうすると得する」「知っておくと便利」という切り口で、情報としての価値を出す\n' +
-      '・具体的な数字や手順があると良い\n' +
-      '・「昔の自分に教えてあげたい」「これ知らなかったの、割と損してた」系の自虐・自己開示を1パターン以上に入れる\n' +
-      '・ツッコミや軽い毒舌（「定価で買い続けてたの今考えると痛い」など）を自然に混ぜる\n' +
-      '・上から目線にならず「一緒に賢くなろう」感を出す\n' +
-      '・ハッシュタグは #Amazon #節約 から1〜2個のみ\n' +
-      '・絵文字は1〜2個程度（使いすぎない）\n\n' +
-      '【出力形式】\n' +
-      'パターン1〜3を番号なし・区切りなしで、各ツイートを空行1つで区切って出力してください。\n' +
-      '余計な説明文は不要です。ツイート本文のみを出力してください。';
-  }
-
-  if (type === 'e') {
-    var etheme = document.getElementById('freeTheme-e').value.trim()
-      || selectedThemes.e
-      || 'Amazon買い物あるある';
-    return base +
-      '以下のテーマについて、Xに投稿する共感・日常ツイートを3パターン作成してください。\n\n' +
-      'テーマ：' + etheme + '\n\n' +
-      '【条件】\n' +
-      '・各パターンは140文字以内\n' +
-      '・「あるある」「わかる」と思ってもらえる日常の一言\n' +
-      '・買い物・節約・Amazon利用にまつわる内容に絞る\n' +
-      '・自分の失敗・損した体験・あるあるを自虐的に語るトーンで親近感を出す\n' +
-      '・「これ俺だけじゃないよね？」「同じ人いる？」と問いかけるパターンを1つ以上入れる\n' +
-      '・フォロワーが気軽にリプライ・引用したくなる終わり方にする\n' +
-      '・アフィリエイトリンクなしで自然に成立する内容\n' +
-      '・絵文字は1〜2個程度\n' +
-      '・ハッシュタグは不要\n\n' +
-      '【出力形式】\n' +
-      '各ツイートを空行1つで区切って出力してください。余計な説明文は不要です。';
-  }
-
-  if (type === 'a') {
-    var title = document.getElementById('blogTitle').value.trim();
-    var url   = document.getElementById('blogUrl').value.trim();
-    var note  = document.getElementById('blogNote').value.trim();
-    var cat   = selectedCategory || 'その他';
-    if (!title || !url) throw new Error('記事タイトルとURLを入力してください');
-    if (!selectedCategory) throw new Error('カテゴリを選択してください');
-
-    // カテゴリ別トーン定義
-    var catTone = {
-      'ガジェット・家電':     'スペック・性能・コスパに興味がある読者向け。「自分もスペック気になって調べた」「買う前に確認しておきたかった」系の切り口が刺さる。技術的な納得感を与えるトーンで。',
-      '日用品・生活雑貨':     '毎日使うものだからこそコスパが大事という読者向け。「これ定価で買ってたの損してた」「まとめ買いのタイミング逃したくない」系の切り口が刺さる。生活感のある親しみやすいトーンで。',
-      '食品・飲料':           '価格と品質のバランスを重視する読者向け。「これ安すぎて逆に不安だったけど買ってみた」「リピート買いしてるやつ」系の切り口が刺さる。食欲・生活感を刺激するトーンで。',
-      '美容・健康':           '効果と価格の両方を気にする読者向け。「ドラッグストアより全然安かった」「続けやすい価格かどうか気になってた」系の切り口が刺さる。共感しやすい等身大のトーンで。',
-      'ファッション・アパレル':'ブランドよりコスパを重視する読者向け。「これ定価で買う必要なかった」「セールで買うかどうか迷ってる人向け」系の切り口が刺さる。お得感を強調するトーンで。',
-      '本・電子書籍':         '知識・情報収集に積極的な読者向け。「これ読んでおけばよかった」「電子書籍で安く手に入る今がチャンス」系の切り口が刺さる。知的好奇心を刺激するトーンで。',
-      'スポーツ・アウトドア': '機能性とコスパを両立したい読者向け。「これの性能でこの価格は普通にやばい」「シーズン前に揃えておきたいやつ」系の切り口が刺さる。テンション高めのアクティブなトーンで。',
-      'その他':               '幅広い読者向け。「知らないと損する」「自分も最近まで気づいてなかった」系の普遍的な切り口で。'
-    };
-    var toneGuide = catTone[cat] || catTone['その他'];
-
-    return base +
-      '以下のブログ記事をXで告知するツイートを3パターン作成してください。\n\n' +
-      '記事タイトル：' + title + '\n' +
-      'URL：' + url + '\n' +
-      'カテゴリ：' + cat + '\n' +
-      (note ? '補足：' + note + '\n' : '') +
-      '\n【カテゴリ別トーンガイド】\n' +
-      toneGuide + '\n\n' +
-      '【このツイートの目的】\n' +
-      'フォロワーにブログ記事をクリックしてもらうこと。「宣伝」ではなく「価値ある情報を教えてくれる友達の一言」として読まれること。\n\n' +
-      '【人間心理を活用した3パターンを1つずつ作ること】\n\n' +
-      'パターン1：【損失回避の心理】\n' +
-      '「知らないと損する」「これを見ずに買うのはもったいない」という切り口。\n' +
-      '人は「得する」より「損したくない」という感情の方が強く動く。\n\n' +
-      'パターン2：【自己開示＋共感の心理】\n' +
-      '「自分も気になって調べた」「昔の自分が知りたかった情報」という自虐・自己開示の切り口。\n' +
-      '発信者が弱みを見せることで読者が親近感を持ち、記事への信頼感が生まれる。\n\n' +
-      'パターン3：【好奇心・情報ギャップの心理】\n' +
-      '「意外と知られていない事実」「ほとんどの人が気づいていないこと」という切り口。\n' +
-      '「え、そうなの？」と思わせることで続きを読みたくなる衝動を作る。\n\n' +
-      '【共通ルール】\n' +
-      '・URLを含めて140文字以内\n' +
-      '・冒頭の1文でクリックするかどうかが決まる。最初の一言に全力を注ぐこと\n' +
-      '・宣伝くさい表現（「ブログ書きました」「記事はこちら」）は絶対に使わない\n' +
-      '・URLは必ず含めること（' + url + '）\n' +
-      '・ハッシュタグは #Amazon #節約 から1個のみ\n' +
-      '・絵文字は1〜2個程度。文頭か文末に自然に置く\n' +
-      '・一人称は「自分」を使う\n\n' +
-      '【出力形式】\n' +
-      'パターン1〜3を番号なし・説明なし・区切りなしで、各ツイートを空行1つで区切って出力してください。\n' +
-      'ツイート本文のみを出力してください。';
-  }
-
-  return base + 'Amazonお得情報アカウント向けのツイートを1つ作成してください。';
+/* ===== X投稿文生成 ===== */
+function makeTw(p) {
+  var ef = p.eff != null ? '\n💡実質\u00a5'+fmt(p.eff)+'（'+fmt(p.pt)+'pt還元）' : '';
+  return callAI(
+    'AmazonアフィリエイトのX投稿文を作成。140文字以内。\n' +
+    'ASIN:'+p.asin+'\n商品名:'+(p.name||'（ASINから推測）')+'\n請求額:\u00a5'+fmt(p.sale)+
+    '\n定価:'+(p.orig?'\u00a5'+fmt(p.orig):'不明')+'\n割引:'+(p.disc>0?p.disc+'%OFF':'不明')+
+    '\n節約:\u00a5'+fmt(p.save)+'\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+
+    '\n実質:'+(p.eff?'\u00a5'+fmt(p.eff):'なし')+'\nリンク:'+p.link+'\n補足:'+(p.note||'なし')+
+    '\n\n形式:\n【'+(p.disc>0?p.disc+'%OFF🔥':'セール🔥')+'】商品名20文字以内\n\u00a5'+
+    (p.orig?fmt(p.orig)+'\u2192':'')+'\u00a5'+fmt(p.sale)+'（\u00a5'+fmt(p.save)+'お得！）'+ef+
+    '\n⏰特徴一言\n\n'+p.link+'\n#PR #AD #AM #セール #激安\n\n文字数厳守。Markdown不使用。'
+  );
 }
 
-/* ===== バリエーション表示 ===== */
-function renderVariations(text, type) {
-  // 空行で区切ってパターン分割
-  var patterns = text.split(/\n\s*\n/).map(function(s) { return s.trim(); }).filter(Boolean);
-  if (patterns.length === 0) patterns = [text.trim()];
+/* ===== ブログ記事生成 ===== */
+function makeBl(p) {
+  var title  = p.selTitle || '【'+(p.disc>0?p.disc+'%OFF':'セール')+'】'+(p.name||'（商品名を簡潔に）');
+  var ptBlock = p.pt > 0 ?
+    '\n## 🪙 ポイント還元\n\n<div style="background:#f3faf7;border:2px solid #00897b;border-radius:10px;padding:16px 20px;margin:12px 0">' +
+    '<div>🪙 <strong>獲得ポイント</strong>: <span style="color:#FF9900;font-weight:bold;font-size:18px">+'+fmt(p.pt)+'pt</span></div>' +
+    '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #b2dfdb">実質価格: <strong style="font-size:22px;color:#e53935">\u00a5'+fmt(p.eff)+'</strong></div></div>\n' : '';
 
-  var list = document.getElementById('variationList');
-  list.innerHTML = '';
+  return callAI(
+    'はてなブログAmazonアフィリエイト記事をMarkdownで作成してください。\n' +
+    'ASIN:'+p.asin+'\n商品名:'+(p.name||'（ASINから推測）')+'\n請求額:\u00a5'+fmt(p.sale)+
+    '\n定価:'+(p.orig?'\u00a5'+fmt(p.orig):'不明')+'\n割引:'+(p.disc>0?p.disc+'%OFF':'不明')+
+    '\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+'\n実質:'+(p.eff?'\u00a5'+fmt(p.eff):'なし')+
+    '\n画像URL:'+p.iUrl+'\nアフィリエイトリンク:'+p.link+'\n補足:'+(p.note||'なし')+'\n作成日:'+p.date+'\n\n' +
+    '【記事タイトル】\n' + title + '\n\n' +
+    '【必須構成】\n' +
+    '# '+title+'\n\n' +
+    '<a href="'+p.link+'" target="_blank" rel="noopener" style="display:block;background:none!important;border:none!important;padding:0!important;margin:16px auto!important;max-width:500px;text-decoration:none"><img src="'+p.iUrl+'" alt="'+p.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:8px;background:#fff"></a>\n\n' +
+    '（リード文：読者が得する理由を120文字で）\n\n' +
+    '## 💰 価格情報\n\n' +
+    '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">' +
+    '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.badge||'SALE')+'</span>' +
+    '<span style="font-size:26px;font-weight:bold;color:#e53935">\u00a5'+fmt(p.sale)+'</span></div>' +
+    (p.orig>0?'<div style="margin-top:6px"><span style="color:#888;text-decoration:line-through">\u00a5'+fmt(p.orig)+'</span></div>':'') +
+    (p.save>0?'<div style="margin-top:6px;color:#00897b;font-weight:bold">\u2705 \u00a5'+fmt(p.save)+'お得！</div>':'') +
+    '</div>\n\n' + ptBlock +
+    '## こんな人におすすめ\n\n（箇条書き5点）\n\n' +
+    '## スペック・特徴\n\n（箇条書き）\n\n' +
+    '## 😊 ここが嬉しいポイント\n\n（購入して良かったと感じるセリングポイントを5点。読者が「買いたい」と思えるよう前向きな表現で書くこと。ネガティブな情報は含めない）\n\n' +
+    '## まとめ\n\n（まとめ2〜3文。購入を後押しする文章）\n\n' +
+    '<a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:16px;padding:14px 32px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a>\n\n' +
+    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
+    '【ルール】\n' +
+    '・タイトル「'+title+'」をそのまま使うこと\n' +
+    '・タイトルで約束した内容を記事本文で必ず回収すること。タイトルに「スペック解説」とあればスペックを、「価格比較」とあれば価格情報を、「購入ガイド」とあれば購入手順・注意点を必ず本文に含めること\n' +
+    '・実際に商品を手にして体験・検証していないため、「実機レビュー」「使用感」「徹底検証」「〇〇してみた」など体験を示す表現は一切使わない\n' +
+    '・書けるのはカタログ情報・スペック・価格・おすすめ理由・こんな人向けの情報のみ。誠実なアフィリエイト記事として成立する内容に限定する\n' +
+    '・Markdownのみ。HTMLタグはdivとaのみ使用可'
+  , 3000);
+}
 
-  patterns.forEach(function(pat, i) {
-    var div = document.createElement('div');
-    div.className = 'variation-item' + (i === 0 ? ' selected' : '');
-    div.innerHTML = '<span class="var-num">' + (i+1) + '/' + patterns.length + '</span>' + escHtml(pat);
-    div.addEventListener('click', function() {
-      document.querySelectorAll('.variation-item').forEach(function(v) { v.classList.remove('selected'); });
-      div.classList.add('selected');
-      document.getElementById('editBox').textContent = pat;
-      updCount();
-    });
-    list.appendChild(div);
-  });
+/* ===== ブログ記事文字数カウント ===== */
+function updBl() {
+  var t = document.getElementById('blOut').textContent;
+  document.getElementById('blCount').textContent = t.length + '文字';
+}
 
-  // 最初のパターンを編集エリアにセット
-  document.getElementById('editBox').textContent = patterns[0];
-  updCount();
+/* ===== 関連商品 画像プレビュー ===== */
+var REL_IMG_CANDIDATES = function(asin) {
+  return [
+    'https://m.media-amazon.com/images/P/' + asin + '._SL200_.jpg',
+    'https://images-na.ssl-images-amazon.com/images/P/' + asin + '.01._SL200_.jpg',
+    'https://m.media-amazon.com/images/P/' + asin + '.jpg',
+  ];
+};
 
-  // ヒント
-  var hints = {
-    k: '💡 豆知識ツイート：定期的に混ぜることで「ためになるアカウント」として認知されます',
-    e: '💬 共感ツイート：リプライや共感を生みやすく、アカウントへの親しみが高まります',
-    a: '📣 告知ツイート：記事への流入を作ります。週1〜2回が自然なペース',
+// タイマーID保持（連続入力のデバウンス用）
+var relPreviewTimers = [null, null, null];
+
+function previewRelImg(idx) {
+  clearTimeout(relPreviewTimers[idx]);
+  var asin = (document.getElementById('relAsin' + idx).value || '').trim().toUpperCase();
+  var txt  = document.getElementById('relThumbTxt' + idx);
+  var img  = document.getElementById('relThumbImg' + idx);
+  var row  = document.getElementById('relImgRow' + idx);
+  var st   = document.getElementById('relImgStatus' + idx);
+
+  if (!asin || asin.length < 8) {
+    img.style.display = 'none';
+    img.src = '';
+    txt.style.display = 'block';
+    txt.innerHTML = 'ASIN<br>入力で<br>確認';
+    row.style.display = 'none';
+    st.textContent = '';
+    return;
+  }
+
+  txt.innerHTML = '確認中...';
+  relPreviewTimers[idx] = setTimeout(function() {
+    tryRelImgUrls(idx, asin, REL_IMG_CANDIDATES(asin), 0);
+  }, 600);
+}
+
+function tryRelImgUrls(idx, asin, urls, attempt) {
+  var txt = document.getElementById('relThumbTxt' + idx);
+  var img = document.getElementById('relThumbImg' + idx);
+  var row = document.getElementById('relImgRow' + idx);
+  var st  = document.getElementById('relImgStatus' + idx);
+
+  if (attempt >= urls.length) {
+    // 全URL失敗 → 手動入力欄を表示
+    img.style.display = 'none';
+    txt.style.display = 'block';
+    txt.innerHTML = '画像なし';
+    row.style.display = 'block';
+    st.innerHTML = '<span style="color:#e07b00">⚠ 自動取得できませんでした。画像URLを貼り付けてください。</span>';
+    return;
+  }
+
+  var testImg = new Image();
+  testImg.onload = function() {
+    if (testImg.naturalWidth < 5) {
+      tryRelImgUrls(idx, asin, urls, attempt + 1);
+      return;
+    }
+    img.src = urls[attempt];
+    img.style.display = 'block';
+    txt.style.display = 'none';
+    row.style.display = 'none';
+    // 画像表示時は枠を消す
+    var box = document.getElementById('relThumbBox' + idx);
+    if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
+    st.innerHTML = '<span style="color:var(--gr)">✓ 画像を自動取得しました</span>';
+    // 手動URL欄をクリア
+    var manualEl = document.getElementById('relImg' + idx);
+    if (manualEl) manualEl.value = '';
   };
-  var hint = document.getElementById('resultHint');
-  hint.textContent = hints[type] || '';
-  hint.style.display = hints[type] ? 'block' : 'none';
+  testImg.onerror = function() {
+    tryRelImgUrls(idx, asin, urls, attempt + 1);
+  };
+  testImg.src = urls[attempt];
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function applyManualRelImg(idx) {
+  var url = (document.getElementById('relImg' + idx).value || '').trim();
+  var img = document.getElementById('relThumbImg' + idx);
+  var txt = document.getElementById('relThumbTxt' + idx);
+  var box = document.getElementById('relThumbBox' + idx);
+  var st  = document.getElementById('relImgStatus' + idx);
+  if (!url) {
+    img.style.display = 'none'; txt.style.display = 'block'; txt.innerHTML = '画像なし';
+    if (box) { box.style.border = '1.5px dashed var(--bd)'; box.style.background = 'var(--s2)'; }
+    return;
+  }
+  img.src = url;
+  img.style.display = 'block';
+  txt.style.display = 'none';
+  if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
+  st.innerHTML = '<span style="color:var(--gr)">✓ 手動URLを適用しました</span>';
 }
 
-/* ===== 文字数カウント ===== */
-function updCount() {
-  var t  = document.getElementById('editBox').textContent;
-  var el = document.getElementById('charCount');
+/* ===== 関連商品セクション生成 ===== */
+function getRelItems() {
+  var items = [];
+  for (var i = 0; i < 3; i++) {
+    var asin    = (document.getElementById('relAsin' + i).value || '').trim();
+    var name    = (document.getElementById('relName' + i).value || '').trim();
+    var imgEl   = document.getElementById('relImg' + i);
+    var manualImg = imgEl ? imgEl.value.trim() : '';
+    // プレビュー確認済みのsrcを優先、なければ手動URL
+    var thumbImg  = document.getElementById('relThumbImg' + i);
+    var confirmedImg = (thumbImg && thumbImg.style.display !== 'none' && thumbImg.src) ? thumbImg.src : '';
+    var img = confirmedImg || manualImg;
+    if (asin || name) items.push({ asin: asin, name: name, img: img });
+  }
+  return items;
+}
+
+async function genRelSection(mainProduct, relItems) {
+  if (!relItems.length) return '';
+  var assocId = 'popo1215-22';
+
+  // AIに短縮タイトル＋2〜3行説明をJSON形式で一括生成させる
+  var promptLines = [
+    'Amazonアフィリエイト記事用の関連商品紹介データをJSON形式で生成してください。',
+    '',
+    '【本体商品】',
+    mainProduct.name || mainProduct.asin,
+    '',
+    '【紹介する関連商品】',
+  ];
+  relItems.forEach(function(item, i) {
+    promptLines.push((i+1) + '. ' + (item.name || ('ASIN: ' + item.asin)));
+  });
+  promptLines = promptLines.concat([
+    '',
+    '【出力ルール】',
+    '・必ずJSON配列のみを出力すること。前置き・説明・コードブロック記号は一切不要',
+    '・各商品を1オブジェクトとして以下のキーで出力:',
+    '  "shortTitle": 商品名を20文字以内に短縮（型番・長い修飾語は省略してOK）',
+    '  "desc": 本体商品との相性・おすすめ理由を2〜3文、合計80文字以内でまとめる',
+    '・出力例: [{"shortTitle":"ケース（MagSafe対応）","desc":"MagSafe充電に対応し..."},...]',
+  ]);
+
+  var items = [];
+  try {
+    var raw = await callAI(promptLines.join('\n'));
+    var cleaned = raw.replace(/```json|```/g, '').trim();
+    items = JSON.parse(cleaned);
+  } catch(e) {
+    // JSON失敗時はフォールバック
+    relItems.forEach(function(item) {
+      items.push({ shortTitle: item.name ? item.name.substring(0, 20) : item.asin, desc: '' });
+    });
+  }
+
+  // HTML直接構築（左画像・右テキスト横並びカード）
+  var cards = relItems.map(function(item, i) {
+    var link      = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
+    // 画像URL優先順: ①手動入力 ②m.media-amazon（SL200）③images-na（フォールバック）
+    var imgSrc    = item.img
+      ? item.img
+      : 'https://m.media-amazon.com/images/P/' + item.asin + '._SL200_.jpg';
+    var fallback  = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.01._SL200_.jpg';
+    var shortName = (items[i] && items[i].shortTitle) || (item.name ? item.name.substring(0, 20) : item.asin);
+    var desc      = (items[i] && items[i].desc) || '';
+
+    return (
+      '<div style="display:flex;gap:14px;align-items:flex-start;background:#fafafa;' +
+      'border:1px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:12px;overflow:hidden">' +
+        // 左：画像（リンクあり）
+        '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0;display:block;background:none!important;border:none!important;padding:0!important;margin:0!important;box-shadow:none!important">' +
+          '<img src="' + imgSrc + '" alt="' + shortName + '" ' +
+          'onerror="this.onerror=null;this.src=\'' + fallback + '\'" ' +
+          'style="width:90px;height:90px;object-fit:contain;background:#fff;' +
+          'border-radius:6px;border:1px solid #e8e8e8;display:block">' +
+        '</a>' +
+        // 右：テキスト
+        '<div style="flex:1;min-width:0;overflow:hidden">' +
+          // タイトルはプレーンテキスト（リンクなし）
+          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:6px;' +
+          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+            shortName +
+          '</div>' +
+          '<div style="font-size:12px;line-height:1.7;color:#555;' +
+          'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">' +
+            desc +
+          '</div>' +
+          '<div style="margin-top:8px">' +
+            '<a href="' + link + '" target="_blank" rel="noopener" ' +
+            'style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;' +
+            'font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで詳細を見る →</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  });
+
+  return '\n## 📦 合わせて買いたいアクセサリー\n\n' + cards.join('\n');
+}
+
+/* ===== X投稿 ===== */
+function updTw() {
+  var t  = document.getElementById('twOut').textContent;
+  var el = document.getElementById('twCount');
   el.textContent = t.length + '文字';
-  el.className   = 'char-count' + (t.length > 140 ? ' over' : '');
+  el.className   = 'cc' + (t.length > 140 ? ' over' : '');
 }
-
-/* ===== コピー・投稿 ===== */
-function copyTweet() {
-  var t = document.getElementById('editBox').textContent;
-  navigator.clipboard.writeText(t).then(function() { toast('コピーしました！'); });
-}
-
-function openTwitter() {
-  var t = document.getElementById('editBox').textContent;
-  if (!t) { toast('ツイートが空です', 1); return; }
-  navigator.clipboard.writeText(t).then(function() {
+function copyX() {
+  navigator.clipboard.writeText(document.getElementById('twOut').textContent).then(function(){
+    toast('コピーしました！');
     window.open('https://twitter.com/intent/tweet', '_blank');
-    toast('コピー完了！Xが開きます');
   });
 }
 
-/* ===== 履歴に保存 ===== */
-function saveToHistory() {
-  var t = document.getElementById('editBox').textContent.trim();
-  if (!t) { toast('ツイートが空です', 1); return; }
-  history.unshift({
-    type:    currentType,
-    text:    t,
-    savedAt: new Date().toLocaleString('ja-JP', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })
-  });
-  if (history.length > 50) history = history.slice(0, 50);
-  localStorage.setItem('tweetHistory', JSON.stringify(history));
-  renderHistory();
-  toast('💾 履歴に保存しました');
+/* ===== ブログ記事コピー・DL ===== */
+function copyBl() {
+  navigator.clipboard.writeText(document.getElementById('blOut').textContent)
+    .then(function(){ toast('記事をコピーしました！'); });
+}
+function dlBl() {
+  var t = document.getElementById('blOut').textContent;
+  if (!t) { toast('まず生成してください', 1); return; }
+  dl(t, 'blog-' + Date.now() + '.md');
+}
+function dl(text, filename) {
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));
+  a.download = filename; a.click();
+  toast('保存しました！');
 }
 
-/* ===== スケジュールに追加 ===== */
-function addToSchedule() {
-  var t = document.getElementById('editBox').textContent.trim();
-  if (!t) { toast('ツイートが空です', 1); return; }
-  // 同じタイプの最初の空スロットを探す
-  var slot = schedule.find(function(s) { return s.type === currentType && !s.text && !s.done; });
-  if (!slot) {
-    // 空スロットなら任意の空きへ
-    slot = schedule.find(function(s) { return !s.text && !s.done; });
+/* ===== 再生成 ===== */
+async function regenTw(btn) {
+  if (!cur) { toast('先に商品情報を入力してください', 1); return; }
+  btn.disabled = true; btn.textContent = '生成中...';
+  try { document.getElementById('twOut').textContent = await makeTw(cur); updTw(); toast('再生成しました！'); }
+  catch(e) { toast('失敗: '+e.message, 1); }
+  finally { btn.disabled = false; btn.textContent = '🔄 再生成'; }
+}
+async function regenBl(btn) {
+  if (!cur) { toast('先に商品情報を入力してください', 1); return; }
+  btn.disabled = true; btn.textContent = '生成中...';
+  try {
+    var bl = await makeBl(cur);
+    document.getElementById('blOut').textContent = bl;
+    document.getElementById('blCount').textContent = bl.length+'文字';
+    toast('再生成しました！');
   }
-  if (!slot) { toast('今日の投稿枠がすべて埋まっています', 1); return; }
-  slot.text = t;
-  saveSchedule();
-  renderSchedule();
-  updateSummary();
-  toast('📅 今日の投稿枠に追加しました！');
+  catch(e) { toast('失敗: '+e.message, 1); }
+  finally { btn.disabled = false; btn.textContent = '🔄 再生成'; }
 }
 
-/* ===== スケジュール表示 ===== */
-function renderSchedule() {
-  var el = document.getElementById('slotList');
-  el.innerHTML = '';
-  schedule.forEach(function(slot, idx) {
-    var div = document.createElement('div');
-    div.className = 'slot' + (slot.done ? ' done' : '');
-
-    var typeClass = slot.type;
-    var typeText  = typeLabel(slot.type);
-
-    div.innerHTML =
-      '<span class="slot-time">' + slot.time + '</span>' +
-      '<div class="slot-body">' +
-        '<div class="slot-type ' + typeClass + '">' + typeText + '</div>' +
-        (slot.text
-          ? '<div class="slot-text">' + escHtml(slot.text.substring(0, 60)) + (slot.text.length > 60 ? '…' : '') + '</div>'
-          : '<div class="slot-empty">未設定</div>') +
-        (slot.text && !slot.done ? '<button class="slot-save-btn" onclick="useSlot(' + idx + ')">コピーして投稿 →</button>' : '') +
-      '</div>' +
-      '<button class="slot-check" onclick="toggleSlotDone(' + idx + ')">' + (slot.done ? '✓' : '') + '</button>';
-
-    el.appendChild(div);
-  });
-
-  // バランスアドバイス
-  var kDone = schedule.filter(function(s){ return s.type==='k' && s.done; }).length;
-  var eDone = schedule.filter(function(s){ return s.type==='e' && s.done; }).length;
-  var aDone = schedule.filter(function(s){ return s.type==='a' && s.done; }).length;
-  var total = kDone + eDone + aDone;
-  var note  = '';
-  if (total === 0) note = '今日はまだ投稿していません。豆知識か共感ツイートから始めましょう。';
-  else if (aDone > 1) note = '⚠ 告知投稿が多めです。豆知識か共感ツイートを混ぜるとバランスよくなります。';
-  else if (kDone + eDone === 0) note = '告知だけにならないよう、豆知識か共感ツイートを追加しましょう。';
-  else note = '良いバランスです！';
-  document.getElementById('balanceNote').textContent = note;
+/* ===== はてなブログ投稿 ===== */
+async function postHatena() {
+  if (!cur) { toast('先に商品情報を入力してください', 1); return; }
+  var body = document.getElementById('blOut').textContent;
+  if (!body) { toast('先に記事を生成してください', 1); return; }
+  var title = body.split('\n')[0].replace(/^#+\s*/,'').trim();
+  var btn   = document.getElementById('hatBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="sp"></span>投稿中...';
+  try {
+    var r = await fetch(WK, {method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:'hatena-post',title:title,body:body,hatenaId:HID,blogId:BID,category:cur.cat,imageUrl:cur.iUrl})});
+    var d = await r.json();
+    if (d.error) throw new Error(d.error);
+    toast('投稿しました！🎉');
+  } catch(e) { toast('投稿失敗: '+e.message, 1); }
+  finally { btn.disabled = false; btn.innerHTML = '📝 はてなブログに投稿'; }
 }
 
-function toggleSlotDone(idx) {
-  schedule[idx].done = !schedule[idx].done;
-  if (schedule[idx].done && schedule[idx].text) {
-    // 投稿済みとしてログに記録
-    var today = todayKey();
-    var existing = JSON.parse(localStorage.getItem('tweetLog') || '{}');
-    var items = (existing.date === today) ? existing.items : [];
-    items.push({ type: schedule[idx].type, text: schedule[idx].text, time: schedule[idx].time });
-    localStorage.setItem('tweetLog', JSON.stringify({ date: today, items: items }));
-    todayLog = items;
-  }
-  saveSchedule();
-  renderSchedule();
-  updateSummary();
+/* ===== 記事ストック（localStorage永続） ===== */
+function saveArticleStock() {
+  localStorage.setItem('articleStock', JSON.stringify(articleStock));
+  renderStockPage();
+  renderStockSidebar();
 }
 
-function useSlot(idx) {
-  var t = schedule[idx].text;
-  if (!t) return;
-  navigator.clipboard.writeText(t).then(function() {
-    window.open('https://twitter.com/intent/tweet', '_blank');
-    toast('コピー完了！Xが開きます');
-  });
+// 自動保存（生成時）
+function autoSaveArticle(p, body) {
+  var title = body.split('\n')[0].replace(/^#+\s*/,'').trim() || (p.name || p.asin);
+  var idx   = articleStock.findIndex(function(a){ return a.asin === p.asin; });
+  var item  = {
+    id:      Date.now(),
+    asin:    p.asin,
+    name:    p.name || p.asin,
+    title:   title,
+    cat:     p.cat || getSelectedCat(),
+    sale:    p.sale,
+    orig:    p.orig,
+    disc:    p.disc,
+    pt:      p.pt,
+    link:    p.link,
+    iUrl:    p.iUrl,
+    body:    body,
+    savedAt: new Date().toLocaleDateString('ja-JP') + ' ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})
+  };
+  if (idx >= 0) articleStock[idx] = item;
+  else articleStock.unshift(item);
+  saveArticleStock();
 }
 
-function saveSchedule() {
-  localStorage.setItem('tweetSchedule', JSON.stringify({ date: todayKey(), slots: schedule }));
+// 手動保存
+function saveToStock() {
+  if (!cur) { toast('先に記事を生成してください', 1); return; }
+  var body = document.getElementById('blOut').textContent;
+  if (!body) { toast('先に記事を生成してください', 1); return; }
+  autoSaveArticle(cur, body);
+  toast('📦 ストックに保存しました！');
 }
 
-function resetToday() {
-  if (!confirm('今日のスケジュールをリセットしますか？')) return;
-  schedule = defaultSchedule();
-  saveSchedule();
-  renderSchedule();
-  updateSummary();
-  toast('リセットしました');
-}
-
-/* ===== サマリー更新 ===== */
-function updateSummary() {
-  var today  = todayKey();
-  var log    = JSON.parse(localStorage.getItem('tweetLog') || '{}');
-  var items  = (log.date === today) ? log.items : [];
-  var kc = items.filter(function(i){ return i.type==='k'; }).length;
-  var ec = items.filter(function(i){ return i.type==='e'; }).length;
-  var ac = items.filter(function(i){ return i.type==='a'; }).length;
-  var total = kc + ec + ac;
-
-  document.getElementById('kCount').textContent     = kc;
-  document.getElementById('eCount').textContent     = ec;
-  document.getElementById('aCount').textContent     = ac;
-  document.getElementById('totalCount').textContent = total;
-
-  var advice = '';
-  if      (total === 0)                   advice = '今日の投稿を始めましょう';
-  else if (total >= 3)                    advice = '今日の目標達成！お疲れさまです ✓';
-  else if (ac >= 2 && kc + ec === 0)     advice = '告知多め。豆知識か共感を混ぜましょう';
-  else if (kc + ec >= 2 && ac === 0)     advice = '告知投稿も入れましょう';
-  else                                    advice = 'あと' + (3 - total) + '件で今日の目標達成';
-  document.getElementById('adviceText').textContent = advice;
-}
-
-/* ===== 履歴表示 ===== */
-function renderHistory() {
-  var el = document.getElementById('historyList');
-  if (!history.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>まだ履歴がありません</div>';
+// ストック一覧ページ表示
+function renderStockPage() {
+  var el  = document.getElementById('stockPageList');
+  var cnt = document.getElementById('stockPageCount');
+  cnt.textContent = '（' + articleStock.length + '件）';
+  if (!articleStock.length) {
+    el.innerHTML = '<div class="stock-empty">まだ記事がありません。記事作成タブで記事を生成してください。</div>';
     return;
   }
   el.innerHTML = '';
   var list = document.createElement('div');
-  list.className = 'history-list';
-  history.slice(0, 20).forEach(function(item, idx) {
-    var div = document.createElement('div');
-    div.className = 'history-item';
-    div.innerHTML =
-      '<div class="history-meta">' +
-        '<span class="history-type ' + item.type + '">' + typeLabel(item.type) + '</span>' +
-        '<span class="history-date">' + item.savedAt + '</span>' +
+  list.className = 'stock-list';
+  articleStock.forEach(function(item, idx) {
+    var card = document.createElement('div');
+    card.className = 'stock-card';
+    card.innerHTML =
+      '<img class="stock-thumb" src="'+item.iUrl+'" onerror="this.style.display=\'none\'">' +
+      '<div class="stock-info">' +
+        '<div class="stock-name">'+item.title+'</div>' +
+        '<div class="stock-meta">' +
+          '<span>'+item.savedAt+'</span>' +
+          '<span class="stock-badge badge-asin">ASIN: '+item.asin+'</span>' +
+          (item.disc>0?'<span class="stock-badge badge-disc">-'+item.disc+'%</span>':'') +
+          '<span style="color:var(--mu)">'+item.cat+'</span>' +
+        '</div>' +
       '</div>' +
-      '<div class="history-text">' + escHtml(item.text) + '</div>' +
-      '<div class="history-actions">' +
-        '<button class="btn btn-ghost btn-sm" onclick="copyHistory(' + idx + ')">📋 コピー</button>' +
-        '<button class="btn btn-ghost btn-sm" onclick="loadHistory(' + idx + ')">↩ 編集に読込</button>' +
-        '<button class="btn btn-danger btn-sm" onclick="deleteHistory(' + idx + ')">削除</button>' +
+      '<div class="stock-actions">' +
+        '<button class="btn bs btn-sm" onclick="viewArticle('+idx+')">📄 開く</button>' +
+        '<button class="btn bs btn-sm" onclick="reEditArticle('+idx+')">✏️ 再編集</button>' +
+        '<button class="btn bs btn-sm" onclick="copyArticle('+idx+')">📋 コピー</button>' +
+        '<button class="btn bpu btn-sm" onclick="addToRank('+idx+')">🏆 ランキングに追加</button>' +
+        '<button class="btn bre btn-sm" onclick="deleteArticle('+idx+')">🗑️</button>' +
       '</div>';
-    list.appendChild(div);
+    list.appendChild(card);
   });
   el.appendChild(list);
 }
 
-function copyHistory(idx) {
-  navigator.clipboard.writeText(history[idx].text).then(function() { toast('コピーしました！'); });
+// ストックサイドバー（記事作成タブ内）
+function renderStockSidebar() {
+  var el  = document.getElementById('stList');
+  var cnt = document.getElementById('stCount');
+  if (!el) return;
+  cnt.textContent = '（' + articleStock.length + '件）';
+  el.innerHTML = '';
+  if (!articleStock.length) {
+    el.innerHTML = '<div class="stock-empty">まだ記事がありません。上で記事を生成すると自動保存されます。</div>';
+    return;
+  }
+  var list = document.createElement('div');
+  list.className = 'stock-list';
+  articleStock.slice(0, 5).forEach(function(item, idx) {
+    var card = document.createElement('div');
+    card.className = 'stock-card';
+    card.style.cursor = 'pointer';
+    card.innerHTML =
+      '<img class="stock-thumb" src="'+item.iUrl+'" onerror="this.style.display=\'none\'">' +
+      '<div class="stock-info">' +
+        '<div class="stock-name">'+item.title+'</div>' +
+        '<div class="stock-meta"><span>'+item.savedAt+'</span>'+(item.disc>0?'<span class="stock-badge badge-disc">-'+item.disc+'%</span>':'')+'</div>' +
+      '</div>' +
+      '<div class="stock-actions">' +
+        '<button class="btn bs btn-sm" onclick="viewArticle('+idx+')">📄</button>' +
+        '<button class="btn bs btn-sm" onclick="copyArticle('+idx+')">📋</button>' +
+        '<button class="btn bre btn-sm" onclick="deleteArticle('+idx+')">🗑️</button>' +
+      '</div>';
+    list.appendChild(card);
+  });
+  el.appendChild(list);
+  if (articleStock.length > 5) {
+    var more = document.createElement('div');
+    more.style = 'text-align:center;margin-top:10px';
+    more.innerHTML = '<button class="btn bs btn-sm" onclick="swTab(\'stock\',document.getElementById(\'btn-stock\'))">全'+articleStock.length+'件を見る →</button>';
+    el.appendChild(more);
+  }
 }
 
-function loadHistory(idx) {
-  var item = history[idx];
-  selectType(item.type);
-  document.getElementById('editBox').textContent = item.text;
-  updCount();
-  document.getElementById('resultArea').classList.add('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  toast('編集エリアに読み込みました');
+function viewArticle(idx) {
+  var item = articleStock[idx];
+  if (!item) return;
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalOut').textContent   = item.body;
+  document.getElementById('viewModal').classList.add('show');
 }
-
-function deleteHistory(idx) {
-  if (!confirm('削除しますか？')) return;
-  history.splice(idx, 1);
-  localStorage.setItem('tweetHistory', JSON.stringify(history));
-  renderHistory();
+function copyArticle(idx) {
+  var item = articleStock[idx];
+  if (!item) return;
+  navigator.clipboard.writeText(item.body).then(function(){ toast('コピーしました！'); });
+}
+function deleteArticle(idx) {
+  if (!confirm('この記事を削除しますか？')) return;
+  articleStock.splice(idx, 1);
+  saveArticleStock();
   toast('削除しました');
+}
+function closeModal() { document.getElementById('viewModal').classList.remove('show'); }
+
+// ストックから再編集：フォームに値を復元して記事作成タブへ移動
+function reEditArticle(idx) {
+  var item = articleStock[idx];
+  if (!item) return;
+
+  // フォームに値を復元
+  document.getElementById('qUrl').value   = item.asin || '';
+  document.getElementById('qName').value  = item.name || '';
+  document.getElementById('qSale').value  = item.sale || '';
+  document.getElementById('qOrig').value  = item.orig || '';
+  document.getElementById('qPoint').value = item.pt   || '';
+  document.getElementById('qNote').value  = '';
+
+  // カテゴリー復元
+  var catSel = document.getElementById('qCat');
+  if (catSel && item.cat) catSel.value = item.cat;
+
+  // ASIN表示・画像を更新
+  onUrlInput();
+
+  // 生成済み記事を出力欄に復元
+  document.getElementById('blOut').textContent = item.body || '';
+  document.getElementById('blCount').textContent = (item.body || '').length + '文字';
+  document.getElementById('blCard').style.display = 'block';
+
+  // curを復元
+  cur = {
+    asin: item.asin, name: item.name, orig: item.orig||0, sale: item.sale||0,
+    disc: item.disc||0, save: (item.orig||0)-(item.sale||0), pt: item.pt||0,
+    eff: item.pt ? (item.sale||0)-(item.pt||0) : null,
+    link: item.link, iUrl: item.iUrl, note: '', selTitle: item.title,
+    cat: item.cat, date: item.savedAt
+  };
+
+  // 記事作成タブへ移動
+  swTab('post', document.getElementById('btn-post'));
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast('✏️ 再編集モードで読み込みました');
+}
+function copyModal() {
+  navigator.clipboard.writeText(document.getElementById('modalOut').textContent)
+    .then(function(){ toast('コピーしました！'); });
+}
+
+/* ===== まとめ記事ストック（旧） ===== */
+function addToMtStock(p) {
+  var idx  = stockItems.findIndex(function(i){ return i.asin===p.asin; });
+  var item = {asin:p.asin,name:p.name,sale:p.sale,orig:p.orig,pt:p.pt,eff:p.eff,link:p.link,addedAt:Date.now()};
+  if (idx>=0) stockItems[idx]=item; else stockItems.unshift(item);
+  localStorage.setItem('amzStock', JSON.stringify(stockItems));
+}
+
+/* ===== まとめ記事生成 ===== */
+async function genMatome() {
+  if (stockItems.length < 2) { toast('商品が2件以上必要です', 1); return; }
+  var style = document.getElementById('mtStyle').value;
+  var cat   = document.getElementById('mtCat').value;
+  var max   = parseInt(document.getElementById('mtMax').value);
+  var tgts  = stockItems.slice();
+  if (cat) tgts = tgts.filter(function(i){ return guessCategory(i.name)===cat; });
+  tgts = tgts.slice(0, max);
+  if (!tgts.length) { toast('該当する商品がありません', 1); return; }
+
+  var btn = document.getElementById('mtBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="sp"></span>生成中...';
+
+  /* タイトル：日付なし・短く */
+  var label = style === 'daily'
+    ? 'Amazon\u304a\u5f97\u307e\u3068\u3081'
+    : (cat || '\u30bb\u30fc\u30eb') + '\u304a\u3059\u3059\u3081\u307e\u3068\u3081';
+  var fullTitle = label + '\u3010' + tgts.length + '\u9078\u3011';
+
+  /* 価格表記：「¥1,501（定価¥1,949・43%OFF / 35pt還元で実質¥1,466）」 */
+  function buildPriceText(item) {
+    var disc = (item.orig > 0 && item.sale < item.orig)
+      ? Math.round((1 - item.sale / item.orig) * 100) : 0;
+    var txt = '\u00a5' + fmt(item.sale);
+    if (item.orig > 0 && item.sale < item.orig) {
+      txt += '\uff08\u5b9a\u4fa1\u00a5' + fmt(item.orig) + '\u30fb' + disc + '%OFF\uff09';
+    }
+    if (item.pt > 0) {
+      txt += ' / ' + fmt(item.pt) + 'pt\u9084\u5143\u3067\u5b9f\u8cea\u00a5' + fmt(item.sale - item.pt);
+    }
+    return txt;
+  }
+
+  /* 画像スタイル：200×200固定 */
+  var IMG_STYLE = 'width:200px;height:200px;object-fit:contain;background:#fff;border-radius:8px;padding:4px;display:block;margin:10px auto';
+
+  /* 商品情報テキスト（AIに渡す） */
+  var itemLines = [];
+  for (var i = 0; i < tgts.length; i++) {
+    var item = tgts[i];
+    var disc = (item.orig > 0 && item.sale < item.orig)
+      ? Math.round((1 - item.sale / item.orig) * 100) : 0;
+    var imgSrc = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.jpg';
+    itemLines.push(
+      '--- \u5546\u54c1' + (i+1) + ' ---\n' +
+      '\u5546\u54c1\u540d: ' + (item.name || item.asin) + '\n' +
+      'ASIN: ' + item.asin + '\n' +
+      '\u4fa1\u683c\u8868\u8a18: ' + buildPriceText(item) + '\n' +
+      '\u5272\u5f15: ' + (disc > 0 ? disc + '%OFF' : '\u306a\u3057') + '\n' +
+      '\u8cfc\u5165\u30ea\u30f3\u30af\uff08\u5909\u66f4\u7981\u6b62\uff09: ' + item.link + '\n' +
+      '\u753b\u50cfURL\uff08\u5909\u66f4\u7981\u6b62\uff09: ' + imgSrc
+    );
+  }
+  var itemsTxt = itemLines.join('\n\n');
+
+  /* セクションひな形（リンク・画像をJS側で確定） */
+  var sectionParts = [];
+  for (var j = 0; j < tgts.length; j++) {
+    var it = tgts[j];
+    var imgS = 'https://images-na.ssl-images-amazon.com/images/P/' + it.asin + '.jpg';
+    sectionParts.push(
+      '## ' + (j+1) + '. \u3010\u5546\u54c1' + (j+1) + '\u306e\u6b63\u5f0f\u540d\u79f0\u3092\u3053\u3053\u306b\u5165\u308c\u308b\u3011\n\n' +
+      '<a href="' + it.link + '" target="_blank" rel="noopener">\n' +
+      '<img src="' + imgS + '" alt="\u5546\u54c1\u753b\u50cf" style="' + IMG_STYLE + '">\n' +
+      '</a>\n\n' +
+      '\ud83d\udcb0 **' + buildPriceText(it) + '**\n\n' +
+      '\u3010\u3053\u306e\u5546\u54c1\u306e\u9b45\u529b\u30fb\u304a\u3059\u3059\u3081\u7406\u7531\u30923\u6587\u4ee5\u4e0a\u3067\u66f8\u304f\u3002\u5546\u54c1\u306e\u7279\u5fb4\u3001\u3069\u3093\u306a\u4eba\u306b\u5411\u3044\u3066\u3044\u308b\u304b\u3001\u751f\u6d3b\u3078\u306e\u52b9\u679c\u306a\u3069\u3092\u5177\u4f53\u7684\u306b\u3011\n\n' +
+      '<a href="' + it.link + '" target="_blank" rel="noopener">\ud83d\uded2 Amazon\u3067\u8cfc\u5165\u3059\u308b</a>'
+    );
+  }
+  var sections = sectionParts.join('\n\n---\n\n');
+
+  /* 一覧表 */
+  var tableRows = [];
+  for (var k = 0; k < tgts.length; k++) {
+    var ti = tgts[k];
+    var td = (ti.orig > 0 && ti.sale < ti.orig)
+      ? Math.round((1 - ti.sale / ti.orig) * 100) + '%OFF' : '-';
+    tableRows.push('| ' + (k+1) + ' | ' + (ti.name||ti.asin).substring(0,20) + ' | \u00a5' + fmt(ti.sale) + ' | ' + td + ' |');
+  }
+
+  /* プロンプト */
+  var prompt = [
+    '\u3042\u306a\u305f\u306f\u306f\u3066\u306a\u30d6\u30ed\u30b0\u306eAmazon\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30bf\u30fc\u3067\u3059\u3002\u4ee5\u4e0b\u306e\u6307\u793a\u306b\u5f93\u3063\u3066\u8a18\u4e8b\u3092\u5b8c\u6210\u3055\u305b\u3066\u304f\u3060\u3055\u3044\u3002',
+    '',
+    '\u3010\u53b3\u5b88\u30eb\u30fc\u30eb\u3011',
+    '1. \u5404\u5546\u54c1\u30bb\u30af\u30b7\u30e7\u30f3\u306eHTML\u30ea\u30f3\u30af\u3068\u753b\u50cfURL\u306f\u7d76\u5bfe\u306b\u5909\u66f4\u30fb\u6539\u5909\u3057\u306a\u3044\u3053\u3068',
+    '2. \u5546\u54c1\u540d\u306f\u5fc5\u305a\u5b9f\u969b\u306e\u5546\u54c1\u540d\u3092\u4f7f\u3046\u3053\u3068',
+    '3. \u4fa1\u683c\u8868\u8a18\u306f\u63d0\u4f9b\u3055\u308c\u305f\u3082\u306e\u3092\u305d\u306e\u307e\u307e\u4f7f\u3046\u3053\u3068',
+    '4. \u5404\u5546\u54c1\u306e\u8aac\u660e\u6587\u306f\u5fc5\u305a3\u6587\u4ee5\u4e0a\u66f8\u304f\u3053\u3068',
+    '5. Markdown\u3068\u30b7\u30f3\u30d7\u30eb\u306adiv/a\u30bf\u30b0\u306e\u307f\u4f7f\u7528',
+    '',
+    '\u3010\u5546\u54c1\u60c5\u5831\u30ea\u30b9\u30c8\u3011',
+    itemsTxt,
+    '',
+    '\u3010\u4ee5\u4e0b\u306e\u3072\u306a\u5f62\u3092\u5b8c\u6210\u3055\u305b\u3066\u51fa\u529b\u3059\u308b\u3053\u3068\u3011',
+    '',
+    '# ' + fullTitle,
+    '',
+    '> \u203b\u672c\u8a18\u4e8b\u306b\u306f\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30c8\u30ea\u30f3\u30af\u304c\u542b\u307e\u308c\u307e\u3059\u3002 #AD',
+    '',
+    '\uff08\u30ea\u30fc\u30c9\u6587\uff1a2\uff5e3\u6587\u3067\uff09',
+    '',
+    '## \u5546\u54c1\u4e00\u89a7',
+    '',
+    '| # | \u5546\u54c1\u540d | \u4fa1\u683c | \u5272\u5f15 |',
+    '|---|--------|------|------|',
+    tableRows.join('\n'),
+    '',
+    '---',
+    '',
+    sections,
+    '',
+    '---',
+    '',
+    '## \u307e\u3068\u3081',
+    '',
+    '\uff08\u7de0\u3081\u30b3\u30e1\u30f3\u30c8\u3092 2\uff5e3\u6587\u3067\uff09',
+    '',
+    '\u3010\u51fa\u529b\u306fMarkdown\u5f62\u5f0f\u306e\u307f\u3002\u3010\u3011\u5185\u306e\u6307\u793a\u6587\u3092\u5b9f\u969b\u306e\u30c6\u30ad\u30b9\u30c8\u306b\u7f6e\u304d\u63db\u3048\u308b\u3053\u3068\u3011'
+  ].join('\n');
+
+  try {
+    var result = await callAI(prompt);
+    document.getElementById('mtOut').textContent      = result;
+    document.getElementById('mtResult').style.display = 'block';
+    document.getElementById('mtCount').textContent    = result.length + '\u6587\u5b57';
+    document.getElementById('mtResult').scrollIntoView({behavior:'smooth'});
+    toast('\u307e\u3068\u3081\u8a18\u4e8b\u3092\u751f\u6210\u3057\u307e\u3057\u305f\uff01');
+  } catch(e) { toast('\u751f\u6210\u5931\u6557: '+e.message, 1); }
+  finally { btn.disabled=false; btn.innerHTML='\ud83d\udccb \u307e\u3068\u3081\u8a18\u4e8b\u3092\u751f\u6210'; }
+}
+/* ===== ランキング操作 ===== */
+function renderRankSlots() {
+  var el  = document.getElementById('rankSlots');
+  var cnt = document.getElementById('rankCount');
+  cnt.textContent = '（'+rankItems.length+'件）';
+  if (!rankItems.length) {
+    el.innerHTML = '<div class="stock-empty">まだ商品がありません。ストックから追加してください。</div>';
+    return;
+  }
+  el.innerHTML = '';
+  rankItems.forEach(function(item, idx) {
+    var colors = ['gold','silver','bronze'];
+    var div = document.createElement('div');
+    div.className = 'rank-slot';
+    div.innerHTML =
+      '<div class="rank-num '+(colors[idx]||'')+'">'+(idx+1)+'位</div>' +
+      '<img class="rank-thumb" src="'+item.iUrl+'" onerror="this.style.display=\'none\'">' +
+      '<div class="rank-info">' +
+        '<div class="rank-name">'+item.name+'</div>' +
+        '<div class="rank-price">\u00a5'+fmt(item.sale)+(item.disc>0?' (-'+item.disc+'%)':'')+'</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-shrink:0">' +
+        (idx>0?'<button class="btn bs btn-sm" onclick="moveRank('+idx+',-1)">▲</button>':'') +
+        (idx<rankItems.length-1?'<button class="btn bs btn-sm" onclick="moveRank('+idx+',1)">▼</button>':'') +
+        '<button class="rank-del" onclick="removeRank('+idx+')">\u00d7</button>' +
+      '</div>';
+    el.appendChild(div);
+  });
+}
+
+function addToRank(stockIdx) {
+  var item = articleStock[stockIdx];
+  if (!item) return;
+  if (rankItems.find(function(r){ return r.asin===item.asin; })) {
+    toast('すでにランキングに追加されています', 1); return;
+  }
+  rankItems.push({asin:item.asin, name:item.name||item.title, sale:item.sale, orig:item.orig, disc:item.disc, link:item.link, iUrl:item.iUrl, body:item.body});
+  renderRankSlots();
+  toast('🏆 ランキングに追加しました！');
+}
+
+function moveRank(idx, dir) {
+  var to = idx + dir;
+  if (to < 0 || to >= rankItems.length) return;
+  var tmp = rankItems[idx]; rankItems[idx] = rankItems[to]; rankItems[to] = tmp;
+  renderRankSlots();
+}
+
+function removeRank(idx) { rankItems.splice(idx, 1); renderRankSlots(); }
+
+function clearRank() {
+  if (!confirm('ランキング構成をクリアしますか？')) return;
+  rankItems = []; renderRankSlots();
+}
+
+async function genRanking() {
+  if (!rankItems.length) { toast('ランキングに商品を追加してください', 1); return; }
+  var rankTitle = document.getElementById('rankTitle').value.trim() || 'おすすめ商品ランキング';
+  var rankTheme = document.getElementById('rankTheme').value.trim();
+  var btn = document.getElementById('rankGenBtn');
+  btn.disabled=true; btn.innerHTML='<span class="sp"></span>生成中...';
+
+  var itemsTxt = rankItems.map(function(item,i){
+    return (i+1)+'位: '+(item.name||item.asin)+
+      '\n   価格:\u00a5'+fmt(item.sale)+(item.disc>0?' (-'+item.disc+'%)':'')+
+      '\n   リンク:'+item.link+
+      '\n   画像:'+item.iUrl+
+      (item.body ? '\n   記事概要:'+(item.body.substring(0,200)+'...') : '');
+  }).join('\n\n');
+
+  var prompt =
+    'はてなブログAmazonアフィリエイト「'+rankTitle+'」ランキング記事をMarkdownで作成してください。\n\n' +
+    (rankTheme?'テーマ・対象: '+rankTheme+'\n\n':'') +
+    '【ランキング商品リスト（順位は固定）】\n'+itemsTxt+'\n\n' +
+    '【必須構成】\n' +
+    '# '+rankTitle+'【'+rankItems.length+'選】\n\n' +
+    '（リード文120文字：このランキングを読む価値を伝える）\n\n' +
+    '## 選び方のポイント\n\n（3点）\n\n' +
+    rankItems.map(function(item,i){
+      var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅';
+      return '## '+(i+1)+'位 '+medal+' （商品名を簡潔に）\n\n' +
+        '<a href="'+item.link+'" target="_blank" rel="noopener" style="display:block;background:none!important;border:none!important;padding:0!important;margin:12px auto!important;max-width:400px;text-decoration:none"><img src="'+item.iUrl+'" alt="'+item.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:6px;background:#fff"></a>\n\n' +
+        '| 項目 | 内容 |\n|------|------|\n' +
+        '| 💰 価格 | \u00a5'+fmt(item.sale)+(item.disc>0?' (-'+item.disc+'%)':'')+' |\n' +
+        '| ✅ おすすめ度 | ★★★★☆ |\n\n' +
+        '（この商品のおすすめポイントを2〜3文で）\n\n' +
+        '<a href="'+item.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:15px;padding:12px 28px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a>';
+    }).join('\n\n---\n\n') +
+    '\n\n---\n\n## まとめ\n\n（ランキングの総括・購入を後押しする文章を3文で）\n\n' +
+    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
+    '【ルール】各（商品名を簡潔に）は実際の商品名に置き換えること。Markdownのみ。HTMLタグはdivとaのみ使用可。';
+
+  try {
+    var result = await callAI(prompt, 3000);
+    document.getElementById('rankOut').textContent      = result;
+    document.getElementById('rankResult').style.display = 'block';
+    document.getElementById('rankCount2').textContent   = result.length + '文字';
+    document.getElementById('rankResult').scrollIntoView({behavior:'smooth'});
+    toast('ランキング記事を生成しました！');
+  } catch(e) { toast('生成失敗: '+e.message, 1); }
+  finally { btn.disabled=false; btn.innerHTML='🏆 ランキング記事を生成（AI）'; }
+}
+
+function copyRank() { navigator.clipboard.writeText(document.getElementById('rankOut').textContent).then(function(){ toast('コピーしました！'); }); }
+function dlRank()   { dl(document.getElementById('rankOut').textContent, 'ranking-'+Date.now()+'.md'); }
+async function postRank() {
+  var body  = document.getElementById('rankOut').textContent;
+  if (!body){ toast('先に生成してください', 1); return; }
+  var title = body.split('\n')[0].replace(/^#+\s*/,'').trim();
+  var btn   = document.getElementById('rankGenBtn');
+  btn.disabled=true; btn.innerHTML='<span class="sp"></span>投稿中...';
+  try {
+    var r = await fetch(WK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'hatena-post',title:title,body:body,hatenaId:HID,blogId:BID,category:'ランキング',imageUrl:rankItems[0]?rankItems[0].iUrl:''})});
+    var d = await r.json(); if(d.error) throw new Error(d.error);
+    toast('投稿しました！');
+  } catch(e) { toast('投稿失敗: '+e.message, 1); }
+  finally { btn.disabled=false; btn.innerHTML='🏆 ランキング記事を生成（AI）'; }
+}
+
+/* ===== セール品検索（PA-API） ===== */
+async function doSearch() {
+  var kw = document.getElementById('kw').value.trim();
+  if (!kw) { toast('キーワードを入力してください', 1); return; }
+  var btn = document.getElementById('srchBtn');
+  btn.disabled=true; btn.innerHTML='<span class="sp"></span>検索中...';
+  try {
+    var r = await fetch(WK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({keywords:kw,category:document.getElementById('cat').value,minDiscount:parseInt(document.getElementById('disc').value),sortBy:'Relevance'})});
+    var d = await r.json();
+    if (!r.ok||d.error) throw new Error(d.error||'APIエラー');
+    var items = d.items||[];
+    document.getElementById('srchResult').innerHTML = items.length
+      ? '<div style="font-size:13px;margin-bottom:12px">'+items.length+'件見つかりました</div>'
+      : '<div class="empty-st"><div class="empty-ic">😢</div><div class="empty-ti">該当商品が見つかりませんでした</div></div>';
+  } catch(e) {
+    document.getElementById('srchResult').innerHTML = '<div class="empty-st"><div class="empty-ic">⚠️</div><div class="empty-ti">'+e.message+'</div></div>';
+  } finally {
+    btn.disabled=false; btn.innerHTML='🔍 セール品を探す';
+  }
 }
 </script>
 </body>
