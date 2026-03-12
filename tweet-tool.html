@@ -1008,14 +1008,19 @@ async function genAll() {
 function makeTw(p) {
   var ef = p.eff != null ? '\n💡実質\u00a5'+fmt(p.eff)+'（'+fmt(p.pt)+'pt還元）' : '';
   return callAI(
-    'AmazonアフィリエイトのX投稿文を作成。140文字以内。\n' +
+    'AmazonのセールをXでシェアする投稿文を作成してください。\n' +
     'ASIN:'+p.asin+'\n商品名:'+(p.name||'（ASINから推測）')+'\n請求額:\u00a5'+fmt(p.sale)+
     '\n定価:'+(p.orig?'\u00a5'+fmt(p.orig):'不明')+'\n割引:'+(p.disc>0?p.disc+'%OFF':'不明')+
     '\n節約:\u00a5'+fmt(p.save)+'\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+
     '\n実質:'+(p.eff?'\u00a5'+fmt(p.eff):'なし')+'\nリンク:'+p.link+'\n補足:'+(p.note||'なし')+
-    '\n\n形式:\n【'+(p.disc>0?p.disc+'%OFF🔥':'セール🔥')+'】商品名20文字以内\n\u00a5'+
+    '\n\n【キャラクター設定】\n'+
+    'Amazonをちょっと使いこなしてる、ちょっと先に気づいた友達のような発信者。\n'+
+    '上から目線にならず、「これ知ってる？」「自分も最近まで知らなかった」という等身大の共感トーン。\n'+
+    '一人称は「自分」。\n'+
+    '\n【形式】\n'+
+    '【'+(p.disc>0?p.disc+'%OFF🔥':'セール🔥')+'】商品名20文字以内\n\u00a5'+
     (p.orig?fmt(p.orig)+'\u2192':'')+'\u00a5'+fmt(p.sale)+'（\u00a5'+fmt(p.save)+'お得！）'+ef+
-    '\n⏰特徴一言\n\n'+p.link+'\n#PR #AD #AM #セール #激安\n\n文字数厳守。Markdown不使用。'
+    '\n（商品の特徴や買い時の理由を人間味ある一言で。「これ安すぎない？」「自分も気になってた」系のトーンで）\n\n'+p.link+'\n#ad\n\n【ルール】URLを含めて140文字以内。Markdown不使用。宣伝くさい表現は避ける。'
   );
 }
 
@@ -1198,7 +1203,7 @@ async function genRelSection(mainProduct, relItems) {
     '【出力ルール】',
     '・必ずJSON配列のみを出力すること。前置き・説明・コードブロック記号は一切不要',
     '・各商品を1オブジェクトとして以下のキーで出力:',
-    '  "shortTitle": 商品名を20文字以内に短縮（型番・長い修飾語は省略してOK）',
+    '  "shortTitle": 商品名を20文字以内に短縮。色違い・サイズ違いの場合は必ず色名やサイズを含めること（例:「ジェギング ネイビー」「ジェギング ホワイト」）。同じ商品名が重複しないよう区別できる表現にすること',
     '  "desc": 本体商品との相性・おすすめ理由を2〜3文、合計80文字以内でまとめる',
     '・出力例: [{"shortTitle":"ケース（MagSafe対応）","desc":"MagSafe充電に対応し..."},...]',
   ]);
@@ -1257,7 +1262,7 @@ async function genRelSection(mainProduct, relItems) {
     );
   });
 
-  return '\n## 📦 合わせて買いたいアクセサリー\n\n' + cards.join('\n');
+  return '\n## 📦 合わせてチェックしたい商品\n\n' + cards.join('\n');
 }
 
 /* ===== X投稿 ===== */
