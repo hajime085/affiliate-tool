@@ -207,18 +207,15 @@ textarea{resize:vertical}
             ondragover="onImgDragOver(event)"
             ondragleave="onImgDragLeave(event)"
             ondrop="onImgDrop(event)">
-            <!-- プレビュー画像 -->
             <img id="thumbImg"
               style="width:100%;height:100%;object-fit:contain;background:#fff;border-radius:10px;padding:6px;display:block"
               alt="">
-            <!-- ドロップ誘導オーバーレイ（画像なし時） -->
             <div id="dropOverlay"
               style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none">
               <div style="font-size:22px">📷</div>
               <div style="font-size:9px;color:var(--mu);text-align:center;line-height:1.4">クリックまたは<br>ドロップ</div>
             </div>
           </div>
-          <!-- 隠しファイル入力 -->
           <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="onImgFileSelect(event)">
 
           <!-- ASIN情報 + URL入力 -->
@@ -272,6 +269,24 @@ textarea{resize:vertical}
           <span class="pp-val" id="ppEff"></span>
         </div>
         <div class="pp-sum" id="ppSum"></div>
+      </div>
+
+      <!-- ===== 注文価格スクリーンショット ===== -->
+      <div class="f" id="orderImgWrap" style="margin-bottom:14px">
+        <span class="lbl">📸 注文価格のスクリーンショット <span class="lbl-hint">任意・添付時のみ記事に挿入</span></span>
+        <div id="orderImgZone"
+          style="border:2px dashed var(--bd);border-radius:10px;background:var(--s2);padding:14px;text-align:center;cursor:pointer;transition:border-color .15s;position:relative"
+          onclick="document.getElementById('orderImgInput').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--gr)'"
+          ondragleave="this.style.borderColor='var(--bd)'"
+          ondrop="onOrderImgDrop(event)">
+          <div id="orderImgPreview" style="display:none;margin-bottom:8px">
+            <img id="orderImgEl" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--bd)">
+          </div>
+          <div id="orderImgHint" style="color:var(--mu);font-size:12px">📸 クリックまたはドロップで注文価格の画像を追加（任意）</div>
+          <button id="orderImgClear" onclick="clearOrderImg(event)" style="display:none;position:absolute;top:8px;right:8px;background:rgba(255,77,109,.2);border:none;color:var(--re);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px">✕ 削除</button>
+        </div>
+        <input type="file" id="orderImgInput" accept="image/*" style="display:none" onchange="onOrderImgSelect(event)">
       </div>
 
       <div class="r2">
@@ -484,7 +499,6 @@ textarea{resize:vertical}
 <div class="tab" id="tab-rank">
   <div class="main">
 
-    <!-- ランキング設定 -->
     <div class="card">
       <div class="card-title">🏆 ランキング記事を作成</div>
       <div class="hint">💡 <strong>記事ストックから商品を追加</strong>してランキングを組み、AIがランキング記事を生成します。</div>
@@ -495,7 +509,6 @@ textarea{resize:vertical}
       <button class="btn bs" onclick="swTab('stock', document.getElementById('btn-stock'))">📦 ストックから商品を追加する →</button>
     </div>
 
-    <!-- ランキングスロット -->
     <div class="card">
       <div class="card-title">📋 ランキング構成 <span id="rankCount" style="font-size:11px;color:var(--mu);font-weight:400">（0件）</span></div>
       <div id="rankSlots">
@@ -507,7 +520,6 @@ textarea{resize:vertical}
       </div>
     </div>
 
-    <!-- ランキング記事結果 -->
     <div class="card" id="rankResult" style="display:none">
       <div class="card-title">📄 生成されたランキング記事</div>
       <div class="out-hdr"><span class="out-lbl">コピーしてはてなブログへ</span><span class="cc" id="rankCount2">0文字</span></div>
@@ -565,24 +577,56 @@ const WK  = 'https://amazon-sale-api.bulibuli-mushi.workers.dev';
 const HID = 'enjoy-box';
 const BID = 'popo-1215.hatenablog.com';
 
-let cur = null;          // 現在生成中の商品情報
-let stockItems = [];     // まとめ用ストック（旧）
-let articleStock = [];   // 記事ストック（localStorage永続）
-let rankItems = [];      // ランキング構成
+let cur = null;
+let stockItems = [];
+let articleStock = [];
+let rankItems = [];
+
+/* ===== 注文価格スクリーンショット ===== */
+var orderImgBase64 = '';
+
+function onOrderImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('orderImgZone').style.borderColor = 'var(--bd)';
+  var file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) readOrderImg(file);
+  else toast('画像ファイルをドロップしてください', 1);
+}
+function onOrderImgSelect(e) {
+  var file = e.target.files[0];
+  if (file) readOrderImg(file);
+}
+function readOrderImg(file) {
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    orderImgBase64 = ev.target.result;
+    document.getElementById('orderImgEl').src = orderImgBase64;
+    document.getElementById('orderImgPreview').style.display = 'block';
+    document.getElementById('orderImgHint').style.display = 'none';
+    document.getElementById('orderImgClear').style.display = 'block';
+    document.getElementById('orderImgZone').style.borderColor = 'var(--am)';
+    toast('📸 注文価格画像をセットしました！');
+  };
+  reader.readAsDataURL(file);
+}
+function clearOrderImg(e) {
+  e.stopPropagation();
+  orderImgBase64 = '';
+  document.getElementById('orderImgEl').src = '';
+  document.getElementById('orderImgPreview').style.display = 'none';
+  document.getElementById('orderImgHint').style.display = 'block';
+  document.getElementById('orderImgClear').style.display = 'none';
+  document.getElementById('orderImgZone').style.borderColor = 'var(--bd)';
+}
 
 /* ===== 初期化 ===== */
 window.addEventListener('DOMContentLoaded', function() {
-  // アソシエイトID復元
   var id = localStorage.getItem('assocId') || 'popo1215-22';
   document.getElementById('assocId').value = id;
 
-  // 記事ストック復元
   try { articleStock = JSON.parse(localStorage.getItem('articleStock') || '[]'); } catch(e) { articleStock = []; }
-
-  // まとめ用ストック復元
   try { stockItems = JSON.parse(localStorage.getItem('amzStock') || '[]'); } catch(e) { stockItems = []; }
 
-  // 最後の入力復元
   var last = JSON.parse(localStorage.getItem('lastInput') || '{}');
   if (last.url)   document.getElementById('qUrl').value   = last.url;
   if (last.name)  document.getElementById('qName').value  = last.name;
@@ -636,7 +680,6 @@ function swTab(name, el) {
 
 function fmt(n) { return Number(n).toLocaleString('ja-JP'); }
 
-// ASIN抽出
 function getAsin(s) {
   s = (s || '').trim();
   if (/^[A-Z0-9]{10}$/i.test(s)) return s.toUpperCase();
@@ -662,7 +705,6 @@ function affLink(asin) {
   return 'https://www.amazon.co.jp/dp/' + asin + '?tag=' + id;
 }
 
-// カテゴリー自動判定（拡充版）
 function guessCategory(name, disc) {
   if (!name) return disc >= 30 ? 'セール情報' : 'その他';
   if (/イヤホン|スピーカー|カメラ|パソコン|PC|タブレット|スマホ|スマートフォン|充電|バッテリー|マウス|キーボード|モニター|SSD|HDD|ゲーム|テレビ|冷蔵庫|洗濯機|掃除機|炊飯|電子レンジ|エアコン|ルーター|Wi-Fi|ドライヤー|電動/i.test(name)) return '家電・ガジェット';
@@ -675,7 +717,6 @@ function guessCategory(name, disc) {
   return 'その他';
 }
 
-// 商品名入力時にカテゴリーを自動更新
 function onNameInput() {
   saveLastInput();
   var name = document.getElementById('qName').value.trim();
@@ -691,17 +732,13 @@ function onNameInput() {
   }
 }
 
-// 現在選択中のカテゴリーを取得（手動変更があればそちら優先）
 function getSelectedCat() {
   var sel = document.getElementById('qCat');
   return sel ? sel.value : guessCategory(document.getElementById('qName').value.trim(), 0);
 }
 
-// Amazonリンクをtarget="_blank" rel="noopener" 付きで生成
 function affLinkMd(asin, label) {
   var url = affLink(asin);
-  // Markdownリンクはそのまま（はてなブログ側でtargetは付与される）
-  // HTMLブロック内だけtargetを付与
   return { url: url, html: '<a href="' + url + '" target="_blank" rel="noopener">' + (label||'Amazonで購入する') + '</a>' };
 }
 
@@ -718,12 +755,10 @@ async function callAI(prompt, maxTokens) {
   return d.text || '';
 }
 
-/* ===== アソシエイトID保存 ===== */
 function saveAssocId() {
   localStorage.setItem('assocId', document.getElementById('assocId').value.trim());
 }
 
-/* ===== URL入力 → ASIN自動抽出 ===== */
 function onUrlInput() {
   var val  = document.getElementById('qUrl').value;
   var asin = getAsin(val);
@@ -732,10 +767,8 @@ function onUrlInput() {
     row.style.display = 'block';
     document.getElementById('asinDisplay').textContent    = asin;
     document.getElementById('affLinkDisplay').textContent = affLink(asin);
-    // ローカル画像(base64)がセット済みなら上書きしない
     var img = document.getElementById('thumbImg');
     if (!img.dataset.localSet) {
-      // URL欄に手動入力がなければASINから自動セット
       var manualUrl = document.getElementById('qImgUrl').value.trim();
       if (!manualUrl) setThumb(imgUrl(asin), '自動取得');
     }
@@ -745,9 +778,6 @@ function onUrlInput() {
   saveLastInput();
 }
 
-// ===== 画像セット共通 =====
-// url: 表示するsrc（http URL or base64）
-// source: ラベル文字列（表示用）
 function setThumb(url, source) {
   var img = document.getElementById('thumbImg');
   var overlay = document.getElementById('dropOverlay');
@@ -759,7 +789,6 @@ function setThumb(url, source) {
   document.getElementById('imgDropZone').style.borderColor = 'var(--am)';
 }
 
-// ===== ドラッグ＆ドロップ =====
 function onImgDragOver(e) {
   e.preventDefault();
   document.getElementById('imgDropZone').style.borderColor = 'var(--gr)';
@@ -781,34 +810,27 @@ function onImgDrop(e) {
   }
 }
 
-// ===== ファイル選択（クリック） =====
 function onImgFileSelect(e) {
   var file = e.target.files[0];
   if (file) readImgFile(file);
 }
 
-// ===== ファイル→base64→プレビュー =====
 function readImgFile(file) {
   var reader = new FileReader();
   reader.onload = function(ev) {
     setThumb(ev.target.result, 'ローカルファイル');
-    // URL欄はクリア（ローカル画像優先）
     document.getElementById('qImgUrl').value = '';
     toast('画像をセットしました！');
   };
   reader.readAsDataURL(file);
 }
 
-// ===== 手動URL入力 =====
 function onManualImgInput() {
   var url = document.getElementById('qImgUrl').value.trim();
   if (!url) return;
-  // ローカルフラグをリセット
   document.getElementById('thumbImg').dataset.localSet = '';
-  // URLだけ保持（srcへの反映はブラウザがブロックするため省略・適用ボタンで対応）
 }
 
-// 「✓ 適用」ボタン
 function applyManualImg() {
   var url = document.getElementById('qImgUrl').value.trim();
   if (!url) { toast('URLを入力してください', 1); return; }
@@ -817,7 +839,6 @@ function applyManualImg() {
   toast('URLをセットしました（ブラウザ制限により表示されない場合があります）');
 }
 
-/* ===== 価格計算 ===== */
 function calcQ() {
   var orig = parseFloat(document.getElementById('qOrig').value)  || 0;
   var sale = parseFloat(document.getElementById('qSale').value)  || 0;
@@ -853,11 +874,9 @@ function calcQ() {
   if (disc > 0) parts.push('('+disc+'%OFF \u00a5'+fmt(save)+'お得)');
   if (pt > 0) parts.push('\u2192 '+fmt(pt)+'pt還元 \u2192 実質\u00a5'+fmt(sale-pt));
   document.getElementById('ppSum').textContent = parts.join(' ');
-  // 割引率変化でカテゴリーを再判定（セール情報判定のため）
   onNameInput();
 }
 
-/* ===== バッジ選択 ===== */
 function selectBadge(btn) {
   document.querySelectorAll('.pp-badge-btn').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
@@ -875,7 +894,6 @@ function getSelectedBadge() {
   return btn ? btn.dataset.label : 'SALE';
 }
 
-/* ===== 最後の入力保存 ===== */
 function saveLastInput() {
   localStorage.setItem('lastInput', JSON.stringify({
     url:   document.getElementById('qUrl').value,
@@ -886,7 +904,6 @@ function saveLastInput() {
   }));
 }
 
-/* ===== タイトル候補生成 ===== */
 async function genTitles() {
   var name = document.getElementById('qName').value.trim();
   var orig = parseFloat(document.getElementById('qOrig').value) || 0;
@@ -918,7 +935,7 @@ async function genTitles() {
     '・書けるのは「スペック紹介」「価格・コスパ解説」「おすすめな人」「発売・予約情報」「カタログ上のスペック比較」のみ。アフィリエイターとして誠実に書ける内容に限定すること',
     '・SEOを意識して検索されやすいキーワードを含める',
     '・【】でバッジを先頭に付ける（例: 【' + (disc > 0 ? disc + '%OFF' : 'セール') + '】【' + year + '年最新】【スペック解説】【購入ガイド】など）',
-    (note ? '・補足情報「' + note + '」の内容を活かしたタイトルを少なくとも2〜3案含めること（例：予約受付中なら【予約受付中】などのバッジや「予約開始」「発売前に確認」などの表現を使う）' : ''),
+    (note ? '・補足情報「' + note + '」の内容を活かしたタイトルを少なくとも2〜3案含めること' : ''),
     '・商品名は長すぎる場合は重要キーワードを残して省略してよい',
     '・1案ずつ改行で区切り、番号や説明文は不要。タイトル本文のみを出力する',
   ].filter(function(l){ return l !== ''; });
@@ -950,7 +967,6 @@ async function genTitles() {
   }
 }
 
-/* ===== 記事一括生成 ===== */
 async function genAll() {
   var urlVal = document.getElementById('qUrl').value.trim();
   var orig   = parseFloat(document.getElementById('qOrig').value)  || 0;
@@ -967,13 +983,10 @@ async function genAll() {
   if (!asin) { toast('有効なAmazon URLまたはASINを入力してください', 1); return; }
 
   var link = affLink(asin);
-  // 手動入力画像URLがあればそちらを優先、なければ現在表示中のsrcを使う
-  // 画像URL決定：① ローカルbase64 ② 手動URL ③ ASIN自動生成
   var thumbEl   = document.getElementById('thumbImg');
   var manualUrl = (document.getElementById('qImgUrl').value || '').trim();
   var iUrl;
   if (thumbEl.dataset.localSet === '1') {
-    // ローカルファイル → base64をそのまま使う（記事内のimgタグに直接埋め込み）
     iUrl = thumbEl.src;
   } else if (manualUrl) {
     iUrl = manualUrl;
@@ -994,14 +1007,13 @@ async function genAll() {
     document.getElementById('twOut').textContent = results[0];
     var blText = results[1];
 
-    // 関連商品セクションの生成・追加
     var relItems = getRelItems();
     if (relItems.length > 0) {
       btn.innerHTML = '<span class="sp"></span>関連商品セクション生成中...';
       try {
         var relSection = await genRelSection(cur, relItems);
         if (relSection) blText = blText + '\n\n' + relSection;
-      } catch(re) { /* 関連商品生成失敗は無視して続行 */ }
+      } catch(re) { }
     }
 
     document.getElementById('blOut').textContent = blText;
@@ -1010,9 +1022,7 @@ async function genAll() {
     updTw();
     document.getElementById('blCount').textContent = blText.length + '文字';
 
-    // 自動でまとめストックに追加
     addToMtStock(cur);
-    // 自動で記事ストックに保存
     autoSaveArticle(cur, blText);
 
     toast('生成完了！🎉');
@@ -1025,7 +1035,6 @@ async function genAll() {
   }
 }
 
-/* ===== X投稿文生成 ===== */
 function makeTw(p) {
   var ef = p.eff != null ? '\n💡実質\u00a5'+fmt(p.eff)+'（'+fmt(p.pt)+'pt還元）' : '';
   return callAI(
@@ -1045,13 +1054,17 @@ function makeTw(p) {
   );
 }
 
-/* ===== ブログ記事生成 ===== */
 function makeBl(p) {
   var title  = p.selTitle || '【'+(p.disc>0?p.disc+'%OFF':'セール')+'】'+(p.name||'（商品名を簡潔に）');
   var ptBlock = p.pt > 0 ?
     '\n## 🪙 ポイント還元\n\n<div style="background:#f3faf7;border:2px solid #00897b;border-radius:10px;padding:16px 20px;margin:12px 0">' +
     '<div>🪙 <strong>獲得ポイント</strong>: <span style="color:#FF9900;font-weight:bold;font-size:18px">+'+fmt(p.pt)+'pt</span></div>' +
     '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #b2dfdb">実質価格: <strong style="font-size:22px;color:#e53935">\u00a5'+fmt(p.eff)+'</strong></div></div>\n' : '';
+
+  // 注文価格スクリーンショットブロック（添付があれば価格情報の直後に挿入）
+  var orderImgBlock = orderImgBase64
+    ? '\n## 📸 注文価格の確認\n\n<div style="margin:12px 0;text-align:center"><img src="' + orderImgBase64 + '" alt="注文価格スクリーンショット" style="max-width:100%;border-radius:8px;border:1px solid #e0e0e0;display:inline-block"></div>\n'
+    : '';
 
   return callAI(
     'はてなブログAmazonアフィリエイト記事をMarkdownで作成してください。\n' +
@@ -1070,7 +1083,7 @@ function makeBl(p) {
     '<span style="font-size:26px;font-weight:bold;color:#e53935">\u00a5'+fmt(p.sale)+'</span></div>' +
     (p.orig>0?'<div style="margin-top:6px"><span style="color:#888;text-decoration:line-through">\u00a5'+fmt(p.orig)+'</span></div>':'') +
     (p.save>0?'<div style="margin-top:6px;color:#00897b;font-weight:bold">\u2705 \u00a5'+fmt(p.save)+'お得！</div>':'') +
-    '</div>\n\n' + ptBlock +
+    '</div>\n\n' + ptBlock + orderImgBlock +
     '## こんな人におすすめ\n\n（箇条書き5点）\n\n' +
     '## スペック・特徴\n\n（箇条書き）\n\n' +
     '## 😊 ここが嬉しいポイント\n\n（購入して良かったと感じるセリングポイントを5点。読者が「買いたい」と思えるよう前向きな表現で書くこと。ネガティブな情報は含めない）\n\n' +
@@ -1079,20 +1092,18 @@ function makeBl(p) {
     '> ※本記事にはアフィリエイトリンクが含まれます。 #AD\n\n' +
     '【ルール】\n' +
     '・タイトル「'+title+'」をそのまま使うこと\n' +
-    '・タイトルで約束した内容を記事本文で必ず回収すること。タイトルに「スペック解説」とあればスペックを、「価格比較」とあれば価格情報を、「購入ガイド」とあれば購入手順・注意点を必ず本文に含めること\n' +
+    '・タイトルで約束した内容を記事本文で必ず回収すること\n' +
     '・実際に商品を手にして体験・検証していないため、「実機レビュー」「使用感」「徹底検証」「〇〇してみた」など体験を示す表現は一切使わない\n' +
-    '・書けるのはカタログ情報・スペック・価格・おすすめ理由・こんな人向けの情報のみ。誠実なアフィリエイト記事として成立する内容に限定する\n' +
+    '・書けるのはカタログ情報・スペック・価格・おすすめ理由・こんな人向けの情報のみ\n' +
     '・Markdownのみ。HTMLタグはdivとaのみ使用可'
   , 3000);
 }
 
-/* ===== ブログ記事文字数カウント ===== */
 function updBl() {
   var t = document.getElementById('blOut').textContent;
   document.getElementById('blCount').textContent = t.length + '文字';
 }
 
-/* ===== 関連商品 画像プレビュー ===== */
 var REL_IMG_CANDIDATES = function(asin) {
   return [
     'https://m.media-amazon.com/images/P/' + asin + '._SL200_.jpg',
@@ -1101,7 +1112,6 @@ var REL_IMG_CANDIDATES = function(asin) {
   ];
 };
 
-// タイマーID保持（連続入力のデバウンス用）
 var relPreviewTimers = [null, null, null];
 
 function previewRelImg(idx) {
@@ -1113,12 +1123,8 @@ function previewRelImg(idx) {
   var st   = document.getElementById('relImgStatus' + idx);
 
   if (!asin || asin.length < 8) {
-    img.style.display = 'none';
-    img.src = '';
-    txt.style.display = 'block';
-    txt.innerHTML = 'ASIN<br>入力で<br>確認';
-    row.style.display = 'none';
-    st.textContent = '';
+    img.style.display = 'none'; img.src = ''; txt.style.display = 'block';
+    txt.innerHTML = 'ASIN<br>入力で<br>確認'; row.style.display = 'none'; st.textContent = '';
     return;
   }
 
@@ -1135,10 +1141,7 @@ function tryRelImgUrls(idx, asin, urls, attempt) {
   var st  = document.getElementById('relImgStatus' + idx);
 
   if (attempt >= urls.length) {
-    // 全URL失敗 → 手動入力欄を表示
-    img.style.display = 'none';
-    txt.style.display = 'block';
-    txt.innerHTML = '画像なし';
+    img.style.display = 'none'; txt.style.display = 'block'; txt.innerHTML = '画像なし';
     row.style.display = 'block';
     st.innerHTML = '<span style="color:#e07b00">⚠ 自動取得できませんでした。画像URLを貼り付けてください。</span>';
     return;
@@ -1146,25 +1149,16 @@ function tryRelImgUrls(idx, asin, urls, attempt) {
 
   var testImg = new Image();
   testImg.onload = function() {
-    if (testImg.naturalWidth < 5) {
-      tryRelImgUrls(idx, asin, urls, attempt + 1);
-      return;
-    }
-    img.src = urls[attempt];
-    img.style.display = 'block';
-    txt.style.display = 'none';
+    if (testImg.naturalWidth < 5) { tryRelImgUrls(idx, asin, urls, attempt + 1); return; }
+    img.src = urls[attempt]; img.style.display = 'block'; txt.style.display = 'none';
     row.style.display = 'none';
-    // 画像表示時は枠を消す
     var box = document.getElementById('relThumbBox' + idx);
     if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
     st.innerHTML = '<span style="color:var(--gr)">✓ 画像を自動取得しました</span>';
-    // 手動URL欄をクリア
     var manualEl = document.getElementById('relImg' + idx);
     if (manualEl) manualEl.value = '';
   };
-  testImg.onerror = function() {
-    tryRelImgUrls(idx, asin, urls, attempt + 1);
-  };
+  testImg.onerror = function() { tryRelImgUrls(idx, asin, urls, attempt + 1); };
   testImg.src = urls[attempt];
 }
 
@@ -1179,14 +1173,11 @@ function applyManualRelImg(idx) {
     if (box) { box.style.border = '1.5px dashed var(--bd)'; box.style.background = 'var(--s2)'; }
     return;
   }
-  img.src = url;
-  img.style.display = 'block';
-  txt.style.display = 'none';
+  img.src = url; img.style.display = 'block'; txt.style.display = 'none';
   if (box) { box.style.border = 'none'; box.style.background = 'transparent'; }
   st.innerHTML = '<span style="color:var(--gr)">✓ 手動URLを適用しました</span>';
 }
 
-/* ===== 関連商品セクション生成 ===== */
 function getRelItems() {
   var items = [];
   for (var i = 0; i < 3; i++) {
@@ -1194,7 +1185,6 @@ function getRelItems() {
     var name    = (document.getElementById('relName' + i).value || '').trim();
     var imgEl   = document.getElementById('relImg' + i);
     var manualImg = imgEl ? imgEl.value.trim() : '';
-    // プレビュー確認済みのsrcを優先、なければ手動URL
     var thumbImg  = document.getElementById('relThumbImg' + i);
     var confirmedImg = (thumbImg && thumbImg.style.display !== 'none' && thumbImg.src) ? thumbImg.src : '';
     var img = confirmedImg || manualImg;
@@ -1207,24 +1197,18 @@ async function genRelSection(mainProduct, relItems) {
   if (!relItems.length) return '';
   var assocId = 'popo1215-22';
 
-  // AIに短縮タイトル＋2〜3行説明をJSON形式で一括生成させる
   var promptLines = [
     'Amazonアフィリエイト記事用の関連商品紹介データをJSON形式で生成してください。',
-    '',
-    '【本体商品】',
-    mainProduct.name || mainProduct.asin,
-    '',
-    '【紹介する関連商品】',
+    '', '【本体商品】', mainProduct.name || mainProduct.asin, '', '【紹介する関連商品】',
   ];
   relItems.forEach(function(item, i) {
     promptLines.push((i+1) + '. ' + (item.name || ('ASIN: ' + item.asin)));
   });
   promptLines = promptLines.concat([
-    '',
-    '【出力ルール】',
+    '', '【出力ルール】',
     '・必ずJSON配列のみを出力すること。前置き・説明・コードブロック記号は一切不要',
     '・各商品を1オブジェクトとして以下のキーで出力:',
-    '  "shortTitle": 商品名を20文字以内に短縮。色違い・サイズ違いの場合は必ず色名やサイズを含めること（例:「ジェギング ネイビー」「ジェギング ホワイト」）。同じ商品名が重複しないよう区別できる表現にすること',
+    '  "shortTitle": 商品名を20文字以内に短縮',
     '  "desc": 本体商品との相性・おすすめ理由を2〜3文、合計80文字以内でまとめる',
     '・出力例: [{"shortTitle":"ケース（MagSafe対応）","desc":"MagSafe充電に対応し..."},...]',
   ]);
@@ -1235,49 +1219,27 @@ async function genRelSection(mainProduct, relItems) {
     var cleaned = raw.replace(/```json|```/g, '').trim();
     items = JSON.parse(cleaned);
   } catch(e) {
-    // JSON失敗時はフォールバック
     relItems.forEach(function(item) {
       items.push({ shortTitle: item.name ? item.name.substring(0, 20) : item.asin, desc: '' });
     });
   }
 
-  // HTML直接構築（左画像・右テキスト横並びカード）
   var cards = relItems.map(function(item, i) {
-    var link      = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
-    // 画像URL優先順: ①手動入力 ②m.media-amazon（SL200）③images-na（フォールバック）
-    var imgSrc    = item.img
-      ? item.img
-      : 'https://m.media-amazon.com/images/P/' + item.asin + '._SL200_.jpg';
-    var fallback  = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.01._SL200_.jpg';
+    var link     = 'https://www.amazon.co.jp/dp/' + item.asin + '?tag=' + assocId;
+    var imgSrc   = item.img ? item.img : 'https://m.media-amazon.com/images/P/' + item.asin + '._SL200_.jpg';
+    var fallback = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.01._SL200_.jpg';
     var shortName = (items[i] && items[i].shortTitle) || (item.name ? item.name.substring(0, 20) : item.asin);
     var desc      = (items[i] && items[i].desc) || '';
 
     return (
-      '<div style="display:flex;gap:14px;align-items:flex-start;background:#fafafa;' +
-      'border:1px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:12px;overflow:hidden">' +
-        // 左：画像（リンクあり）
+      '<div style="display:flex;gap:14px;align-items:flex-start;background:#fafafa;border:1px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:12px;overflow:hidden">' +
         '<a href="' + link + '" target="_blank" rel="noopener" style="flex-shrink:0;display:block;background:none!important;border:none!important;padding:0!important;margin:0!important;box-shadow:none!important">' +
-          '<img src="' + imgSrc + '" alt="' + shortName + '" ' +
-          'onerror="this.onerror=null;this.src=\'' + fallback + '\'" ' +
-          'style="width:90px;height:90px;object-fit:contain;background:#fff;' +
-          'border-radius:6px;border:1px solid #e8e8e8;display:block">' +
+          '<img src="' + imgSrc + '" alt="' + shortName + '" onerror="this.onerror=null;this.src=\'' + fallback + '\'" style="width:90px;height:90px;object-fit:contain;background:#fff;border-radius:6px;border:1px solid #e8e8e8;display:block">' +
         '</a>' +
-        // 右：テキスト
         '<div style="flex:1;min-width:0;overflow:hidden">' +
-          // タイトルはプレーンテキスト（リンクなし）
-          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:6px;' +
-          'white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
-            shortName +
-          '</div>' +
-          '<div style="font-size:12px;line-height:1.7;color:#555;' +
-          'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">' +
-            desc +
-          '</div>' +
-          '<div style="margin-top:8px">' +
-            '<a href="' + link + '" target="_blank" rel="noopener" ' +
-            'style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;' +
-            'font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで詳細を見る →</a>' +
-          '</div>' +
+          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + shortName + '</div>' +
+          '<div style="font-size:12px;line-height:1.7;color:#555;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">' + desc + '</div>' +
+          '<div style="margin-top:8px"><a href="' + link + '" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;font-size:11px;padding:5px 14px;border-radius:5px;text-decoration:none">Amazonで詳細を見る →</a></div>' +
         '</div>' +
       '</div>'
     );
@@ -1286,7 +1248,6 @@ async function genRelSection(mainProduct, relItems) {
   return '\n## 📦 合わせてチェックしたい商品\n\n' + cards.join('\n');
 }
 
-/* ===== X投稿 ===== */
 function updTw() {
   var t  = document.getElementById('twOut').textContent;
   var el = document.getElementById('twCount');
@@ -1300,7 +1261,6 @@ function copyX() {
   });
 }
 
-/* ===== ブログ記事コピー・DL ===== */
 function copyBl() {
   navigator.clipboard.writeText(document.getElementById('blOut').textContent)
     .then(function(){ toast('記事をコピーしました！'); });
@@ -1317,7 +1277,6 @@ function dl(text, filename) {
   toast('保存しました！');
 }
 
-/* ===== 再生成 ===== */
 async function regenTw(btn) {
   if (!cur) { toast('先に商品情報を入力してください', 1); return; }
   btn.disabled = true; btn.textContent = '生成中...';
@@ -1338,7 +1297,6 @@ async function regenBl(btn) {
   finally { btn.disabled = false; btn.textContent = '🔄 再生成'; }
 }
 
-/* ===== はてなブログ投稿 ===== */
 async function postHatena() {
   if (!cur) { toast('先に商品情報を入力してください', 1); return; }
   var body = document.getElementById('blOut').textContent;
@@ -1356,30 +1314,19 @@ async function postHatena() {
   finally { btn.disabled = false; btn.innerHTML = '📝 はてなブログに投稿'; }
 }
 
-/* ===== 記事ストック（localStorage永続） ===== */
 function saveArticleStock() {
   localStorage.setItem('articleStock', JSON.stringify(articleStock));
   renderStockPage();
   renderStockSidebar();
 }
 
-// 自動保存（生成時）
 function autoSaveArticle(p, body) {
   var title = body.split('\n')[0].replace(/^#+\s*/,'').trim() || (p.name || p.asin);
   var idx   = articleStock.findIndex(function(a){ return a.asin === p.asin; });
   var item  = {
-    id:      Date.now(),
-    asin:    p.asin,
-    name:    p.name || p.asin,
-    title:   title,
-    cat:     p.cat || getSelectedCat(),
-    sale:    p.sale,
-    orig:    p.orig,
-    disc:    p.disc,
-    pt:      p.pt,
-    link:    p.link,
-    iUrl:    p.iUrl,
-    body:    body,
+    id: Date.now(), asin: p.asin, name: p.name || p.asin, title: title,
+    cat: p.cat || getSelectedCat(), sale: p.sale, orig: p.orig, disc: p.disc,
+    pt: p.pt, link: p.link, iUrl: p.iUrl, body: body,
     savedAt: new Date().toLocaleDateString('ja-JP') + ' ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})
   };
   if (idx >= 0) articleStock[idx] = item;
@@ -1387,7 +1334,6 @@ function autoSaveArticle(p, body) {
   saveArticleStock();
 }
 
-// 手動保存
 function saveToStock() {
   if (!cur) { toast('先に記事を生成してください', 1); return; }
   var body = document.getElementById('blOut').textContent;
@@ -1396,7 +1342,6 @@ function saveToStock() {
   toast('📦 ストックに保存しました！');
 }
 
-// ストック一覧ページ表示
 function renderStockPage() {
   var el  = document.getElementById('stockPageList');
   var cnt = document.getElementById('stockPageCount');
@@ -1434,7 +1379,6 @@ function renderStockPage() {
   el.appendChild(list);
 }
 
-// ストックサイドバー（記事作成タブ内）
 function renderStockSidebar() {
   var el  = document.getElementById('stList');
   var cnt = document.getElementById('stCount');
@@ -1493,32 +1437,21 @@ function deleteArticle(idx) {
 }
 function closeModal() { document.getElementById('viewModal').classList.remove('show'); }
 
-// ストックから再編集：フォームに値を復元して記事作成タブへ移動
 function reEditArticle(idx) {
   var item = articleStock[idx];
   if (!item) return;
-
-  // フォームに値を復元
   document.getElementById('qUrl').value   = item.asin || '';
   document.getElementById('qName').value  = item.name || '';
   document.getElementById('qSale').value  = item.sale || '';
   document.getElementById('qOrig').value  = item.orig || '';
   document.getElementById('qPoint').value = item.pt   || '';
   document.getElementById('qNote').value  = '';
-
-  // カテゴリー復元
   var catSel = document.getElementById('qCat');
   if (catSel && item.cat) catSel.value = item.cat;
-
-  // ASIN表示・画像を更新
   onUrlInput();
-
-  // 生成済み記事を出力欄に復元
   document.getElementById('blOut').textContent = item.body || '';
   document.getElementById('blCount').textContent = (item.body || '').length + '文字';
   document.getElementById('blCard').style.display = 'block';
-
-  // curを復元
   cur = {
     asin: item.asin, name: item.name, orig: item.orig||0, sale: item.sale||0,
     disc: item.disc||0, save: (item.orig||0)-(item.sale||0), pt: item.pt||0,
@@ -1526,8 +1459,6 @@ function reEditArticle(idx) {
     link: item.link, iUrl: item.iUrl, note: '', selTitle: item.title,
     cat: item.cat, date: item.savedAt
   };
-
-  // 記事作成タブへ移動
   swTab('post', document.getElementById('btn-post'));
   window.scrollTo({top:0, behavior:'smooth'});
   toast('✏️ 再編集モードで読み込みました');
@@ -1537,7 +1468,6 @@ function copyModal() {
     .then(function(){ toast('コピーしました！'); });
 }
 
-/* ===== まとめ記事ストック（旧） ===== */
 function addToMtStock(p) {
   var idx  = stockItems.findIndex(function(i){ return i.asin===p.asin; });
   var item = {asin:p.asin,name:p.name,sale:p.sale,orig:p.orig,pt:p.pt,eff:p.eff,link:p.link,addedAt:Date.now()};
@@ -1545,7 +1475,6 @@ function addToMtStock(p) {
   localStorage.setItem('amzStock', JSON.stringify(stockItems));
 }
 
-/* ===== まとめ記事生成 ===== */
 async function genMatome() {
   if (stockItems.length < 2) { toast('商品が2件以上必要です', 1); return; }
   var style = document.getElementById('mtStyle').value;
@@ -1559,126 +1488,103 @@ async function genMatome() {
   var btn = document.getElementById('mtBtn');
   btn.disabled = true; btn.innerHTML = '<span class="sp"></span>生成中...';
 
-  /* タイトル：日付なし・短く */
-  var label = style === 'daily'
-    ? 'Amazon\u304a\u5f97\u307e\u3068\u3081'
-    : (cat || '\u30bb\u30fc\u30eb') + '\u304a\u3059\u3059\u3081\u307e\u3068\u3081';
-  var fullTitle = label + '\u3010' + tgts.length + '\u9078\u3011';
+  var label = style === 'daily' ? 'Amazonお得まとめ' : (cat || 'セール') + 'おすすめまとめ';
+  var fullTitle = label + '【' + tgts.length + '選】';
 
-  /* 価格表記：「¥1,501（定価¥1,949・43%OFF / 35pt還元で実質¥1,466）」 */
   function buildPriceText(item) {
-    var disc = (item.orig > 0 && item.sale < item.orig)
-      ? Math.round((1 - item.sale / item.orig) * 100) : 0;
+    var disc = (item.orig > 0 && item.sale < item.orig) ? Math.round((1 - item.sale / item.orig) * 100) : 0;
     var txt = '\u00a5' + fmt(item.sale);
-    if (item.orig > 0 && item.sale < item.orig) {
-      txt += '\uff08\u5b9a\u4fa1\u00a5' + fmt(item.orig) + '\u30fb' + disc + '%OFF\uff09';
-    }
-    if (item.pt > 0) {
-      txt += ' / ' + fmt(item.pt) + 'pt\u9084\u5143\u3067\u5b9f\u8cea\u00a5' + fmt(item.sale - item.pt);
-    }
+    if (item.orig > 0 && item.sale < item.orig) txt += '（定価\u00a5' + fmt(item.orig) + '・' + disc + '%OFF）';
+    if (item.pt > 0) txt += ' / ' + fmt(item.pt) + 'pt還元で実質\u00a5' + fmt(item.sale - item.pt);
     return txt;
   }
 
-  /* 画像スタイル：200×200固定 */
   var IMG_STYLE = 'width:200px;height:200px;object-fit:contain;background:#fff;border-radius:8px;padding:4px;display:block;margin:10px auto';
 
-  /* 商品情報テキスト（AIに渡す） */
   var itemLines = [];
   for (var i = 0; i < tgts.length; i++) {
     var item = tgts[i];
-    var disc = (item.orig > 0 && item.sale < item.orig)
-      ? Math.round((1 - item.sale / item.orig) * 100) : 0;
+    var disc = (item.orig > 0 && item.sale < item.orig) ? Math.round((1 - item.sale / item.orig) * 100) : 0;
     var imgSrc = 'https://images-na.ssl-images-amazon.com/images/P/' + item.asin + '.jpg';
     itemLines.push(
-      '--- \u5546\u54c1' + (i+1) + ' ---\n' +
-      '\u5546\u54c1\u540d: ' + (item.name || item.asin) + '\n' +
-      'ASIN: ' + item.asin + '\n' +
-      '\u4fa1\u683c\u8868\u8a18: ' + buildPriceText(item) + '\n' +
-      '\u5272\u5f15: ' + (disc > 0 ? disc + '%OFF' : '\u306a\u3057') + '\n' +
-      '\u8cfc\u5165\u30ea\u30f3\u30af\uff08\u5909\u66f4\u7981\u6b62\uff09: ' + item.link + '\n' +
-      '\u753b\u50cfURL\uff08\u5909\u66f4\u7981\u6b62\uff09: ' + imgSrc
+      '--- 商品' + (i+1) + ' ---\n商品名: ' + (item.name || item.asin) + '\nASIN: ' + item.asin +
+      '\n価格表記: ' + buildPriceText(item) + '\n割引: ' + (disc > 0 ? disc + '%OFF' : 'なし') +
+      '\n購入リンク（変更禁止）: ' + item.link + '\n画像URL（変更禁止）: ' + imgSrc
     );
   }
   var itemsTxt = itemLines.join('\n\n');
 
-  /* セクションひな形（リンク・画像をJS側で確定） */
   var sectionParts = [];
   for (var j = 0; j < tgts.length; j++) {
     var it = tgts[j];
     var imgS = 'https://images-na.ssl-images-amazon.com/images/P/' + it.asin + '.jpg';
     sectionParts.push(
-      '## ' + (j+1) + '. \u3010\u5546\u54c1' + (j+1) + '\u306e\u6b63\u5f0f\u540d\u79f0\u3092\u3053\u3053\u306b\u5165\u308c\u308b\u3011\n\n' +
+      '## ' + (j+1) + '. 【商品' + (j+1) + 'の正式名称をここに入れる】\n\n' +
       '<a href="' + it.link + '" target="_blank" rel="noopener">\n' +
-      '<img src="' + imgS + '" alt="\u5546\u54c1\u753b\u50cf" style="' + IMG_STYLE + '">\n' +
-      '</a>\n\n' +
-      '\ud83d\udcb0 **' + buildPriceText(it) + '**\n\n' +
-      '\u3010\u3053\u306e\u5546\u54c1\u306e\u9b45\u529b\u30fb\u304a\u3059\u3059\u3081\u7406\u7531\u30923\u6587\u4ee5\u4e0a\u3067\u66f8\u304f\u3002\u5546\u54c1\u306e\u7279\u5fb4\u3001\u3069\u3093\u306a\u4eba\u306b\u5411\u3044\u3066\u3044\u308b\u304b\u3001\u751f\u6d3b\u3078\u306e\u52b9\u679c\u306a\u3069\u3092\u5177\u4f53\u7684\u306b\u3011\n\n' +
-      '<a href="' + it.link + '" target="_blank" rel="noopener">\ud83d\uded2 Amazon\u3067\u8cfc\u5165\u3059\u308b</a>'
+      '<img src="' + imgS + '" alt="商品画像" style="' + IMG_STYLE + '">\n</a>\n\n' +
+      '💰 **' + buildPriceText(it) + '**\n\n' +
+      '【この商品の魅力・おすすめ理由を3文以上で書く】\n\n' +
+      '<a href="' + it.link + '" target="_blank" rel="noopener">🛒 Amazonで購入する</a>'
     );
   }
-  var sections = sectionParts.join('\n\n---\n\n');
 
-  /* 一覧表 */
   var tableRows = [];
   for (var k = 0; k < tgts.length; k++) {
     var ti = tgts[k];
-    var td = (ti.orig > 0 && ti.sale < ti.orig)
-      ? Math.round((1 - ti.sale / ti.orig) * 100) + '%OFF' : '-';
+    var td = (ti.orig > 0 && ti.sale < ti.orig) ? Math.round((1 - ti.sale / ti.orig) * 100) + '%OFF' : '-';
     tableRows.push('| ' + (k+1) + ' | ' + (ti.name||ti.asin).substring(0,20) + ' | \u00a5' + fmt(ti.sale) + ' | ' + td + ' |');
   }
 
-  /* プロンプト */
   var prompt = [
-    '\u3042\u306a\u305f\u306f\u306f\u3066\u306a\u30d6\u30ed\u30b0\u306eAmazon\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30bf\u30fc\u3067\u3059\u3002\u4ee5\u4e0b\u306e\u6307\u793a\u306b\u5f93\u3063\u3066\u8a18\u4e8b\u3092\u5b8c\u6210\u3055\u305b\u3066\u304f\u3060\u3055\u3044\u3002',
-    '',
-    '\u3010\u53b3\u5b88\u30eb\u30fc\u30eb\u3011',
-    '1. \u5404\u5546\u54c1\u30bb\u30af\u30b7\u30e7\u30f3\u306eHTML\u30ea\u30f3\u30af\u3068\u753b\u50cfURL\u306f\u7d76\u5bfe\u306b\u5909\u66f4\u30fb\u6539\u5909\u3057\u306a\u3044\u3053\u3068',
-    '2. \u5546\u54c1\u540d\u306f\u5fc5\u305a\u5b9f\u969b\u306e\u5546\u54c1\u540d\u3092\u4f7f\u3046\u3053\u3068',
-    '3. \u4fa1\u683c\u8868\u8a18\u306f\u63d0\u4f9b\u3055\u308c\u305f\u3082\u306e\u3092\u305d\u306e\u307e\u307e\u4f7f\u3046\u3053\u3068',
-    '4. \u5404\u5546\u54c1\u306e\u8aac\u660e\u6587\u306f\u5fc5\u305a3\u6587\u4ee5\u4e0a\u66f8\u304f\u3053\u3068',
-    '5. Markdown\u3068\u30b7\u30f3\u30d7\u30eb\u306adiv/a\u30bf\u30b0\u306e\u307f\u4f7f\u7528',
-    '',
-    '\u3010\u5546\u54c1\u60c5\u5831\u30ea\u30b9\u30c8\u3011',
-    itemsTxt,
-    '',
-    '\u3010\u4ee5\u4e0b\u306e\u3072\u306a\u5f62\u3092\u5b8c\u6210\u3055\u305b\u3066\u51fa\u529b\u3059\u308b\u3053\u3068\u3011',
-    '',
-    '# ' + fullTitle,
-    '',
-    '> \u203b\u672c\u8a18\u4e8b\u306b\u306f\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30c8\u30ea\u30f3\u30af\u304c\u542b\u307e\u308c\u307e\u3059\u3002 #AD',
-    '',
-    '\uff08\u30ea\u30fc\u30c9\u6587\uff1a2\uff5e3\u6587\u3067\uff09',
-    '',
-    '## \u5546\u54c1\u4e00\u89a7',
-    '',
-    '| # | \u5546\u54c1\u540d | \u4fa1\u683c | \u5272\u5f15 |',
+    'あなたははてなブログのAmazonアフィリエイターです。以下の指示に従って記事を完成させてください。',
+    '', '【厳守ルール】',
+    '1. 各商品セクションのHTMLリンクと画像URLは絶対に変更・改変しないこと',
+    '2. 商品名は必ず実際の商品名を使うこと',
+    '3. 価格表記は提供されたものをそのまま使うこと',
+    '4. 各商品の説明文は必ず3文以上書くこと',
+    '5. MarkdownとシンプルなHTMLのdiv/aタグのみ使用',
+    '', '【商品情報リスト】', itemsTxt, '',
+    '【以下のひな形を完成させて出力すること】', '',
+    '# ' + fullTitle, '',
+    '> ※本記事にはアフィリエイトリンクが含まれます。 #AD', '',
+    '（リード文：2〜3文で）', '',
+    '## 商品一覧', '',
+    '| # | 商品名 | 価格 | 割引 |',
     '|---|--------|------|------|',
-    tableRows.join('\n'),
-    '',
-    '---',
-    '',
-    sections,
-    '',
-    '---',
-    '',
-    '## \u307e\u3068\u3081',
-    '',
-    '\uff08\u7de0\u3081\u30b3\u30e1\u30f3\u30c8\u3092 2\uff5e3\u6587\u3067\uff09',
-    '',
-    '\u3010\u51fa\u529b\u306fMarkdown\u5f62\u5f0f\u306e\u307f\u3002\u3010\u3011\u5185\u306e\u6307\u793a\u6587\u3092\u5b9f\u969b\u306e\u30c6\u30ad\u30b9\u30c8\u306b\u7f6e\u304d\u63db\u3048\u308b\u3053\u3068\u3011'
+    tableRows.join('\n'), '',
+    '---', '',
+    sectionParts.join('\n\n---\n\n'), '',
+    '---', '',
+    '## まとめ', '',
+    '（締めコメントを 2〜3文で）', '',
+    '【出力はMarkdown形式のみ。【】内の指示文を実際のテキストに置き換えること】'
   ].join('\n');
 
   try {
     var result = await callAI(prompt);
     document.getElementById('mtOut').textContent      = result;
     document.getElementById('mtResult').style.display = 'block';
-    document.getElementById('mtCount').textContent    = result.length + '\u6587\u5b57';
+    document.getElementById('mtCount').textContent    = result.length + '文字';
     document.getElementById('mtResult').scrollIntoView({behavior:'smooth'});
-    toast('\u307e\u3068\u3081\u8a18\u4e8b\u3092\u751f\u6210\u3057\u307e\u3057\u305f\uff01');
-  } catch(e) { toast('\u751f\u6210\u5931\u6557: '+e.message, 1); }
-  finally { btn.disabled=false; btn.innerHTML='\ud83d\udccb \u307e\u3068\u3081\u8a18\u4e8b\u3092\u751f\u6210'; }
+    toast('まとめ記事を生成しました！');
+  } catch(e) { toast('生成失敗: '+e.message, 1); }
+  finally { btn.disabled=false; btn.innerHTML='📋 まとめ記事を生成'; }
 }
-/* ===== ランキング操作 ===== */
+
+function copyMt() { navigator.clipboard.writeText(document.getElementById('mtOut').textContent).then(function(){ toast('コピーしました！'); }); }
+function dlMt()   { dl(document.getElementById('mtOut').textContent, 'matome-'+Date.now()+'.md'); }
+async function postMt() {
+  var body = document.getElementById('mtOut').textContent;
+  if (!body){ toast('先に生成してください', 1); return; }
+  var title = body.split('\n')[0].replace(/^#+\s*/,'').trim();
+  try {
+    var r = await fetch(WK,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'hatena-post',title:title,body:body,hatenaId:HID,blogId:BID,category:'まとめ',imageUrl:''})});
+    var d = await r.json(); if(d.error) throw new Error(d.error);
+    toast('投稿しました！');
+  } catch(e) { toast('投稿失敗: '+e.message, 1); }
+}
+
 function renderRankSlots() {
   var el  = document.getElementById('rankSlots');
   var cnt = document.getElementById('rankCount');
@@ -1743,8 +1649,7 @@ async function genRanking() {
   var itemsTxt = rankItems.map(function(item,i){
     return (i+1)+'位: '+(item.name||item.asin)+
       '\n   価格:\u00a5'+fmt(item.sale)+(item.disc>0?' (-'+item.disc+'%)':'')+
-      '\n   リンク:'+item.link+
-      '\n   画像:'+item.iUrl+
+      '\n   リンク:'+item.link+'\n   画像:'+item.iUrl+
       (item.body ? '\n   記事概要:'+(item.body.substring(0,200)+'...') : '');
   }).join('\n\n');
 
@@ -1798,7 +1703,6 @@ async function postRank() {
   finally { btn.disabled=false; btn.innerHTML='🏆 ランキング記事を生成（AI）'; }
 }
 
-/* ===== セール品検索（PA-API） ===== */
 async function doSearch() {
   var kw = document.getElementById('kw').value.trim();
   if (!kw) { toast('キーワードを入力してください', 1); return; }
