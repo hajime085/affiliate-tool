@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 Amazon → ツール 送信ボタン インストール</title>
+<style>
+:root { --am:#FF9900; --bg:#0f0f13; --s1:#1a1a22; --s2:#22222e; --bd:#2e2e3e; --tx:#e8e8f0; --mu:#8888aa; --gr:#00d68f; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:-apple-system,'Helvetica Neue',sans-serif; background:var(--bg); color:var(--tx); padding:32px 20px; line-height:1.7; }
+.wrap { max-width:680px; margin:0 auto; }
+h1 { font-size:22px; font-weight:800; background:linear-gradient(90deg,#FF9900,#ffcc44); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.sub { color:var(--mu); font-size:14px; margin-bottom:32px; }
+.card { background:var(--s1); border:1px solid var(--bd); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:15px; color:var(--am); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.step { display:flex; gap:14px; align-items:flex-start; margin-bottom:18px; }
+.step-num { background:var(--am); color:#000; font-weight:800; font-size:13px; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-body { flex:1; }
+.step-body strong { display:block; font-size:14px; margin-bottom:4px; }
+.step-body p { font-size:13px; color:var(--mu); }
+.bm-box { background:var(--s2); border:2px dashed var(--bd); border-radius:10px; padding:20px; text-align:center; margin:12px 0; }
+.bm-btn { display:inline-block; background:var(--am); color:#000; font-weight:800; font-size:15px; padding:12px 24px; border-radius:10px; text-decoration:none; cursor:grab; border:none; font-family:inherit; }
+.bm-btn:active { cursor:grabbing; }
+.hint-box { background:rgba(0,214,143,.08); border:1px solid rgba(0,214,143,.25); border-radius:10px; padding:14px 18px; font-size:13px; color:var(--gr); margin-top:8px; }
+.demo { background:var(--s2); border:1px solid var(--bd); border-radius:10px; padding:16px; font-size:12px; font-family:monospace; color:#aaa; word-break:break-all; max-height:120px; overflow:auto; }
+.badge { display:inline-block; background:rgba(255,153,0,.15); color:var(--am); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; margin-left:6px; }
+ul.features { list-style:none; padding:0; }
+ul.features li { font-size:13px; color:var(--mu); padding:5px 0; display:flex; align-items:center; gap:8px; }
+ul.features li::before { content:'✅'; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>📦 Amazon → ツール 送信ボタン</h1>
+  <p class="sub">Amazonの商品ページを開いたままワンクリックで、アフィリエイト記事作成ツールに情報を送れます。</p>
+
+  <!-- 何ができるか -->
+  <div class="card">
+    <h2>⚡ できること</h2>
+    <ul class="features">
+      <li>ASIN・商品名・価格・ポイントを自動抽出</li>
+      <li>アフィリエイト記事作成ツールを新タブで開いて自動入力</li>
+      <li>商品画像URLも自動セット</li>
+      <li>クリック1回で完了（コピペ不要）</li>
+    </ul>
+  </div>
+
+  <!-- インストール手順 -->
+  <div class="card">
+    <h2>🔧 インストール手順</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>ブックマークバーを表示する</strong>
+        <p>Chrome：Ctrl+Shift+B（Mac: ⌘+Shift+B）でブックマークバーを表示してください。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>下のボタンをブックマークバーにドラッグ＆ドロップ</strong>
+        <p>ドラッグして、ブラウザ上部のブックマークバーへ落とすだけでOKです。</p>
+      </div>
+    </div>
+
+    <div class="bm-box">
+      <p style="font-size:12px;color:var(--mu);margin-bottom:12px">👇 このボタンをブックマークバーへドラッグ</p>
+      <a id="bmBtn" class="bm-btn" href="#">📦 ツールへ送る</a>
+      <p style="font-size:11px;color:var(--mu);margin-top:10px">※ドラッグできない場合は「手動インストール」の手順を使ってください</p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Amazonの商品ページで使う</strong>
+        <p>商品ページを開いて「📦 ツールへ送る」をクリックするだけ！</p>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      ✅ ブックマークバーに「📦 ツールへ送る」が追加されれば完了です！
+    </div>
+  </div>
+
+  <!-- 手動インストール -->
+  <div class="card">
+    <h2>🛠️ 手動インストール <span class="badge">ドラッグが効かない場合</span></h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>下のコードを全選択してコピー</strong>
+      </div>
+    </div>
+    <div class="demo" id="codeBox">（読み込み中...）</div>
+    <button onclick="copyCode()" style="margin-top:8px;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit">📋 コードをコピー</button>
+
+    <div class="step" style="margin-top:18px">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>ブックマークを手動で追加</strong>
+        <p>Chromeのブックマークバーを右クリック →「ページを追加」→ 名前に「📦 ツールへ送る」、URLに上のコードを貼り付けて保存。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== ブックマークレット本体 =====
+var TOOL_URL = 'https://hajime085.github.io/affiliate-tool/';
+
+var bookmarkletCode = `javascript:(function(){
+  var m=location.href.match(/\/dp\/([A-Z0-9]{10})/i);
+  if(!m){alert('Amazon商品ページで実行してください');return;}
+  var asin=m[1].toUpperCase();
+  var title='';
+  var tel=document.getElementById('productTitle');
+  if(tel)title=tel.textContent.trim().replace(/\\s+/g,' ').substring(0,120);
+  var sale='';
+  var sels=['#corePriceDisplay_desktop_feature_div .a-price:not([data-a-strike]) .a-offscreen','#corePrice_feature_div .a-price:not([data-a-strike]) .a-offscreen','#priceblock_ourprice','#price_inside_buybox'];
+  for(var i=0;i<sels.length;i++){var el=document.querySelector(sels[i]);if(el){sale=el.textContent.replace(/[^\\d]/g,'');break;}}
+  var orig='';
+  var osels=['.basisPrice .a-offscreen','.a-text-price[data-a-strike="true"] .a-offscreen','#priceblock_listprice','.a-price[data-a-strike="true"] .a-offscreen'];
+  for(var j=0;j<osels.length;j++){var oel=document.querySelector(osels[j]);if(oel){orig=oel.textContent.replace(/[^\\d]/g,'');break;}}
+  var pt='';
+  var pels=['#loyalty-points .a-color-price','#pointsInsideBuyBox_feature_div .a-color-price','.loyalty-points .a-color-price'];
+  for(var k=0;k<pels.length;k++){var pel=document.querySelector(pels[k]);if(pel){pt=pel.textContent.replace(/[^\\d]/g,'');break;}}
+  var img='';
+  var imgEl=document.getElementById('landingImage')||document.querySelector('#imgBlkFront');
+  if(imgEl)img=imgEl.getAttribute('data-old-hires')||imgEl.getAttribute('data-a-dynamic-image')?Object.keys(JSON.parse(imgEl.getAttribute('data-a-dynamic-image')||'{}')).sort(function(a,b){return b.length-a.length;})[0]||imgEl.src:imgEl.src;
+  var p=new URLSearchParams({asin:asin,name:encodeURIComponent(title),sale:sale,orig:orig,pt:pt,img:encodeURIComponent(img)});
+  window.open('${TOOL_URL}?'+p.toString(),'_blank');
+})();`;
+
+// ボタンのhrefをセット
+document.getElementById('bmBtn').href = bookmarkletCode;
+
+// コードボックスに表示
+document.getElementById('codeBox').textContent = bookmarkletCode;
+
+function copyCode() {
+  navigator.clipboard.writeText(bookmarkletCode).then(function(){
+    var btn = event.target;
+    btn.textContent = '✅ コピーしました！';
+    setTimeout(function(){ btn.textContent = '📋 コードをコピー'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
