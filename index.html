@@ -612,14 +612,14 @@ index.html に追加するコード
     var p = new URLSearchParams(window.location.search);
     if (!p.get('asin')) return;
     document.getElementById('qUrl').value   = p.get('asin') || '';
-    document.getElementById('qName').value  = decodeURIComponent(p.get('name') || '');
+    document.getElementById('qName').value  = p.get('name') || '';
     document.getElementById('qSale').value  = p.get('sale') || '';
     document.getElementById('qOrig').value  = p.get('orig') || '';
     document.getElementById('qPoint').value = p.get('pt')   || '';
     onUrlInput();
     calcQ();
     onNameInput();
-    var img = decodeURIComponent(p.get('img') || '');
+    var img = p.get('img') || '';
     if (img) {
       document.getElementById('qImgUrl').value = img;
       applyManualImg();
