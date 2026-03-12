@@ -594,6 +594,69 @@ window.addEventListener('DOMContentLoaded', function() {
   renderStockSidebar();
   renderStockPage();
   renderRankSlots();
+  ===================================================
+index.html に追加するコード
+===================================================
+
+【場所】index.html の末尾付近、以下の3行を探す：
+
+  renderStockSidebar();
+  renderStockPage();
+  renderRankSlots();
+});                   ← ここの直前に下のコードを挿入
+
+【挿入するコード】↓↓↓ renderRankSlots(); の直後、}); の直前に追加 ↓↓↓
+
+  // ===== URLパラメータから自動入力（ブックマークレット連携）=====
+  (function() {
+    var p = new URLSearchParams(window.location.search);
+    if (!p.get('asin')) return;
+    document.getElementById('qUrl').value   = p.get('asin') || '';
+    document.getElementById('qName').value  = decodeURIComponent(p.get('name') || '');
+    document.getElementById('qSale').value  = p.get('sale') || '';
+    document.getElementById('qOrig').value  = p.get('orig') || '';
+    document.getElementById('qPoint').value = p.get('pt')   || '';
+    onUrlInput();
+    calcQ();
+    onNameInput();
+    var img = decodeURIComponent(p.get('img') || '');
+    if (img) {
+      document.getElementById('qImgUrl').value = img;
+      applyManualImg();
+    }
+    setTimeout(function(){ toast('\u2705 Amazon\u304b\u3089\u5546\u54c1\u60c5\u5831\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f\uff01'); }, 300);
+    window.history.replaceState({}, '', window.location.pathname);
+  })();
+
+===================================================
+完成後のイメージ（最後の数行）
+===================================================
+
+  renderStockSidebar();
+  renderStockPage();
+  renderRankSlots();
+
+  // ===== URLパラメータから自動入力（ブックマークレット連携）=====
+  (function() {
+    var p = new URLSearchParams(window.location.search);
+    if (!p.get('asin')) return;
+    document.getElementById('qUrl').value   = p.get('asin') || '';
+    document.getElementById('qName').value  = decodeURIComponent(p.get('name') || '');
+    document.getElementById('qSale').value  = p.get('sale') || '';
+    document.getElementById('qOrig').value  = p.get('orig') || '';
+    document.getElementById('qPoint').value = p.get('pt')   || '';
+    onUrlInput();
+    calcQ();
+    onNameInput();
+    var img = decodeURIComponent(p.get('img') || '');
+    if (img) {
+      document.getElementById('qImgUrl').value = img;
+      applyManualImg();
+    }
+    setTimeout(function(){ toast('\u2705 Amazon\u304b\u3089\u5546\u54c1\u60c5\u5831\u3092\u8aad\u307f\u8fbc\u307f\u307e\u3057\u305f\uff01'); }, 300);
+    window.history.replaceState({}, '', window.location.pathname);
+  })();
+});
 });
 
 /* ===== ユーティリティ ===== */
