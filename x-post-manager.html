@@ -249,6 +249,30 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ── SETUP COMPLETE BUTTON ── */
+  .btn-setup-done {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 20px; padding: 10px 22px;
+    background: var(--green-dim); border: 1px solid var(--green);
+    color: var(--green); border-radius: 8px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif; transition: all 0.15s;
+  }
+  .btn-setup-done:hover { background: rgba(0,186,124,0.2); }
+
+  .setup-toggle {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    background: none; border: none;
+    transition: color 0.15s;
+    padding: 0;
+  }
+  .setup-toggle:hover { color: var(--text-muted); }
+
   /* ── NOT GITHUB PAGES WARNING ── */
   .warning-card {
     background: rgba(255,212,0,0.07);
@@ -287,6 +311,7 @@
     下の手順に従って <strong>GitHub Pages にアップロード</strong>してください。
   </div>
 
+  <div id="setup-section">
   <div class="setup-card">
     <h2>🔧 セットアップ（初回のみ）</h2>
     <div class="steps">
@@ -341,6 +366,16 @@
       </div>
 
     </div>
+    <button class="btn-setup-done" onclick="completeSetup()">
+      ✅ セットアップ完了 — この画面を非表示にする
+    </button>
+  </div>
+  </div><!-- /#setup-section -->
+
+  <div style="margin-bottom:20px; margin-top:-8px;">
+    <button class="setup-toggle" id="setup-toggle-btn" onclick="toggleSetup()" style="display:none;">
+      ⚙ セットアップ手順を再表示する
+    </button>
   </div>
 
   <!-- 統計 -->
@@ -380,6 +415,30 @@
   const STORAGE_KEY = 'x_post_manager_v1';
   let currentFilter = 'all';
   let currentSort = 'newest';
+
+  // ── セットアップ完了フラグ ──
+  const SETUP_KEY = 'x_post_manager_setup_done';
+
+  function applySetupState() {
+    const done = localStorage.getItem(SETUP_KEY) === '1';
+    document.getElementById('setup-section').style.display = done ? 'none' : 'block';
+    document.getElementById('setup-toggle-btn').style.display = done ? 'inline' : 'none';
+  }
+
+  function completeSetup() {
+    localStorage.setItem(SETUP_KEY, '1');
+    applySetupState();
+    showToast('✅ セットアップ完了！いつでも再表示できます');
+  }
+
+  let setupVisible = false;
+  function toggleSetup() {
+    setupVisible = !setupVisible;
+    document.getElementById('setup-section').style.display = setupVisible ? 'block' : 'none';
+    document.getElementById('setup-toggle-btn').textContent = setupVisible
+      ? '✕ セットアップ手順を閉じる'
+      : '⚙ セットアップ手順を再表示する';
+  }
 
   // ── ローカルファイル判定 ──
   const isLocal = location.protocol === 'file:';
@@ -504,6 +563,8 @@
     }
     history.replaceState({}, '', location.pathname);
   }
+
+  applySetupState();
 
   render();
 </script>
