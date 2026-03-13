@@ -24,7 +24,6 @@
   .header-right{display:flex;align-items:center;gap:10px;}
   .badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);padding:3px 10px;border:1px solid var(--border-light);border-radius:20px;}
   .badge span{color:var(--accent);font-weight:500;}
-
   #sync-btn{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);padding:4px 10px;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:none;white-space:nowrap;transition:all .15s;}
   #sync-btn:hover{border-color:var(--border-light);color:var(--text-muted);}
   .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim);flex-shrink:0;}
@@ -50,7 +49,7 @@
   .form-hint a{color:var(--accent);}
   .form-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--yellow);font-size:10px;}
 
-  #connect-status{padding:12px 14px;border-radius:8px;font-size:12px;display:none;line-height:1.8;font-family:'DM Mono',monospace;white-space:pre-wrap;}
+  #connect-status{padding:12px 14px;border-radius:8px;font-size:12px;display:none;line-height:1.8;font-family:'DM Mono',monospace;white-space:pre-wrap;word-break:break-all;}
   #connect-status.ok{display:block;background:var(--green-dim);border:1px solid rgba(0,186,124,.3);color:var(--green);}
   #connect-status.fail{display:block;background:var(--red-dim);border:1px solid rgba(244,33,46,.3);color:var(--red);}
   #connect-status.info{display:block;background:var(--accent-dim);border:1px solid rgba(29,155,240,.3);color:var(--accent);}
@@ -87,6 +86,11 @@
   #local-warning.visible{display:block;}
   #local-warning code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,212,0,.1);padding:1px 5px;border-radius:3px;}
 
+  #manual-sync-area{display:none;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;align-items:center;gap:12px;flex-wrap:wrap;}
+  #manual-sync-area.visible{display:flex;}
+  .gist-id-label{flex:1;font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;line-height:1.6;}
+  .gist-id-label span{color:var(--yellow);}
+
   .stats-row{display:flex;gap:12px;margin-bottom:20px;}
   .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'DM Mono',monospace;display:flex;flex-direction:column;gap:2px;flex:1;}
   .stat-num{font-size:20px;font-weight:500;color:var(--text);}
@@ -111,7 +115,10 @@
   .post-item.checked .post-title{color:var(--text-muted);text-decoration:line-through;text-decoration-color:var(--green);}
   .post-url{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.7;transition:opacity .15s;}
   .post-url:hover{opacity:1;text-decoration:underline;}
-  .post-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);}
+  .post-dates{font-family:'DM Mono',monospace;font-size:10px;line-height:1.9;display:flex;flex-direction:column;gap:0;}
+  .date-posted{color:var(--text-muted);}
+  .date-added{color:var(--text-dim);}
+
   .post-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;padding-top:2px;}
   .btn-check,.btn-delete{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-light);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--text-muted);}
   .btn-check:hover,.btn-check.active{background:var(--green-dim);border-color:var(--green);color:var(--green);}
@@ -153,15 +160,14 @@
 <div class="container">
 
   <div id="local-warning">
-    ⚠️ <strong>ローカルファイルとして開かれています。</strong><br>
-    ブックマークレットは動作しませんが、Gist設定・データ閲覧は可能です。<br>
-    Xからポストを保存するには <code>https://</code> でホストされたURLで開いてください。
+    <strong>&#9888; ローカルファイルとして開かれています。</strong><br>
+    ブックマークレットは動作しません。GitHub Pages の <code>https://</code> URLで開いてください。
   </div>
 
   <div id="setup-section">
 
     <div class="card yellow-top">
-      <div class="card-title">🐙 GitHub Gist 同期設定</div>
+      <div class="card-title">GitHub Gist 同期設定</div>
       <div class="gist-form">
         <div class="form-row">
           <div class="form-label">PERSONAL ACCESS TOKEN</div>
@@ -171,20 +177,20 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-label">GIST ID <small style="color:var(--text-dim);font-weight:300;font-family:sans-serif;">（初回は空欄でOK・自動作成）</small></div>
-          <input class="form-input" id="input-gist-id" type="text" placeholder="空欄で自動作成 / 2台目以降は既存IDを入力">
+          <div class="form-label">GIST ID</div>
+          <input class="form-input" id="input-gist-id" type="text" placeholder="初回は空欄で自動作成 / 2台目以降はPC側のIDを入力">
           <div class="form-hint">スマホなど2台目以降は、PC側で表示されたGist IDをここに入力してください。</div>
         </div>
         <div id="connect-status"></div>
         <div class="form-actions">
-          <button class="btn btn-primary" id="btn-connect">🔗 保存して接続テスト</button>
+          <button class="btn btn-primary" id="btn-connect">保存して接続テスト</button>
           <button class="btn btn-ghost" id="btn-clear-gist">設定を削除</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🔖 ブックマークレット設置</div>
+      <div class="card-title">ブックマークレット設置</div>
       <div class="steps">
         <div class="step">
           <div class="step-num" id="sn1">1</div>
@@ -197,12 +203,13 @@
           <div class="step-num" id="sn2">2</div>
           <div class="step-body">
             <div class="step-title">ブックマークバーへドラッグ</div>
+            <div class="step-desc">下のボタンをブックマークバーへドラッグしてください。Xのポストページで押すと新しいタブで管理ページが開きます。</div>
             <div class="bm-area">
               <a id="bm-link" href="#">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 X Post を保存
               </a>
-              <div class="drag-hint">← ブックマークバーへドラッグ<br><b>※ https:// で開いているときのみ有効</b></div>
+              <div class="drag-hint">&#8592; ブックマークバーへドラッグ<br><b>&#10025; 押すと新タブで管理ページが開きます</b></div>
             </div>
           </div>
         </div>
@@ -210,29 +217,24 @@
           <div class="step-num">3</div>
           <div class="step-body">
             <div class="step-title">スマホで見るには</div>
-            <div class="step-desc">スマホで同じURLを開き、同じGist設定を入力するだけで自動同期されます。</div>
+            <div class="step-desc">スマホで同じURLを開き、PC側と同じトークン + Gist ID を入力すれば自動同期されます。</div>
           </div>
         </div>
       </div>
       <div style="margin-top:20px;">
-        <button class="btn btn-green" id="btn-setup-done">✅ セットアップ完了 — この画面を非表示にする</button>
+        <button class="btn btn-green" id="btn-setup-done">&#10003; セットアップ完了 &#8212; この画面を非表示にする</button>
       </div>
     </div>
 
   </div>
 
   <div style="margin-bottom:16px;">
-    <button id="setup-toggle-btn" style="display:none;">⚙ セットアップ画面を再表示する</button>
+    <button id="setup-toggle-btn" style="display:none;">&#9881; セットアップ画面を再表示する</button>
   </div>
 
-  <!-- 手動同期エリア（常時表示） -->
-  <div id="manual-sync-area" style="margin-bottom:16px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; display:none; align-items:center; gap:12px; flex-wrap:wrap;">
-    <div style="flex:1; font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace; line-height:1.6;">
-      Gist ID: <span id="display-gist-id" style="color:var(--yellow);"></span>
-    </div>
-    <button class="btn btn-primary" id="btn-manual-sync" style="font-size:12px; padding:8px 16px;">
-      🔄 今すぐ同期
-    </button>
+  <div id="manual-sync-area">
+    <div class="gist-id-label">Gist ID: <span id="display-gist-id"></span></div>
+    <button class="btn btn-primary" id="btn-manual-sync" style="font-size:12px;padding:8px 16px;">&#8635; 今すぐ同期</button>
   </div>
 
   <div class="stats-row">
@@ -261,7 +263,6 @@
 (function() {
   'use strict';
 
-  // ── キー定数 ──
   var SK  = 'x_post_manager_v1';
   var SUK = 'x_post_manager_setup_done';
   var TK  = 'x_gist_token';
@@ -271,22 +272,14 @@
   var currentFilter = 'all';
   var currentSort   = 'newest';
   var syncing       = false;
+  var isLoading     = false;
 
-  // ── ユーティリティ ──
   function $id(id) { return document.getElementById(id); }
-
-  function localLoad() {
-    try { return JSON.parse(localStorage.getItem(SK) || '[]'); } catch(e) { return []; }
-  }
-  function localSave(d) {
-    localStorage.setItem(SK, JSON.stringify(d));
-  }
+  function localLoad() { try { return JSON.parse(localStorage.getItem(SK) || '[]'); } catch(e) { return []; } }
+  function localSave(d) { localStorage.setItem(SK, JSON.stringify(d)); }
   function getToken()  { return localStorage.getItem(TK) || ''; }
   function getGistId() { return localStorage.getItem(GK) || ''; }
-
-  function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   var toastTimer;
   function toast(msg) {
@@ -309,13 +302,18 @@
   }
 
   function setSyncState(cls, label) {
-    var btn = $id('sync-btn');
-    btn.className = cls;
+    $id('sync-btn').className = cls;
     $id('sync-label').textContent = label;
   }
 
+  function showManualSyncArea(gistId) {
+    var el = $id('manual-sync-area');
+    el.classList.add('visible');
+    $id('display-gist-id').textContent = gistId.slice(0, 12) + '...';
+  }
+
   // ── Gist API ──
-  function gistRequest(method, url, token, body) {
+  function gistReq(method, url, token, body) {
     var opts = {
       method: method,
       headers: {
@@ -327,32 +325,32 @@
     if (body) opts.body = JSON.stringify(body);
     return fetch(url, opts).then(function(r) {
       return r.json().then(function(j) {
-        if (!r.ok) throw new Error(j.message || 'GitHub APIエラー (HTTP ' + r.status + ')');
+        if (!r.ok) throw new Error(j.message || 'HTTP ' + r.status);
         return j;
       });
     });
   }
 
   function createGist(token, data) {
-    return gistRequest('POST', 'https://api.github.com/gists', token, {
-      description: 'X Post Manager Data',
-      public: false,
-      files: { [GF]: { content: JSON.stringify(data, null, 2) } }
+    var files = {};
+    files[GF] = { content: JSON.stringify(data, null, 2) };
+    return gistReq('POST', 'https://api.github.com/gists', token, {
+      description: 'X Post Manager Data', public: false, files: files
     }).then(function(j) { return j.id; });
   }
 
   function updateGist(token, gistId, data) {
-    return gistRequest('PATCH', 'https://api.github.com/gists/' + gistId, token, {
-      files: { [GF]: { content: JSON.stringify(data, null, 2) } }
-    });
+    var files = {};
+    files[GF] = { content: JSON.stringify(data, null, 2) };
+    return gistReq('PATCH', 'https://api.github.com/gists/' + gistId, token, { files: files });
   }
 
   function fetchGist(token, gistId) {
-    return gistRequest('GET', 'https://api.github.com/gists/' + gistId, token, null)
+    return gistReq('GET', 'https://api.github.com/gists/' + gistId, token, null)
       .then(function(j) {
-        var content = j.files && j.files[GF] && j.files[GF].content;
-        if (!content) throw new Error('Gistにデータファイルが見つかりません');
-        return JSON.parse(content);
+        var f = j.files && j.files[GF];
+        if (!f || !f.content) throw new Error('Gist にデータファイルが見つかりません');
+        return JSON.parse(f.content);
       });
   }
 
@@ -360,16 +358,12 @@
   function saveAndConnect() {
     var token  = $id('input-token').value.trim();
     var gistId = $id('input-gist-id').value.trim();
-
-    if (!token) {
-      setConnectStatus('fail', '⚠️ Personal Access Token を入力してください');
-      return;
-    }
+    if (!token) { setConnectStatus('fail', 'Personal Access Token を入力してください'); return; }
 
     var btn = $id('btn-connect');
     btn.disabled = true;
     btn.textContent = '接続中...';
-    setConnectStatus('info', '🔄 GitHub に接続しています...');
+    setConnectStatus('info', '接続しています...');
     setSyncState('syncing', '接続中...');
 
     localStorage.setItem(TK, token);
@@ -380,37 +374,36 @@
       p = fetchGist(token, gistId).then(function(data) {
         localSave(data);
         render();
-        setConnectStatus('ok',
-          '✅ 接続成功！ ' + data.length + '件のポストを取得しました。\n' +
-          'Gist ID: ' + gistId
-        );
+        setConnectStatus('ok', '接続成功！ ' + data.length + ' 件のポストを取得しました。\nGist ID: ' + gistId);
         setSyncState('synced', '同期済み');
+        showManualSyncArea(gistId);
       });
     } else {
       p = createGist(token, localLoad()).then(function(newId) {
         localStorage.setItem(GK, newId);
         $id('input-gist-id').value = newId;
         setConnectStatus('ok',
-          '✅ Gist を新規作成しました！\n' +
-          'Gist ID: ' + newId + '\n' +
-          '↑ スマホで使うときにこのIDを入力してください。'
+          'Gist を新規作成しました！\n' +
+          'Gist ID: ' + newId + '\n\n' +
+          'スマホで使うときにこのIDをコピーしておいてください。'
         );
         setSyncState('synced', '同期済み');
+        showManualSyncArea(newId);
       });
     }
 
     p.catch(function(e) {
       setConnectStatus('fail',
-        '❌ 接続失敗: ' + e.message + '\n\n' +
+        '接続失敗: ' + e.message + '\n\n' +
         '確認ポイント:\n' +
-        '・トークンが正しいか（ghp_ で始まる文字列）\n' +
-        '・トークンに gist スコープがチェックされているか\n' +
-        '・Gist IDが正しいか（間違いなければ空欄にして再試行）'
+        '  - トークンが ghp_ で始まる文字列か\n' +
+        '  - トークンに gist スコープがあるか\n' +
+        '  - Gist ID が正しいか（空欄にして再試行も可）'
       );
       setSyncState('error', 'エラー');
     }).finally(function() {
       btn.disabled = false;
-      btn.textContent = '🔗 保存して接続テスト';
+      btn.textContent = '保存して接続テスト';
     });
   }
 
@@ -418,11 +411,12 @@
     if (!confirm('Gist設定を削除しますか？\nローカルのポストデータは残ります。')) return;
     localStorage.removeItem(TK);
     localStorage.removeItem(GK);
-    $id('input-token').value  = '';
+    $id('input-token').value   = '';
     $id('input-gist-id').value = '';
     clearConnectStatus();
     setSyncState('', '未設定');
-    toast('🗑 設定を削除しました');
+    $id('manual-sync-area').classList.remove('visible');
+    toast('設定を削除しました');
   }
 
   // ── 同期 ──
@@ -431,19 +425,25 @@
     var gistId = getGistId();
     if (!token || !gistId || syncing) return Promise.resolve();
     syncing = true;
-    if (isInitial) setLoading(true);
+    if (isInitial) {
+      isLoading = true;
+      $id('post-list').innerHTML =
+        '<div class="empty-state">' +
+        '<div class="empty-icon" style="font-size:28px;animation:blink .8s infinite">&#9203;</div>' +
+        '<p>Gist からデータを読み込んでいます...</p></div>';
+    }
     setSyncState('syncing', '同期中...');
     return fetchGist(token, gistId).then(function(data) {
       localSave(data);
-      setLoading(false);
+      isLoading = false;
       render();
       setSyncState('synced', '同期済み');
-      if (isInitial && data.length > 0) toast('✅ ' + data.length + '件のポストを読み込みました');
+      if (isInitial && data.length > 0) toast(data.length + ' 件読み込みました');
     }).catch(function(e) {
-      setLoading(false);
+      isLoading = false;
       render();
       setSyncState('error', 'エラー');
-      toast('❌ 同期失敗: ' + e.message);
+      toast('同期失敗: ' + e.message);
     }).finally(function() { syncing = false; });
   }
 
@@ -458,7 +458,7 @@
       setSyncState('synced', '同期済み');
     }).catch(function(e) {
       setSyncState('error', 'エラー');
-      toast('❌ Gist同期失敗: ' + e.message);
+      toast('Gist同期失敗: ' + e.message);
     });
   }
 
@@ -469,24 +469,13 @@
     if (!p) return;
     p.checked = !p.checked;
     saveAndSync(data);
-    toast(p.checked ? '✅ チェックしました' : '↩ チェックを外しました');
+    toast(p.checked ? 'チェックしました' : 'チェックを外しました');
   }
 
   function deletePost(id) {
     if (!confirm('削除しますか？')) return;
     saveAndSync(localLoad().filter(function(x){ return x.id !== id; }));
-    toast('🗑 削除しました');
-  }
-
-  // ── ローディング表示 ──
-  var isLoading = false;
-  function setLoading(v) {
-    isLoading = v;
-    if (v) {
-      $id('post-list').innerHTML =
-        '<div class="empty-state"><div class="empty-icon" style="font-size:28px;animation:blink .8s infinite">⏳</div>' +
-        '<p>Gist からデータを読み込んでいます...</p></div>';
-    }
+    toast('削除しました');
   }
 
   // ── 描画 ──
@@ -508,129 +497,138 @@
     var list = $id('post-list');
     if (!view.length) {
       list.innerHTML =
-        '<div class="empty-state"><div class="empty-icon">📭</div><p>' +
-        (total === 0 ? 'まだポストが保存されていません。<br>セットアップを完了してブックマークレットを設置してください。'
-                     : 'この条件のポストはありません。') +
+        '<div class="empty-state"><div class="empty-icon">&#128205;</div><p>' +
+        (total === 0
+          ? 'まだポストが保存されていません。<br>ブックマークレットを設置してXのポストページで押してください。'
+          : 'この条件のポストはありません。') +
         '</p></div>';
       return;
     }
+
     list.innerHTML = view.map(function(p) {
-      return '<div class="post-item' + (p.checked ? ' checked' : '') + '" data-id="' + p.id + '">' +
-        '<div class="post-meta">' +
-          '<div class="post-title" title="' + esc(p.title) + '">' + esc(p.title) + '</div>' +
-          '<a class="post-url" href="' + esc(p.url) + '" target="_blank">' + esc(p.url) + '</a>' +
-          '<div class="post-date">' + esc(p.date) + '</div>' +
-        '</div>' +
-        '<div class="post-actions">' +
-          '<button class="btn-check' + (p.checked ? ' active' : '') + '" data-action="check" title="チェック">' +
-            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
-          '</button>' +
-          '<button class="btn-delete" data-action="delete" title="削除">' +
-            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
-          '</button>' +
-        '</div>' +
-      '</div>';
+      // 日付（旧データは p.date、新データは p.posted / p.added）
+      var addedVal  = p.added  || p.date || '';
+      var postedVal = p.posted || '';
+
+      var datesHtml = '<div class="post-dates">';
+      if (postedVal) datesHtml += '<span class="date-posted">&#128197; ポスト日: ' + esc(postedVal) + '</span>';
+      if (addedVal)  datesHtml += '<span class="date-added">&#128205; 追加日: '  + esc(addedVal)  + '</span>';
+      datesHtml += '</div>';
+
+      return (
+        '<div class="post-item' + (p.checked ? ' checked' : '') + '" data-id="' + p.id + '">' +
+          '<div class="post-meta">' +
+            '<div class="post-title" title="' + esc(p.title) + '">' + esc(p.title) + '</div>' +
+            '<a class="post-url" href="' + esc(p.url) + '" target="_blank">' + esc(p.url) + '</a>' +
+            datesHtml +
+          '</div>' +
+          '<div class="post-actions">' +
+            '<button class="btn-check' + (p.checked ? ' active' : '') + '" data-action="check" title="チェック">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+            '</button>' +
+            '<button class="btn-delete" data-action="delete" title="削除">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
     }).join('');
   }
 
   // ── セットアップ表示制御 ──
   function applySetupState() {
-    var done = localStorage.getItem(SUK) === '1';
-    var hasCredentials = !!(getToken() && getGistId());
-    var show = !done || !hasCredentials;
+    var done    = localStorage.getItem(SUK) === '1';
+    var hasCreds = !!(getToken() && getGistId());
+    var show    = !done || !hasCreds;
     $id('setup-section').style.display    = show ? 'block' : 'none';
     $id('setup-toggle-btn').style.display = show ? 'none'  : 'inline';
-    if (done && !hasCredentials) {
+    if (done && !hasCreds) {
       setConnectStatus('fail',
-        '⚠️ このデバイスにはまだGist設定が保存されていません。\n' +
-        'PC側のトークンとGist IDを入力して\n「保存して接続テスト」を押してください。'
+        'このデバイスにはまだGist設定が保存されていません。\n' +
+        'PC側のトークンとGist IDを入力して「保存して接続テスト」を押してください。'
       );
     }
   }
 
-  // ── ブックマークレット設定 ──
+  // ── ブックマークレット ──
   var isLocal = location.protocol === 'file:';
   var pageURL = location.href.split('?')[0];
 
   function initBookmarklet() {
     if (isLocal) {
       $id('local-warning').classList.add('visible');
-    } else {
-      $id('sn1').textContent = '✓'; $id('sn1').classList.add('done');
-      $id('sn2').textContent = '✓'; $id('sn2').classList.add('done');
-      var bm = "javascript:(function(){" +
-        "var u=location.href,t=document.title||u;" +
-        "if(!u.includes('x.com')&&!u.includes('twitter.com')){alert('X\u306e\u30dd\u30b9\u30c8\u30da\u30fc\u30b8\u3067\u62bc\u3057\u3066\u304f\u3060\u3055\u3044');return;}" +
-        "location.href='" + pageURL + "?action=save'" +
-        "+'&url='+encodeURIComponent(u)" +
-        "+'&title='+encodeURIComponent(t)" +
-        "+'&date='+encodeURIComponent(new Date().toLocaleString('ja-JP'));" +
-        "})();";
-      $id('bm-link').href = bm;
+      return;
     }
+    $id('sn1').textContent = 'v'; $id('sn1').classList.add('done');
+    $id('sn2').textContent = 'v'; $id('sn2').classList.add('done');
+
+    // 新タブで管理ページを開く + ポスト日時を取得
+    var dest = pageURL;
+    var bm = 'javascript:(function(){' +
+      'var u=location.href,t=document.title||u;' +
+      'if(!u.includes("x.com")&&!u.includes("twitter.com")){' +
+        'alert("X\u306e\u30dd\u30b9\u30c8\u30da\u30fc\u30b8\u3067\u62bc\u3057\u3066\u304f\u3060\u3055\u3044");return;' +
+      '}' +
+      'var added=new Date().toLocaleString("ja-JP");' +
+      'var tel=document.querySelector("article time[datetime]");' +
+      'var posted=tel?new Date(tel.getAttribute("datetime")).toLocaleString("ja-JP"):"";' +
+      'window.open("' + dest + '?action=save"' +
+        '+"&url="+encodeURIComponent(u)' +
+        '+"&title="+encodeURIComponent(t)' +
+        '+"&added="+encodeURIComponent(added)' +
+        '+"&posted="+encodeURIComponent(posted)' +
+      ',"_blank");' +
+    '})();';
+    $id('bm-link').href = bm;
   }
 
   // ── URLパラメータ受信 ──
   function handleUrlParams() {
     var params = new URLSearchParams(location.search);
     if (params.get('action') !== 'save') return;
-    var url   = params.get('url');
-    var title = params.get('title') || url;
-    var date  = params.get('date')  || new Date().toLocaleString('ja-JP');
+    var url    = params.get('url');
+    var title  = params.get('title')  || url;
+    var added  = params.get('added')  || params.get('date') || new Date().toLocaleString('ja-JP');
+    var posted = params.get('posted') || '';
     if (url) {
       var data = localLoad();
       if (!data.some(function(p){ return p.url === url; })) {
-        data.unshift({ id: Date.now(), url: url, title: title, date: date, checked: false });
-        saveAndSync(data).then(function(){ toast('✅ 保存しました！'); });
+        data.unshift({ id: Date.now(), url: url, title: title, posted: posted, added: added, checked: false });
+        saveAndSync(data).then(function(){ toast('保存しました！'); });
       } else {
-        toast('⚠️ このポストはすでに保存されています');
+        toast('このポストはすでに保存されています');
       }
     }
     history.replaceState({}, '', location.pathname);
   }
 
-  // ══════════════════════════════
-  //  イベント登録（DOMContentLoaded）
-  // ══════════════════════════════
+  // ── DOMContentLoaded ──
   document.addEventListener('DOMContentLoaded', function() {
 
-    // Gist設定ボタン
     $id('btn-connect').addEventListener('click', saveAndConnect);
     $id('btn-clear-gist').addEventListener('click', clearGistSettings);
-
-    // 入力変更でステータスクリア
     $id('input-token').addEventListener('input', clearConnectStatus);
     $id('input-gist-id').addEventListener('input', clearConnectStatus);
 
-    // セットアップ完了
     $id('btn-setup-done').addEventListener('click', function() {
       localStorage.setItem(SUK, '1');
       applySetupState();
-      toast('✅ 完了！いつでも再表示できます');
+      toast('完了！いつでも再表示できます');
     });
 
-    // セットアップ再表示トグル
     var setupVisible = false;
     $id('setup-toggle-btn').addEventListener('click', function() {
       setupVisible = !setupVisible;
       $id('setup-section').style.display = setupVisible ? 'block' : 'none';
-      this.textContent = setupVisible ? '✕ セットアップを閉じる' : '⚙ セットアップ画面を再表示する';
+      this.textContent = setupVisible ? 'セットアップを閉じる' : 'セットアップ画面を再表示する';
     });
 
-    // ヘッダー同期ボタン
     $id('sync-btn').addEventListener('click', function(){ syncNow(false); });
 
-    // 手動同期ボタン
-    var manualSyncBtn = $id('btn-manual-sync');
-    if (manualSyncBtn) {
-      manualSyncBtn.addEventListener('click', function() {
-        syncNow(false).then(function(){
-          toast('✅ 同期完了！');
-        });
-      });
-    }
+    $id('btn-manual-sync').addEventListener('click', function() {
+      syncNow(false).then(function(){ toast('同期完了！'); });
+    });
 
-    // フィルタボタン（イベント委譲）
     document.querySelector('.filters').addEventListener('click', function(e) {
       var btn = e.target.closest('.filter-btn');
       if (!btn) return;
@@ -640,13 +638,11 @@
       render();
     });
 
-    // ソート
     $id('sort-select').addEventListener('change', function() {
       currentSort = this.value;
       render();
     });
 
-    // ポストリスト（イベント委譲）
     $id('post-list').addEventListener('click', function(e) {
       var btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -657,9 +653,8 @@
       if (btn.dataset.action === 'delete') deletePost(id);
     });
 
-    // ブックマークレットリンクのクリック防止（localのみ）
     $id('bm-link').addEventListener('click', function(e) {
-      if (isLocal) { e.preventDefault(); toast('⚠️ https:// のURLで開いてください'); }
+      if (isLocal) { e.preventDefault(); toast('https:// のURLで開いてください'); }
     });
 
     // 初期化
@@ -672,24 +667,15 @@
     else if (savedToken)                setSyncState('', 'Gist未設定');
     else                                setSyncState('', '未設定');
 
-    // Gist設定済みなら手動同期エリアを表示
-    if (savedToken && savedGistId) {
-      var syncArea = $id('manual-sync-area');
-      if (syncArea) {
-        syncArea.style.display = 'flex';
-        var gidEl = $id('display-gist-id');
-        if (gidEl) gidEl.textContent = savedGistId.slice(0,12) + '...';
-      }
-    }
+    if (savedToken && savedGistId) showManualSyncArea(savedGistId);
 
     initBookmarklet();
     applySetupState();
     handleUrlParams();
 
-    // Gist設定済みなら読み込み中を表示してから同期、未設定ならそのまま描画
     if (savedToken && savedGistId) {
-      render(); // まずローカルキャッシュを表示
-      syncNow(true); // その後Gistから最新取得（完了後に再描画）
+      render();        // キャッシュをまず表示
+      syncNow(true);   // Gistから最新を取得して再描画
     } else {
       render();
     }
