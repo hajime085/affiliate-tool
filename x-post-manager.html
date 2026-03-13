@@ -416,17 +416,22 @@
   }
 
   // ── 同期 ──
-  function syncNow() {
+  function syncNow(isInitial) {
     var token  = getToken();
     var gistId = getGistId();
-    if (!token || !gistId || syncing) return;
+    if (!token || !gistId || syncing) return Promise.resolve();
     syncing = true;
+    if (isInitial) setLoading(true);
     setSyncState('syncing', '同期中...');
-    fetchGist(token, gistId).then(function(data) {
+    return fetchGist(token, gistId).then(function(data) {
       localSave(data);
+      setLoading(false);
       render();
       setSyncState('synced', '同期済み');
+      if (isInitial && data.length > 0) toast('✅ ' + data.length + '件のポストを読み込みました');
     }).catch(function(e) {
+      setLoading(false);
+      render();
       setSyncState('error', 'エラー');
       toast('❌ 同期失敗: ' + e.message);
     }).finally(function() { syncing = false; });
@@ -463,8 +468,20 @@
     toast('🗑 削除しました');
   }
 
+  // ── ローディング表示 ──
+  var isLoading = false;
+  function setLoading(v) {
+    isLoading = v;
+    if (v) {
+      $id('post-list').innerHTML =
+        '<div class="empty-state"><div class="empty-icon" style="font-size:28px;animation:blink .8s infinite">⏳</div>' +
+        '<p>Gist からデータを読み込んでいます...</p></div>';
+    }
+  }
+
   // ── 描画 ──
   function render() {
+    if (isLoading) return;
     var data    = localLoad();
     var total   = data.length;
     var checked = data.filter(function(p){ return p.checked; }).length;
