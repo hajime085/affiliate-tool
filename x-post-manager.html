@@ -124,6 +124,14 @@
   .btn-check:hover,.btn-check.active{background:var(--green-dim);border-color:var(--green);color:var(--green);}
   .btn-delete:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
 
+  /* アコーディオン */
+  .accordion-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;cursor:pointer;background:none;border:none;padding:2px 0;margin-top:4px;transition:color .15s;}
+  .accordion-btn:hover{color:var(--accent);}
+  .accordion-btn .arrow{display:inline-block;transition:transform .2s;font-size:9px;}
+  .accordion-btn.open .arrow{transform:rotate(90deg);}
+  .post-text{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:6px;border-left:2px solid var(--border-light);white-space:pre-wrap;word-break:break-word;display:none;}
+  .post-text.open{display:block;}
+
   .empty-state{text-align:center;padding:60px 24px;color:var(--text-dim);}
   .empty-icon{font-size:44px;margin-bottom:14px;opacity:.3;}
   .empty-state p{font-size:13px;line-height:1.9;}
@@ -521,6 +529,10 @@
             '<div class="post-title" title="' + esc(p.title) + '">' + esc(p.title) + '</div>' +
             '<a class="post-url" href="' + esc(p.url) + '" target="_blank">' + esc(p.url) + '</a>' +
             datesHtml +
+            (p.text
+              ? '<button class="accordion-btn" data-action="accordion"><span class="arrow">&#9658;</span> 本文を見る</button>' +
+                '<div class="post-text">' + esc(p.text) + '</div>'
+              : '') +
           '</div>' +
           '<div class="post-actions">' +
             '<button class="btn-check' + (p.checked ? ' active' : '') + '" data-action="check" title="チェック">' +
@@ -562,19 +574,23 @@
     $id('sn1').textContent = 'v'; $id('sn1').classList.add('done');
     $id('sn2').textContent = 'v'; $id('sn2').classList.add('done');
 
-    // 新タブで管理ページを開く + ポスト日時を取得
+    // 新タブで管理ページを開く + ポスト日時・本文を取得
     var dest = pageURL;
     var bm = 'javascript:(function(){' +
-      'var u=location.href,t=document.title||u;' +
+      'var u=location.href;' +
       'if(!u.includes("x.com")&&!u.includes("twitter.com")){' +
         'alert("X\u306e\u30dd\u30b9\u30c8\u30da\u30fc\u30b8\u3067\u62bc\u3057\u3066\u304f\u3060\u3055\u3044");return;' +
       '}' +
       'var added=new Date().toLocaleString("ja-JP");' +
       'var tel=document.querySelector("article time[datetime]");' +
       'var posted=tel?new Date(tel.getAttribute("datetime")).toLocaleString("ja-JP"):"";' +
+      'var txEl=document.querySelector("article [data-testid=tweetText]");' +
+      'var tx=txEl?txEl.innerText.trim():"";' +
+      'var t=tx||document.title||u;' +
       'window.open("' + dest + '?action=save"' +
         '+"&url="+encodeURIComponent(u)' +
-        '+"&title="+encodeURIComponent(t)' +
+        '+"&title="+encodeURIComponent(t.slice(0,80))' +
+        '+"&text="+encodeURIComponent(tx)' +
         '+"&added="+encodeURIComponent(added)' +
         '+"&posted="+encodeURIComponent(posted)' +
       ',"_blank");' +
@@ -590,10 +606,11 @@
     var title  = params.get('title')  || url;
     var added  = params.get('added')  || params.get('date') || new Date().toLocaleString('ja-JP');
     var posted = params.get('posted') || '';
+    var text   = params.get('text')   || '';
     if (url) {
       var data = localLoad();
       if (!data.some(function(p){ return p.url === url; })) {
-        data.unshift({ id: Date.now(), url: url, title: title, posted: posted, added: added, checked: false });
+        data.unshift({ id: Date.now(), url: url, title: title, text: text, posted: posted, added: added, checked: false });
         saveAndSync(data).then(function(){ toast('保存しました！'); });
       } else {
         toast('このポストはすでに保存されています');
@@ -651,6 +668,16 @@
       var id = Number(item.dataset.id);
       if (btn.dataset.action === 'check')  toggleCheck(id);
       if (btn.dataset.action === 'delete') deletePost(id);
+      if (btn.dataset.action === 'accordion') {
+        var textEl = item.querySelector('.post-text');
+        if (!textEl) return;
+        var isOpen = textEl.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        var arrowEl = btn.querySelector('.arrow');
+        if (arrowEl) arrowEl.innerHTML = isOpen ? '&#9660;' : '&#9658;';
+        var labelNode = btn.lastChild;
+        if (labelNode && labelNode.nodeType === 3) labelNode.textContent = isOpen ? ' 閉じる' : ' 本文を見る';
+      }
     });
 
     $id('bm-link').addEventListener('click', function(e) {
