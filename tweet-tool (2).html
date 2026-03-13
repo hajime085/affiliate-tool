@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X投稿ツール｜お得情報アカウント運用</title>
+<style>
+/* ===== Google Fonts ===== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* ===== CSS変数 ===== */
+:root {
+  --bg:    #f5f4f0;
+  --s1:    #ffffff;
+  --s2:    #f0ede8;
+  --bd:    #e0dbd3;
+  --tx:    #1a1a18;
+  --mu:    #888880;
+  --acc:   #2a6496;   /* 落ち着いたネイビーブルー */
+  --accs:  #1a4a72;
+  --tw:    #1DA1F2;
+  --gr:    #2d7a4f;
+  --am:    #c45c00;
+  --re:    #c0392b;
+  --tip:   #7c6a52;
+  --knowledge: #2a6496;
+  --empathy:   #2d7a4f;
+  --announce:  #c45c00;
+  --radius: 12px;
+}
+
+/* ===== リセット・基本 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--tx);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ===== ヘッダー ===== */
+header {
+  background: var(--tx);
+  color: #fff;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-sub { font-size: 11px; color: rgba(255,255,255,.5); font-weight: 400; }
+
+/* ===== 今日のサマリーバー ===== */
+.summary-bar {
+  background: var(--acc);
+  color: #fff;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.summary-bar-title { font-weight: 700; font-size: 13px; white-space: nowrap; }
+.progress-group { display: flex; gap: 14px; flex-wrap: wrap; }
+.prog-item { display: flex; align-items: center; gap: 6px; }
+.prog-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.prog-label { opacity: .85; }
+.prog-count { font-weight: 700; font-family: 'DM Mono', monospace; }
+.summary-advice {
+  margin-left: auto;
+  background: rgba(255,255,255,.15);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ===== メインレイアウト ===== */
+.layout {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 740px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ===== カード ===== */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card:last-child { margin-bottom: 0; }
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mu);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== 投稿タイプ選択 ===== */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.type-btn {
+  border: 2px solid var(--bd);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--s1);
+  transition: all .15s;
+  position: relative;
+}
+.type-btn:hover { border-color: var(--acc); background: #f0f5fa; }
+.type-btn.active { background: var(--acc); border-color: var(--acc); color: #fff; }
+.type-btn.active .type-icon { filter: brightness(0) invert(1); }
+.type-btn.active .type-name { color: #fff; }
+.type-btn.active .type-desc { color: rgba(255,255,255,.75); }
+.type-btn.k.active { background: var(--knowledge); border-color: var(--knowledge); }
+.type-btn.e.active { background: var(--empathy);   border-color: var(--empathy); }
+.type-btn.a.active { background: var(--announce);  border-color: var(--announce); }
+.type-icon { font-size: 22px; margin-bottom: 5px; display: block; }
+.type-name { font-size: 12px; font-weight: 700; display: block; color: var(--tx); }
+.type-desc { font-size: 10px; color: var(--mu); display: block; margin-top: 2px; line-height: 1.4; }
+
+/* ===== フォーム ===== */
+.f { margin-bottom: 14px; }
+.lbl { font-size: 11px; font-weight: 700; color: var(--mu); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.lbl-hint { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 4px; }
+input, select, textarea {
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  color: var(--tx);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--acc); background: #fff; }
+textarea { resize: vertical; }
+
+/* ===== テーマタグ ===== */
+.theme-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.theme-tag {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .15s;
+  color: var(--tx);
+}
+.theme-tag:hover { border-color: var(--acc); color: var(--acc); }
+.theme-tag.selected { background: var(--acc); border-color: var(--acc); color: #fff; }
+
+/* ===== ボタン ===== */
+.btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--acc); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--accs); transform: translateY(-1px); }
+.btn-tw { background: var(--tw); color: #fff; }
+.btn-tw:hover:not(:disabled) { opacity: .85; }
+.btn-ghost { background: transparent; color: var(--mu); border: 1px solid var(--bd); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--acc); color: var(--acc); }
+.btn-danger { background: rgba(192,57,43,.1); color: var(--re); border: 1px solid rgba(192,57,43,.2); }
+.btn-full { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+
+/* ===== 生成結果エリア ===== */
+.result-area { display: none; }
+.result-area.show { display: block; }
+.tweet-box {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.8;
+  min-height: 80px;
+  white-space: pre-wrap;
+  margin-bottom: 10px;
+  position: relative;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.tweet-box[contenteditable="true"]:focus { outline: 2px solid var(--acc); outline-offset: 2px; background: #fff; }
+.tweet-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.char-count { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--mu); }
+.char-count.over { color: var(--re); font-weight: 700; }
+.tweet-actions { display: flex; gap: 6px; }
+
+/* ===== バリエーション ===== */
+.variations { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.variation-item {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.variation-item:hover { border-color: var(--acc); background: #f0f5fa; }
+.variation-item.selected { border-color: var(--acc); background: #e8f0f8; }
+.var-num {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--mu);
+}
+
+/* ===== スケジュール（右カラム） ===== */
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.today-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mu);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.today-date {
+  font-size: 11px;
+  color: var(--mu);
+  font-family: 'DM Mono', monospace;
+}
+.slot-list { display: flex; flex-direction: column; gap: 8px; }
+.slot {
+  border: 1.5px solid var(--bd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--s1);
+  transition: all .15s;
+}
+.slot.done { background: var(--s2); opacity: .6; }
+.slot.done .slot-text { text-decoration: line-through; color: var(--mu); }
+.slot-time {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--mu);
+  flex-shrink: 0;
+  padding-top: 1px;
+  width: 36px;
+}
+.slot-body { flex: 1; min-width: 0; }
+.slot-type {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 3px;
+}
+.slot-type.k { color: var(--knowledge); }
+.slot-type.e { color: var(--empathy); }
+.slot-type.a { color: var(--announce); }
+.slot-text { font-size: 12px; line-height: 1.6; color: var(--tx); word-break: break-all; }
+.slot-empty { font-size: 12px; color: var(--mu); font-style: italic; }
+.slot-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--bd);
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all .15s;
+  background: none;
+}
+.slot-check:hover { border-color: var(--gr); background: rgba(45,122,79,.1); }
+.slot.done .slot-check { background: var(--gr); border-color: var(--gr); color: #fff; }
+.slot-save-btn {
+  font-size: 10px;
+  color: var(--acc);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.slot-save-btn:hover { text-decoration: underline; }
+
+/* ===== 履歴 ===== */
+.history-list { display: flex; flex-direction: column; gap: 10px; }
+.history-item {
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--s1);
+}
+.history-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.history-type {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.history-type.k { background: rgba(42,100,150,.12); color: var(--knowledge); }
+.history-type.e { background: rgba(45,122,79,.12);  color: var(--empathy); }
+.history-type.a { background: rgba(196,92,0,.12);   color: var(--announce); }
+.history-date { font-size: 10px; color: var(--mu); font-family: 'DM Mono', monospace; }
+.history-text { font-size: 12px; line-height: 1.7; color: var(--tx); word-break: break-all; }
+.history-actions { display: flex; gap: 6px; margin-top: 8px; }
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--mu);
+  font-size: 13px;
+}
+.empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+/* ===== ヒントボックス ===== */
+.hint {
+  background: #f0f5fa;
+  border-left: 3px solid var(--acc);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--tip);
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+.hint strong { color: var(--acc); }
+
+/* ===== スピナー・トースト ===== */
+.sp {
+  width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  padding: 11px 20px; border-radius: 10px;
+  font-weight: 700; font-size: 13px;
+  opacity: 0; transform: translateY(8px);
+  transition: all .25s; z-index: 9999;
+  pointer-events: none; max-width: 300px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ===== スマホ対応 ===== */
+@media (max-width: 500px) {
+  .type-grid { grid-template-columns: 1fr; }
+  .summary-advice { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ヘッダー ===== -->
+<header>
+  <div class="logo">
+    <span>🐦</span>
+    <div>
+      X 投稿ツール
+      <div class="logo-sub">Amazon・節約・お得情報アカウント用</div>
+    </div>
+  </div>
+  <a href="./index.html" style="font-size:12px;color:rgba(255,255,255,.6);text-decoration:none">← 記事作成ツールへ</a>
+</header>
+
+<!-- ===== 今日のサマリーバー ===== -->
+<div class="summary-bar">
+  <span class="summary-bar-title">📅 今日の投稿状況</span>
+  <div class="progress-group">
+    <div class="prog-item">
+      <span class="prog-dot" style="background:#fff"></span>
+      <span class="prog-label">合計</span>
+      <span class="prog-count" id="totalCount">0</span><span class="prog-label">/3</span>
+    </div>
+    <div class="prog-item">
+      <span class="prog-dot" style="background:#7eb8d4"></span>
+      <span class="prog-label">豆知識</span>
+      <span class="prog-count" id="kCount">0</span>
+    </div>
+    <div class="prog-item">
+      <span class="prog-dot" style="background:#7ec49a"></span>
+      <span class="prog-label">共感</span>
+      <span class="prog-count" id="eCount">0</span>
+    </div>
+    <div class="prog-item">
+      <span class="prog-dot" style="background:#e0a060"></span>
+      <span class="prog-label">告知</span>
+      <span class="prog-count" id="aCount">0</span>
+    </div>
+  </div>
+  <div class="summary-advice" id="adviceText">今日の投稿を始めましょう</div>
+</div>
+
+<!-- ===== メインレイアウト ===== -->
+<div class="layout">
+
+  <!-- ===== 左：生成エリア ===== -->
+  <div class="left-col">
+
+    <!-- 投稿タイプ選択 -->
+    <div class="card">
+      <div class="card-title">📝 投稿タイプを選ぶ</div>
+      <div class="type-grid">
+        <div class="type-btn k active" id="type-k" onclick="selectType('k')">
+          <span class="type-icon">📚</span>
+          <span class="type-name">豆知識</span>
+          <span class="type-desc">Amazon・節約・<br>お得の知識</span>
+        </div>
+        <div class="type-btn e" id="type-e" onclick="selectType('e')">
+          <span class="type-icon">💬</span>
+          <span class="type-name">共感・日常</span>
+          <span class="type-desc">買い物あるある<br>節約テク</span>
+        </div>
+        <div class="type-btn a" id="type-a" onclick="selectType('a')">
+          <span class="type-icon">📣</span>
+          <span class="type-name">ブログ告知</span>
+          <span class="type-desc">記事URLから<br>告知文を生成</span>
+        </div>
+      </div>
+
+      <!-- 豆知識エリア -->
+      <div id="form-k">
+        <div class="hint">
+          <strong>豆知識ツイート</strong>とは：Amazon・節約・お得情報に関する「実はこうすると得する」系の投稿です。<br>
+          テーマを選ぶか自由入力してください。AIが140字以内で生成します。
+        </div>
+        <div class="f">
+          <span class="lbl">テーマ<span class="lbl-hint">クリックで選択、または自由入力</span></span>
+          <div class="theme-tags" id="themeTags-k"></div>
+        </div>
+        <div class="f">
+          <span class="lbl">自由テーマ入力<span class="lbl-hint">任意</span></span>
+          <input id="freeTheme-k" placeholder="例：Amazonギフト券チャージでポイント還元">
+        </div>
+      </div>
+
+      <!-- 共感・日常エリア -->
+      <div id="form-e" style="display:none">
+        <div class="hint">
+          <strong>共感・日常ツイート</strong>とは：「あるある」「わかる」と思ってもらえる、買い物・節約にまつわる日常の一言です。<br>
+          押しつけがましくなく、自然にフォロワーとつながれる投稿を生成します。
+        </div>
+        <div class="f">
+          <span class="lbl">テーマ</span>
+          <div class="theme-tags" id="themeTags-e"></div>
+        </div>
+        <div class="f">
+          <span class="lbl">自由テーマ入力<span class="lbl-hint">任意</span></span>
+          <input id="freeTheme-e" placeholder="例：深夜に衝動買いしそうになった話">
+        </div>
+      </div>
+
+      <!-- ブログ告知エリア -->
+      <div id="form-a" style="display:none">
+        <div class="hint">
+          <strong>ブログ告知ツイート</strong>とは：書いた記事をXでシェアするための投稿です。<br>
+          記事タイトル・URL・カテゴリを入力すると、ジャンルに合った告知文を生成します。
+        </div>
+        <div class="f">
+          <span class="lbl">記事タイトル ※必須</span>
+          <input id="blogTitle" placeholder="例：【43%OFF】強ミヤリサン錠 330錠 徹底レビュー">
+        </div>
+        <div class="f">
+          <span class="lbl">記事URL ※必須</span>
+          <input id="blogUrl" placeholder="例：https://www.otkspot.com/entry/...">
+        </div>
+        <div class="f">
+          <span class="lbl">カテゴリ ※必須</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px" id="blogCategoryTags">
+            <span class="theme-tag cat-tag" data-cat="ガジェット・家電" onclick="selectCat(this)">📱 ガジェット・家電</span>
+            <span class="theme-tag cat-tag" data-cat="日用品・生活雑貨" onclick="selectCat(this)">🧴 日用品・生活雑貨</span>
+            <span class="theme-tag cat-tag" data-cat="食品・飲料" onclick="selectCat(this)">🍜 食品・飲料</span>
+            <span class="theme-tag cat-tag" data-cat="美容・健康" onclick="selectCat(this)">💊 美容・健康</span>
+            <span class="theme-tag cat-tag" data-cat="ファッション・アパレル" onclick="selectCat(this)">👕 ファッション</span>
+            <span class="theme-tag cat-tag" data-cat="本・電子書籍" onclick="selectCat(this)">📚 本・電子書籍</span>
+            <span class="theme-tag cat-tag" data-cat="スポーツ・アウトドア" onclick="selectCat(this)">🏕️ スポーツ・アウトドア</span>
+            <span class="theme-tag cat-tag" data-cat="その他" onclick="selectCat(this)">📦 その他</span>
+          </div>
+        </div>
+        <div class="f">
+          <span class="lbl">一言補足<span class="lbl-hint">任意</span></span>
+          <input id="blogNote" placeholder="例：整腸剤探してる方にぜひ">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-primary btn-full" id="genBtn" onclick="generate()">✨ ツイート文を生成（3パターン）</button>
+      </div>
+    </div>
+
+    <!-- 生成結果 -->
+    <div class="card result-area" id="resultArea">
+      <div class="card-title">💡 生成されたツイート文</div>
+      <div class="hint" id="resultHint" style="font-size:11px"></div>
+
+      <!-- パターン選択 -->
+      <div class="variations" id="variationList"></div>
+
+      <!-- 編集・アクション -->
+      <div style="margin-top:14px">
+        <div class="f">
+          <span class="lbl">選択・編集エリア<span class="lbl-hint">直接編集できます</span></span>
+          <div class="tweet-box" id="editBox" contenteditable="true" oninput="updCount()"></div>
+          <div class="tweet-footer">
+            <span class="char-count" id="charCount">0文字</span>
+            <div class="tweet-actions">
+              <button class="btn btn-ghost btn-sm" onclick="copyTweet()">📋 コピー</button>
+              <button class="btn btn-tw btn-sm" onclick="openTwitter()">🐦 Xで投稿</button>
+              <button class="btn btn-ghost btn-sm" onclick="saveToHistory()">💾 履歴に保存</button>
+              <button class="btn btn-ghost btn-sm" onclick="addToSchedule()">📅 今日に追加</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /left-col -->
+
+  <!-- ===== 右：スケジュール＋履歴 ===== -->
+  <div class="right-col">
+
+    <!-- 今日のスケジュール -->
+    <div class="card">
+      <div class="schedule-header">
+        <div>
+          <div class="today-label">📅 今日の投稿枠</div>
+          <div class="today-date" id="todayDateLabel"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="resetToday()">リセット</button>
+      </div>
+      <div class="slot-list" id="slotList"></div>
+      <div style="margin-top:12px;font-size:11px;color:var(--mu);line-height:1.7" id="balanceNote"></div>
+    </div>
+
+    <!-- 履歴 -->
+    <div class="card">
+      <div class="card-title">🗂 生成履歴</div>
+      <div id="historyList">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          まだ履歴がありません
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right-col -->
+
+</div><!-- /layout -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== JavaScript ===== -->
+<script>
+/* ===== 定数 ===== */
+const WK = 'https://amazon-sale-api.bulibuli-mushi.workers.dev';
+
+// アカウントのコンテキスト（AIへの共通指示）
+const ACCOUNT_CONTEXT = [
+  'このXアカウントはAmazon・節約・お得情報を専門に発信しています。',
+  'ターゲットは節約意識の高い20〜40代の一般消費者です。',
+  '【キャラクター設定】',
+  '・「Amazonをちょっと使いこなしてる、ちょっと先に気づいた友達」というキャラクターです。',
+  '・自分も昔は知らなかった・損してたと認められる、自虐・自己開示ができるトーンです。',
+  '・「損してる人を見るとつい教えたくなる」スタンスで、上から目線にならず「一緒に賢くなろう」感を出します。',
+  '・ツッコミ・あるある・軽い毒舌を自然に混ぜます。ただし嫌味にならないサラッとしたトーンです。',
+  '・「半年前の自分がまさにそうだった」「昔の自分に教えてあげたい」系の自虐表現を適度に使います。',
+  '・一人称は必ず「自分」を使います。「俺」「私」「ワイ」「うち」は使いません。',
+  '・絵文字は使いすぎず、1〜2個程度でカジュアル感を出します。',
+  'アフィリエイトリンク投稿と自然に混ざるよう、同じアカウントの延長線上にある内容にしてください。',
+].join('\n');
+
+/* ===== テーマプール（豆知識・共感） ===== */
+// 季節・月次イベント・曜日を考慮してランダム表示する
+const THEME_POOL = {
+  k: {
+    // 通年
+    always: [
+      'Amazonポイント活用術',
+      'タイムセールの攻略法',
+      '定期おトク便で節約',
+      'Amazonカード活用術',
+      'ポイントアップキャンペーン',
+      '比較サイトとの使い分け',
+      'まとめ買い節約術',
+      'Primeの意外な特典',
+      '欲しいものリストの活用',
+      'Amazonギフト券チャージ',
+      '価格履歴チェックの方法',
+      '送料無料にする方法',
+      'レビューの見極め方',
+      '返品・交換のコツ',
+      'Alexa活用術',
+      '電子書籍を安く読む方法',
+      'お急ぎ便・日時指定の使い分け',
+      '購入履歴から節約パターンを見直す',
+      // 追加：具体的・実用系
+      'Amazonで損しない検索のコツ',
+      'セール品の本当の割引を見抜く方法',
+      '「参考価格」のカラクリ',
+      'クーポン券の見つけ方と使い方',
+      '購入前に必ずやるべき価格チェック',
+      'Amazon Primeを月額換算するとお得な理由',
+      '公式ストアと出品者の見分け方',
+      '低評価レビューこそ先に読む理由',
+      'まとめ買い前の在庫確認が大事な理由',
+      '定期便の割引率を最大にする方法',
+      '配送オプション、実は損してることがある',
+      '商品ページの「よく一緒に購入される」が使える',
+      'Amazonで家電を買う前に確認すること',
+      'ポイント還元率が高い支払い方法',
+      '試着・試用できるサービスをうまく使う',
+      'Amazonビジネスを個人でも活用する方法',
+      'Kindle Unlimitedが向いている人・向かない人',
+      'Audibleを無料期間でフル活用する方法',
+      'Prime Videoで見逃せないコンテンツの探し方',
+      'サブスクの解約・再加入を上手に使う',
+      '日用品はどのサイズ・本数が一番コスパいいか',
+      '型落ちモデルを狙うのが最強な理由',
+      '新商品発売直後は買わない方がいい理由',
+      'ほしい物リストを公開するメリット',
+      'ギフト設定でプレゼントをスマートに送る方法',
+    ],
+    // 月次・季節（月→テーマ）
+    monthly: {
+      1:  ['新年セールの狙い目', '初売りで得する商品カテゴリ', '年始の生活用品まとめ買い'],
+      2:  ['バレンタイン商品の賢い買い方', '冬物クリアランスの狙い目', '花粉シーズン前の準備買い'],
+      3:  ['新生活準備の節約術', '進学・就職前のAmazon活用', '春物の早期購入メリット', '花粉対策グッズをAmazonで揃える', '引越し準備をAmazonで完結させる方法', '年度末セールの狙い目カテゴリ'],
+      4:  ['新生活グッズをAmazonで揃える', 'GW前の備蓄買い', '季節の変わり目の衣替え節約'],
+      5:  ['母の日ギフトのコスパ重視選び', 'GW明けセールの活用', 'サマーセール先取り'],
+      6:  ['夏準備グッズの価格チェック', 'プライムデー前のウィッシュリスト作り', '梅雨時期に必要なグッズ'],
+      7:  ['プライムデー攻略法', '夏のまとめ買い節約', '猛暑対策グッズをお得に買う'],
+      8:  ['お盆セールの活用', '夏物在庫処分品を狙う', 'ふるさと納税×Amazon活用'],
+      9:  ['秋の新商品チェック方法', '年末に向けた価格監視の開始', '防災グッズをAmazonで揃える'],
+      10: ['ハロウィンセール攻略', 'ブラックフライデー前のリサーチ法', '冬物の早期購入メリット'],
+      11: ['ブラックフライデー完全攻略', 'サイバーマンデー狙い目商品', '年末に向けた家電の買い時'],
+      12: ['年末大掃除グッズお得に買う', 'クリスマスギフト節約術', '年末年始の備蓄買いのコツ'],
+    },
+    // 曜日（0=日, 1=月 ...）
+    weekday: {
+      1: ['月曜日のタイムセールチェック習慣', '週の始まりに欲しいものリスト整理'],
+      5: ['金曜日は週末セール狙い目', '週末前のまとめ買いタイミング'],
+      0: ['日曜日の価格チェック習慣', '翌週の消耗品を日曜に注文する理由'],
+    },
+  },
+  e: {
+    always: [
+      'セール前日のそわそわ感',
+      'カートに入れたまま放置してしまう',
+      'ポイントを貯めすぎて使えない',
+      'ついで買いで損した話',
+      '欲しいものリストが肥大化している',
+      '日用品のまとめ買いをしたとき',
+      '翌日配送が来たときの安心感',
+      'レビューを読みすぎて迷う',
+      '「限定特価」に弱い自覚がある',
+      '箱を開ける瞬間が好き',
+      'Amazonのダンボールが溜まっていく',
+      '安すぎて逆に不安になる',
+      '購入完了後に値下がりしているのを発見',
+      '送料のために余計なものを買ってしまう',
+      '比較した結果Amazonに戻ってくる',
+      'Prime会員費を回収できているか計算する',
+      '深夜にカートを覗いてしまう',
+      '1円でも安い方を選んでしまう性格',
+      '定期おトク便を解約し忘れたことがある',
+      '配達員さんへの感謝',
+      // 追加：共感・あるある系
+      '「あとで買う」に入れて忘れる',
+      '同じもの2個注文してしまった経験',
+      '翌日配達なのに来ない日のやきもき',
+      '梱包がやたら豪華で捨てにくい',
+      '似たような商品が多すぎて選べない',
+      '星3.8と星4.0で30分悩んだ',
+      'セール終了5分前に気づいた絶望',
+      '「この商品を見た人はこちらも」で沼にはまる',
+      '実物と色が全然違った経験',
+      '送料無料ラインまであと200円の攻防',
+      '買ったあとに友達が安く買ってたと知る',
+      'Primeなのに配送が遅い時の不満',
+      '試しに安いやつ買ったら後悔した話',
+      '高い方を買えばよかったと思う瞬間',
+      '急いでないのにお急ぎ便を選んでしまう',
+      '箱の中に緩衝材しか入ってなかった瞬間',
+      '商品が思ったより小さかった話',
+      'まとめ買いしたら置き場に困った',
+      'レビュー投稿してポイントもらうの忘れた',
+      'サイズ間違えて返品した経験',
+    ],
+    monthly: {
+      1:  ['初売りで買いすぎた反省', '新年の買い物ルールを決めた話'],
+      2:  ['バレンタインのコスパ重視で選んだ話', '冬物をセールで買い逃した後悔'],
+      3:  ['新生活グッズを買いすぎた話', '春になって不要なものを断捨離した話', '花粉シーズンにマスクをまとめ買いした話', '引越しのタイミングで大量に買い物した話', '年度末でなぜか物欲が高まる'],
+      4:  ['新生活で想定外の出費があった話', 'GW中の衝動買いあるある'],
+      5:  ['母の日に何を贈るか毎年迷う', 'GW明けの節約モードに切り替わる話'],
+      6:  ['夏前に去年の日焼け止めが残ってた話', 'プライムデー前にウィッシュリストを整理した'],
+      7:  ['プライムデーで買いすぎた後悔', '夏の暑さ対策グッズを買いすぎた話'],
+      8:  ['お盆に実家でAmazon注文したら困った話', '夏の終わりに夏物を買うタイミングを逃す'],
+      9:  ['衣替えで昨年買ったもの出てきた話', '秋になると物欲が増す不思議'],
+      10: ['ハロウィン後のセールで買えばよかった', 'ブラックフライデーに向けて欲しいものリスト整理中'],
+      11: ['ブラックフライデーで予算オーバーした話', 'セール中に迷って買い逃した話'],
+      12: ['年末大掃除で不用品を断捨離した話', 'クリスマスプレゼントを直前に慌てて買う'],
+    },
+    weekday: {
+      1: ['月曜日は配達来るかなと待ちわびる', '週明けにまた何か注文してしまった'],
+      5: ['金曜夜にAmazonを見てしまう習慣', '週末に届くよう注文するのが好き'],
+      0: ['日曜日の夜にカートをチェックする習慣', '休日にAmazonが届くのが一番テンション上がる'],
+    },
+  },
+};
+
+/* ===== ランダムテーマ選定（季節・曜日考慮） ===== */
+function pickThemes(type, count) {
+  var now     = new Date();
+  var month   = now.getMonth() + 1;
+  var weekday = now.getDay();
+  var pool    = THEME_POOL[type];
+  if (!pool) return [];
+
+  // 候補を組み立て（通年 + 今月 + 今日の曜日）
+  var candidates = pool.always.slice();
+  if (pool.monthly && pool.monthly[month]) {
+    // 月次テーマは優先度を上げるために先頭に追加
+    candidates = pool.monthly[month].concat(candidates);
+  }
+  if (pool.weekday && pool.weekday[weekday]) {
+    candidates = pool.weekday[weekday].concat(candidates);
+  }
+
+  // 重複排除
+  candidates = candidates.filter(function(v, i, a) { return a.indexOf(v) === i; });
+
+  // シャッフル（6時間単位で変化：朝・昼・夜で異なるテーマが出る）
+  var seed = now.getFullYear() * 1000000 + month * 10000 + now.getDate() * 100 + Math.floor(now.getHours() / 6);
+  candidates = seededShuffle(candidates, seed);
+
+  return candidates.slice(0, count);
+}
+
+// シード付きシャッフル（同じ日は同じ並び）
+function seededShuffle(arr, seed) {
+  var a = arr.slice();
+  var s = seed;
+  for (var i = a.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    var j = Math.abs(s) % (i + 1);
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+/* ===== テーマタグをDOMに描画 ===== */
+function renderThemeTags(type) {
+  var el = document.getElementById('themeTags-' + type);
+  if (!el) return;
+  var themes = pickThemes(type, 8);
+  el.innerHTML = '';
+  themes.forEach(function(theme) {
+    var span = document.createElement('span');
+    span.className = 'theme-tag';
+    span.textContent = theme;
+    span.onclick = function() { selectTheme(span, type); };
+    el.appendChild(span);
+  });
+}
+
+/* ===== 状態管理 ===== */
+let currentType    = 'k';
+let selectedThemes = { k: '', e: '', a: '' };
+let todayLog       = [];   // 今日の投稿済みデータ
+let history        = [];   // 全履歴
+let schedule       = [];   // 今日のスケジュール枠（3スロット）
+
+/* ===== 初期化 ===== */
+window.addEventListener('DOMContentLoaded', function() {
+  // テーマタグをランダム表示（季節・曜日考慮）
+  renderThemeTags('k');
+  renderThemeTags('e');
+
+  var today = todayKey();
+  document.getElementById('todayDateLabel').textContent = new Date().toLocaleDateString('ja-JP', { month:'long', day:'numeric', weekday:'short' });
+
+  // localStorage復元
+  try { history  = JSON.parse(localStorage.getItem('tweetHistory') || '[]'); } catch(e) { history = []; }
+  try {
+    var saved = JSON.parse(localStorage.getItem('tweetSchedule') || '{}');
+    schedule = (saved.date === today) ? saved.slots : defaultSchedule();
+  } catch(e) { schedule = defaultSchedule(); }
+  try {
+    var log = JSON.parse(localStorage.getItem('tweetLog') || '{}');
+    todayLog = (log.date === today) ? log.items : [];
+  } catch(e) { todayLog = []; }
+
+  renderSchedule();
+  renderHistory();
+  updateSummary();
+});
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function defaultSchedule() {
+  return [
+    { time: '08:00', type: 'k', text: '', done: false },
+    { time: '12:00', type: 'e', text: '', done: false },
+    { time: '19:00', type: 'a', text: '', done: false },
+  ];
+}
+
+/* ===== ユーティリティ ===== */
+function toast(msg, err) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#c0392b' : '#1a4a72';
+  t.style.color = '#fff';
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+function typeLabel(type) {
+  return { k: '豆知識', e: '共感・日常', a: 'ブログ告知' }[type] || type;
+}
+
+async function callAI(prompt) {
+  var r = await fetch(WK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'claude', prompt: prompt })
+  });
+  var d = await r.json();
+  if (d.error) throw new Error(d.error);
+  return d.text || '';
+}
+
+/* ===== カテゴリタグ選択 ===== */
+let selectedCategory = '';
+function selectCat(el) {
+  document.querySelectorAll('.cat-tag').forEach(function(t) {
+    t.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  selectedCategory = el.getAttribute('data-cat');
+}
+
+/* ===== 投稿タイプ切り替え ===== */
+function selectType(type) {
+  currentType = type;
+  ['k','e','a'].forEach(function(t) {
+    document.getElementById('type-' + t).classList.toggle('active', t === type);
+    document.getElementById('form-' + t).style.display = t === type ? 'block' : 'none';
+  });
+  document.getElementById('resultArea').classList.remove('show');
+}
+
+/* ===== テーマタグ選択 ===== */
+function selectTheme(el, type) {
+  document.querySelectorAll('#themeTags-' + type + ' .theme-tag').forEach(function(t) {
+    t.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  selectedThemes[type] = el.textContent;
+  var freeInput = document.getElementById('freeTheme-' + type);
+  if (freeInput) freeInput.value = '';
+}
+
+/* ===== ツイート生成 ===== */
+async function generate() {
+  var btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="sp"></span> 生成中...';
+
+  try {
+    var prompt = buildPrompt(currentType);
+    var result = await callAI(prompt);
+    renderVariations(result, currentType);
+    document.getElementById('resultArea').classList.add('show');
+    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    toast('3パターン生成しました！');
+  } catch(e) {
+    toast('生成失敗: ' + e.message, 1);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ ツイート文を生成（3パターン）';
+  }
+}
+
+/* ===== プロンプト生成 ===== */
+function buildPrompt(type) {
+  var base = ACCOUNT_CONTEXT + '\n\n';
+
+  if (type === 'k') {
+    var theme = document.getElementById('freeTheme-k').value.trim()
+      || selectedThemes.k
+      || 'Amazonでお得に買い物する方法';
+    return base +
+      '以下のテーマについて、Xに投稿する豆知識ツイートを3パターン作成してください。\n\n' +
+      'テーマ：' + theme + '\n\n' +
+      '【条件】\n' +
+      '・各パターンは140文字以内\n' +
+      '・「実はこうすると得する」「知っておくと便利」という切り口で、情報としての価値を出す\n' +
+      '・具体的な数字や手順があると良い\n' +
+      '・「昔の自分に教えてあげたい」「これ知らなかったの、割と損してた」系の自虐・自己開示を1パターン以上に入れる\n' +
+      '・ツッコミや軽い毒舌（「定価で買い続けてたの今考えると痛い」など）を自然に混ぜる\n' +
+      '・上から目線にならず「一緒に賢くなろう」感を出す\n' +
+      '・ハッシュタグは #Amazon か #節約 どちらか1個のみ。2個つけない\n' +
+      '・絵文字は1〜2個程度（使いすぎない）\n' +
+      '・文章は短いセンテンスに区切り、読みやすくする。情報を詰め込みすぎない\n' +
+      '・スマホで読んだとき自然に読めるテンポ感を意識する\n\n' +
+      '【出力形式】\n' +
+      'パターン1〜3を番号なし・区切りなしで、各ツイートを空行1つで区切って出力してください。\n' +
+      '余計な説明文は不要です。ツイート本文のみを出力してください。';
+  }
+
+  if (type === 'e') {
+    var etheme = document.getElementById('freeTheme-e').value.trim()
+      || selectedThemes.e
+      || 'Amazon買い物あるある';
+    return base +
+      '以下のテーマについて、Xに投稿する共感・日常ツイートを3パターン作成してください。\n\n' +
+      'テーマ：' + etheme + '\n\n' +
+      '【条件】\n' +
+      '・各パターンは140文字以内\n' +
+      '・「あるある」「わかる」と思ってもらえる日常の一言\n' +
+      '・買い物・節約・Amazon利用にまつわる内容に絞る\n' +
+      '・自分の失敗・損した体験・あるあるを自虐的に語るトーンで親近感を出す\n' +
+      '・「これ俺だけじゃないよね？」「同じ人いる？」と問いかけるパターンを1つ以上入れる\n' +
+      '・フォロワーが気軽にリプライ・引用したくなる終わり方にする\n' +
+      '・アフィリエイトリンクなしで自然に成立する内容\n' +
+      '・絵文字は1〜2個程度\n' +
+      '・ハッシュタグは不要\n' +
+      '・文章は短いセンテンスに区切り、読みやすくする。詰め込みすぎない\n' +
+      '・スマホで読んだとき自然に読めるテンポ感を意識する\n\n' +
+      '【出力形式】\n' +
+      '各ツイートを空行1つで区切って出力してください。余計な説明文は不要です。';
+  }
+
+  if (type === 'a') {
+    var title = document.getElementById('blogTitle').value.trim();
+    var url   = document.getElementById('blogUrl').value.trim();
+    var note  = document.getElementById('blogNote').value.trim();
+    var cat   = selectedCategory || 'その他';
+    if (!title || !url) throw new Error('記事タイトルとURLを入力してください');
+    if (!selectedCategory) throw new Error('カテゴリを選択してください');
+
+    // カテゴリ別トーン定義
+    var catTone = {
+      'ガジェット・家電':     'スペック・性能・コスパに興味がある読者向け。「自分もスペック気になって調べた」「買う前に確認しておきたかった」系の切り口が刺さる。技術的な納得感を与えるトーンで。',
+      '日用品・生活雑貨':     '毎日使うものだからこそコスパが大事という読者向け。「これ定価で買ってたの損してた」「まとめ買いのタイミング逃したくない」系の切り口が刺さる。生活感のある親しみやすいトーンで。',
+      '食品・飲料':           '価格と品質のバランスを重視する読者向け。「これ安すぎて逆に不安だったけど買ってみた」「リピート買いしてるやつ」系の切り口が刺さる。食欲・生活感を刺激するトーンで。',
+      '美容・健康':           '効果と価格の両方を気にする読者向け。「ドラッグストアより全然安かった」「続けやすい価格かどうか気になってた」系の切り口が刺さる。共感しやすい等身大のトーンで。',
+      'ファッション・アパレル':'ブランドよりコスパを重視する読者向け。「これ定価で買う必要なかった」「セールで買うかどうか迷ってる人向け」系の切り口が刺さる。お得感を強調するトーンで。',
+      '本・電子書籍':         '知識・情報収集に積極的な読者向け。「これ読んでおけばよかった」「電子書籍で安く手に入る今がチャンス」系の切り口が刺さる。知的好奇心を刺激するトーンで。',
+      'スポーツ・アウトドア': '機能性とコスパを両立したい読者向け。「これの性能でこの価格は普通にやばい」「シーズン前に揃えておきたいやつ」系の切り口が刺さる。テンション高めのアクティブなトーンで。',
+      'その他':               '幅広い読者向け。「知らないと損する」「自分も最近まで気づいてなかった」系の普遍的な切り口で。'
+    };
+    var toneGuide = catTone[cat] || catTone['その他'];
+
+    return base +
+      '以下のブログ記事をXで告知するツイートを3パターン作成してください。\n\n' +
+      '記事タイトル：' + title + '\n' +
+      'URL：' + url + '\n' +
+      'カテゴリ：' + cat + '\n' +
+      (note ? '補足：' + note + '\n' : '') +
+      '\n【カテゴリ別トーンガイド】\n' +
+      toneGuide + '\n\n' +
+      '【このツイートの目的】\n' +
+      'フォロワーにブログ記事をクリックしてもらうこと。「宣伝」ではなく「価値ある情報を教えてくれる友達の一言」として読まれること。\n\n' +
+      '【人間心理を活用した3パターンを1つずつ作ること】\n\n' +
+      'パターン1：【損失回避の心理】\n' +
+      '「知らないと損する」「これを見ずに買うのはもったいない」という切り口。\n' +
+      '人は「得する」より「損したくない」という感情の方が強く動く。\n\n' +
+      'パターン2：【自己開示＋共感の心理】\n' +
+      '「自分も気になって調べた」「昔の自分が知りたかった情報」という自虐・自己開示の切り口。\n' +
+      '発信者が弱みを見せることで読者が親近感を持ち、記事への信頼感が生まれる。\n\n' +
+      'パターン3：【好奇心・情報ギャップの心理】\n' +
+      '「意外と知られていない事実」「ほとんどの人が気づいていないこと」という切り口。\n' +
+      '「え、そうなの？」と思わせることで続きを読みたくなる衝動を作る。\n\n' +
+      '【共通ルール】\n' +
+      '・URLを含めて140文字以内\n' +
+      '・冒頭の1文でクリックするかどうかが決まる。最初の一言に全力を注ぐこと\n' +
+      '・宣伝くさい表現（「ブログ書きました」「記事はこちら」）は絶対に使わない\n' +
+      '・URLは必ず含めること（' + url + '）\n' +
+      '・ハッシュタグは #Amazon #節約 から1個のみ\n' +
+      '・絵文字は1〜2個程度。文頭か文末に自然に置く\n' +
+      '・一人称は「自分」を使う\n\n' +
+      '【出力形式】\n' +
+      'パターン1〜3を番号なし・説明なし・区切りなしで、各ツイートを空行1つで区切って出力してください。\n' +
+      'ツイート本文のみを出力してください。';
+  }
+
+  return base + 'Amazonお得情報アカウント向けのツイートを1つ作成してください。';
+}
+
+/* ===== バリエーション表示 ===== */
+function renderVariations(text, type) {
+  // 空行で区切ってパターン分割
+  var patterns = text.split(/\n\s*\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+  if (patterns.length === 0) patterns = [text.trim()];
+
+  var list = document.getElementById('variationList');
+  list.innerHTML = '';
+
+  patterns.forEach(function(pat, i) {
+    var div = document.createElement('div');
+    div.className = 'variation-item' + (i === 0 ? ' selected' : '');
+    div.innerHTML = '<span class="var-num">' + (i+1) + '/' + patterns.length + '</span>' + escHtml(pat);
+    div.addEventListener('click', function() {
+      document.querySelectorAll('.variation-item').forEach(function(v) { v.classList.remove('selected'); });
+      div.classList.add('selected');
+      document.getElementById('editBox').textContent = pat;
+      updCount();
+    });
+    list.appendChild(div);
+  });
+
+  // 最初のパターンを編集エリアにセット
+  document.getElementById('editBox').textContent = patterns[0];
+  updCount();
+
+  // ヒント
+  var hints = {
+    k: '💡 豆知識ツイート：定期的に混ぜることで「ためになるアカウント」として認知されます',
+    e: '💬 共感ツイート：リプライや共感を生みやすく、アカウントへの親しみが高まります',
+    a: '📣 告知ツイート：記事への流入を作ります。週1〜2回が自然なペース',
+  };
+  var hint = document.getElementById('resultHint');
+  hint.textContent = hints[type] || '';
+  hint.style.display = hints[type] ? 'block' : 'none';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ===== 文字数カウント ===== */
+function updCount() {
+  var t  = document.getElementById('editBox').textContent;
+  var el = document.getElementById('charCount');
+  el.textContent = t.length + '文字';
+  el.className   = 'char-count' + (t.length > 140 ? ' over' : '');
+}
+
+/* ===== コピー・投稿 ===== */
+function copyTweet() {
+  var t = document.getElementById('editBox').textContent;
+  navigator.clipboard.writeText(t).then(function() { toast('コピーしました！'); });
+}
+
+function openTwitter() {
+  var t = document.getElementById('editBox').textContent;
+  if (!t) { toast('ツイートが空です', 1); return; }
+  navigator.clipboard.writeText(t).then(function() {
+    window.open('https://twitter.com/intent/tweet', '_blank');
+    toast('コピー完了！Xが開きます');
+  });
+}
+
+/* ===== 履歴に保存 ===== */
+function saveToHistory() {
+  var t = document.getElementById('editBox').textContent.trim();
+  if (!t) { toast('ツイートが空です', 1); return; }
+  history.unshift({
+    type:    currentType,
+    text:    t,
+    savedAt: new Date().toLocaleString('ja-JP', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' })
+  });
+  if (history.length > 50) history = history.slice(0, 50);
+  localStorage.setItem('tweetHistory', JSON.stringify(history));
+  renderHistory();
+  toast('💾 履歴に保存しました');
+}
+
+/* ===== スケジュールに追加 ===== */
+function addToSchedule() {
+  var t = document.getElementById('editBox').textContent.trim();
+  if (!t) { toast('ツイートが空です', 1); return; }
+  // 同じタイプの最初の空スロットを探す
+  var slot = schedule.find(function(s) { return s.type === currentType && !s.text && !s.done; });
+  if (!slot) {
+    // 空スロットなら任意の空きへ
+    slot = schedule.find(function(s) { return !s.text && !s.done; });
+  }
+  if (!slot) { toast('今日の投稿枠がすべて埋まっています', 1); return; }
+  slot.text = t;
+  saveSchedule();
+  renderSchedule();
+  updateSummary();
+  toast('📅 今日の投稿枠に追加しました！');
+}
+
+/* ===== スケジュール表示 ===== */
+function renderSchedule() {
+  var el = document.getElementById('slotList');
+  el.innerHTML = '';
+  schedule.forEach(function(slot, idx) {
+    var div = document.createElement('div');
+    div.className = 'slot' + (slot.done ? ' done' : '');
+
+    var typeClass = slot.type;
+    var typeText  = typeLabel(slot.type);
+
+    div.innerHTML =
+      '<span class="slot-time">' + slot.time + '</span>' +
+      '<div class="slot-body">' +
+        '<div class="slot-type ' + typeClass + '">' + typeText + '</div>' +
+        (slot.text
+          ? '<div class="slot-text">' + escHtml(slot.text.substring(0, 60)) + (slot.text.length > 60 ? '…' : '') + '</div>'
+          : '<div class="slot-empty">未設定</div>') +
+        (slot.text && !slot.done ? '<button class="slot-save-btn" onclick="useSlot(' + idx + ')">コピーして投稿 →</button>' : '') +
+      '</div>' +
+      '<button class="slot-check" onclick="toggleSlotDone(' + idx + ')">' + (slot.done ? '✓' : '') + '</button>';
+
+    el.appendChild(div);
+  });
+
+  // バランスアドバイス
+  var kDone = schedule.filter(function(s){ return s.type==='k' && s.done; }).length;
+  var eDone = schedule.filter(function(s){ return s.type==='e' && s.done; }).length;
+  var aDone = schedule.filter(function(s){ return s.type==='a' && s.done; }).length;
+  var total = kDone + eDone + aDone;
+  var note  = '';
+  if (total === 0) note = '今日はまだ投稿していません。豆知識か共感ツイートから始めましょう。';
+  else if (aDone > 1) note = '⚠ 告知投稿が多めです。豆知識か共感ツイートを混ぜるとバランスよくなります。';
+  else if (kDone + eDone === 0) note = '告知だけにならないよう、豆知識か共感ツイートを追加しましょう。';
+  else note = '良いバランスです！';
+  document.getElementById('balanceNote').textContent = note;
+}
+
+function toggleSlotDone(idx) {
+  schedule[idx].done = !schedule[idx].done;
+  if (schedule[idx].done && schedule[idx].text) {
+    // 投稿済みとしてログに記録
+    var today = todayKey();
+    var existing = JSON.parse(localStorage.getItem('tweetLog') || '{}');
+    var items = (existing.date === today) ? existing.items : [];
+    items.push({ type: schedule[idx].type, text: schedule[idx].text, time: schedule[idx].time });
+    localStorage.setItem('tweetLog', JSON.stringify({ date: today, items: items }));
+    todayLog = items;
+  }
+  saveSchedule();
+  renderSchedule();
+  updateSummary();
+}
+
+function useSlot(idx) {
+  var t = schedule[idx].text;
+  if (!t) return;
+  navigator.clipboard.writeText(t).then(function() {
+    window.open('https://twitter.com/intent/tweet', '_blank');
+    toast('コピー完了！Xが開きます');
+  });
+}
+
+function saveSchedule() {
+  localStorage.setItem('tweetSchedule', JSON.stringify({ date: todayKey(), slots: schedule }));
+}
+
+function resetToday() {
+  if (!confirm('今日のスケジュールをリセットしますか？')) return;
+  schedule = defaultSchedule();
+  saveSchedule();
+  renderSchedule();
+  updateSummary();
+  toast('リセットしました');
+}
+
+/* ===== サマリー更新 ===== */
+function updateSummary() {
+  var today  = todayKey();
+  var log    = JSON.parse(localStorage.getItem('tweetLog') || '{}');
+  var items  = (log.date === today) ? log.items : [];
+  var kc = items.filter(function(i){ return i.type==='k'; }).length;
+  var ec = items.filter(function(i){ return i.type==='e'; }).length;
+  var ac = items.filter(function(i){ return i.type==='a'; }).length;
+  var total = kc + ec + ac;
+
+  document.getElementById('kCount').textContent     = kc;
+  document.getElementById('eCount').textContent     = ec;
+  document.getElementById('aCount').textContent     = ac;
+  document.getElementById('totalCount').textContent = total;
+
+  var advice = '';
+  if      (total === 0)                   advice = '今日の投稿を始めましょう';
+  else if (total >= 3)                    advice = '今日の目標達成！お疲れさまです ✓';
+  else if (ac >= 2 && kc + ec === 0)     advice = '告知多め。豆知識か共感を混ぜましょう';
+  else if (kc + ec >= 2 && ac === 0)     advice = '告知投稿も入れましょう';
+  else                                    advice = 'あと' + (3 - total) + '件で今日の目標達成';
+  document.getElementById('adviceText').textContent = advice;
+}
+
+/* ===== 履歴表示 ===== */
+function renderHistory() {
+  var el = document.getElementById('historyList');
+  if (!history.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>まだ履歴がありません</div>';
+    return;
+  }
+  el.innerHTML = '';
+  var list = document.createElement('div');
+  list.className = 'history-list';
+  history.slice(0, 20).forEach(function(item, idx) {
+    var div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML =
+      '<div class="history-meta">' +
+        '<span class="history-type ' + item.type + '">' + typeLabel(item.type) + '</span>' +
+        '<span class="history-date">' + item.savedAt + '</span>' +
+      '</div>' +
+      '<div class="history-text">' + escHtml(item.text) + '</div>' +
+      '<div class="history-actions">' +
+        '<button class="btn btn-ghost btn-sm" onclick="copyHistory(' + idx + ')">📋 コピー</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="loadHistory(' + idx + ')">↩ 編集に読込</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteHistory(' + idx + ')">削除</button>' +
+      '</div>';
+    list.appendChild(div);
+  });
+  el.appendChild(list);
+}
+
+function copyHistory(idx) {
+  navigator.clipboard.writeText(history[idx].text).then(function() { toast('コピーしました！'); });
+}
+
+function loadHistory(idx) {
+  var item = history[idx];
+  selectType(item.type);
+  document.getElementById('editBox').textContent = item.text;
+  updCount();
+  document.getElementById('resultArea').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toast('編集エリアに読み込みました');
+}
+
+function deleteHistory(idx) {
+  if (!confirm('削除しますか？')) return;
+  history.splice(idx, 1);
+  localStorage.setItem('tweetHistory', JSON.stringify(history));
+  renderHistory();
+  toast('削除しました');
+}
+</script>
+</body>
+</html>
