@@ -225,6 +225,16 @@
     <button id="setup-toggle-btn" style="display:none;">⚙ セットアップ画面を再表示する</button>
   </div>
 
+  <!-- 手動同期エリア（常時表示） -->
+  <div id="manual-sync-area" style="margin-bottom:16px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; display:none; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div style="flex:1; font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace; line-height:1.6;">
+      Gist ID: <span id="display-gist-id" style="color:var(--yellow);"></span>
+    </div>
+    <button class="btn btn-primary" id="btn-manual-sync" style="font-size:12px; padding:8px 16px;">
+      🔄 今すぐ同期
+    </button>
+  </div>
+
   <div class="stats-row">
     <div class="stat-box accent"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
     <div class="stat-box"><div class="stat-num" id="stat-unchecked">0</div><div class="stat-label">未チェック</div></div>
@@ -526,8 +536,16 @@
   // ── セットアップ表示制御 ──
   function applySetupState() {
     var done = localStorage.getItem(SUK) === '1';
-    $id('setup-section').style.display    = done ? 'none' : 'block';
-    $id('setup-toggle-btn').style.display = done ? 'inline' : 'none';
+    var hasCredentials = !!(getToken() && getGistId());
+    var show = !done || !hasCredentials;
+    $id('setup-section').style.display    = show ? 'block' : 'none';
+    $id('setup-toggle-btn').style.display = show ? 'none'  : 'inline';
+    if (done && !hasCredentials) {
+      setConnectStatus('fail',
+        '⚠️ このデバイスにはまだGist設定が保存されていません。\n' +
+        'PC側のトークンとGist IDを入力して\n「保存して接続テスト」を押してください。'
+      );
+    }
   }
 
   // ── ブックマークレット設定 ──
@@ -600,7 +618,17 @@
     });
 
     // ヘッダー同期ボタン
-    $id('sync-btn').addEventListener('click', syncNow);
+    $id('sync-btn').addEventListener('click', function(){ syncNow(false); });
+
+    // 手動同期ボタン
+    var manualSyncBtn = $id('btn-manual-sync');
+    if (manualSyncBtn) {
+      manualSyncBtn.addEventListener('click', function() {
+        syncNow(false).then(function(){
+          toast('✅ 同期完了！');
+        });
+      });
+    }
 
     // フィルタボタン（イベント委譲）
     document.querySelector('.filters').addEventListener('click', function(e) {
@@ -644,13 +672,27 @@
     else if (savedToken)                setSyncState('', 'Gist未設定');
     else                                setSyncState('', '未設定');
 
+    // Gist設定済みなら手動同期エリアを表示
+    if (savedToken && savedGistId) {
+      var syncArea = $id('manual-sync-area');
+      if (syncArea) {
+        syncArea.style.display = 'flex';
+        var gidEl = $id('display-gist-id');
+        if (gidEl) gidEl.textContent = savedGistId.slice(0,12) + '...';
+      }
+    }
+
     initBookmarklet();
     applySetupState();
     handleUrlParams();
-    render();
 
-    // 起動時に最新データを取得
-    if (savedToken && savedGistId) syncNow();
+    // Gist設定済みなら読み込み中を表示してから同期、未設定ならそのまま描画
+    if (savedToken && savedGistId) {
+      render(); // まずローカルキャッシュを表示
+      syncNow(true); // その後Gistから最新取得（完了後に再描画）
+    } else {
+      render();
+    }
   });
 
 })();
