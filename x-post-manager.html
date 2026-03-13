@@ -6,287 +6,131 @@
 <title>X Post Manager</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+  :root{
+    --bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;
+    --border:#222;--border-light:#2e2e2e;
+    --text:#e8e8e8;--text-muted:#666;--text-dim:#444;
+    --accent:#1d9bf0;--accent-dim:rgba(29,155,240,0.12);
+    --green:#00ba7c;--green-dim:rgba(0,186,124,0.12);
+    --red:#f4212e;--red-dim:rgba(244,33,46,0.1);
+    --yellow:#ffd400;--yellow-dim:rgba(255,212,0,0.1);
+    --checked-bg:rgba(0,186,124,0.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-weight:300;min-height:100vh;line-height:1.6;}
 
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #1a1a1a;
-    --border: #222222;
-    --border-light: #2e2e2e;
-    --text: #e8e8e8;
-    --text-muted: #666;
-    --text-dim: #444;
-    --accent: #1d9bf0;
-    --accent-dim: rgba(29,155,240,0.12);
-    --green: #00ba7c;
-    --green-dim: rgba(0,186,124,0.12);
-    --red: #f4212e;
-    --red-dim: rgba(244,33,46,0.1);
-    --yellow: #ffd400;
-    --yellow-dim: rgba(255,212,0,0.1);
-    --checked-bg: rgba(0,186,124,0.06);
-  }
+  header{border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);z-index:100;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:14px;font-weight:500;letter-spacing:.04em;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);padding:3px 10px;border:1px solid var(--border-light);border-radius:20px;}
+  .badge span{color:var(--accent);font-weight:500;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  #sync-btn{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);padding:4px 10px;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:none;white-space:nowrap;transition:all .15s;}
+  #sync-btn:hover{border-color:var(--border-light);color:var(--text-muted);}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim);flex-shrink:0;}
+  #sync-btn.synced .sync-dot{background:var(--green);}
+  #sync-btn.syncing .sync-dot{background:var(--yellow);animation:blink .8s infinite;}
+  #sync-btn.error .sync-dot{background:var(--red);}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    line-height: 1.6;
-  }
+  .container{max-width:860px;margin:0 auto;padding:32px 20px;}
 
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: rgba(10,10,10,0.92);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-  }
+  .card{border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:20px;position:relative;overflow:hidden;background:var(--surface);}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .card.yellow-top::before{background:linear-gradient(90deg,var(--yellow),transparent);}
+  .card.green-top::before{background:linear-gradient(90deg,var(--green),transparent);}
+  .card-title{font-size:12px;font-weight:500;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
+  .gist-form{display:flex;flex-direction:column;gap:14px;}
+  .form-row{display:flex;flex-direction:column;gap:5px;}
+  .form-label{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;letter-spacing:.03em;}
+  .form-input{background:var(--surface2);border:1px solid var(--border-light);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color .15s;width:100%;}
+  .form-input:focus{border-color:var(--accent);}
+  .form-hint{font-size:11px;color:var(--text-dim);line-height:1.7;}
+  .form-hint a{color:var(--accent);}
+  .form-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--yellow);font-size:10px;}
 
-  .badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    padding: 3px 10px;
-    border: 1px solid var(--border-light);
-    border-radius: 20px;
-  }
-  .badge span { color: var(--accent); font-weight: 500; }
+  #connect-status{padding:12px 14px;border-radius:8px;font-size:12px;display:none;line-height:1.8;font-family:'DM Mono',monospace;white-space:pre-wrap;}
+  #connect-status.ok{display:block;background:var(--green-dim);border:1px solid rgba(0,186,124,.3);color:var(--green);}
+  #connect-status.fail{display:block;background:var(--red-dim);border:1px solid rgba(244,33,46,.3);color:var(--red);}
+  #connect-status.info{display:block;background:var(--accent-dim);border:1px solid rgba(29,155,240,.3);color:var(--accent);}
 
-  .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+  .form-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;border:1px solid;white-space:nowrap;}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-primary:hover{background:#1a8cd8;}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-ghost{background:transparent;border-color:var(--border-light);color:var(--text-muted);}
+  .btn-ghost:hover{border-color:var(--text-muted);color:var(--text);}
+  .btn-green{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+  .btn-green:hover{background:rgba(0,186,124,.2);}
 
-  /* ── SETUP CARD ── */
-  .setup-card {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 32px;
-    position: relative;
-    overflow: hidden;
-    background: var(--surface);
-  }
-  .setup-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-  .setup-card h2 {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
+  .steps{display:flex;flex-direction:column;gap:18px;}
+  .step{display:flex;align-items:flex-start;gap:12px;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px;transition:all .2s;}
+  .step-num.done{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+  .step-body{flex:1;}
+  .step-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+  .step-desc{font-size:12px;color:var(--text-muted);line-height:1.8;}
+  .step-desc code{font-family:'DM Mono',monospace;font-size:11px;background:var(--surface2);padding:1px 6px;border-radius:4px;color:var(--yellow);word-break:break-all;}
 
-  .steps { display: flex; flex-direction: column; gap: 20px; }
-  .step { display: flex; align-items: flex-start; gap: 14px; }
-  .step-num {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; font-weight: 500;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 2px;
-    transition: all 0.2s;
-  }
-  .step-num.done { background: var(--green-dim); border-color: var(--green); color: var(--green); }
-  .step-body { flex: 1; }
-  .step-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
-  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
-  .step-desc code {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    background: var(--surface2); padding: 1px 7px;
-    border-radius: 4px; color: var(--yellow);
-    word-break: break-all;
-  }
+  .bm-area{margin-top:12px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border-light);border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  #bm-link{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--accent);color:#fff;border-radius:8px;font-size:13px;font-weight:500;cursor:grab;text-decoration:none;white-space:nowrap;font-family:'Noto Sans JP',sans-serif;box-shadow:0 2px 12px rgba(29,155,240,.25);flex-shrink:0;transition:all .15s;}
+  #bm-link:hover{background:#1a8cd8;}
+  .drag-hint{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace;line-height:1.6;}
+  .drag-hint b{color:var(--yellow);}
 
-  /* ブックマークレットボタン（常に表示） */
-  .bm-area {
-    margin-top: 14px;
-    padding: 16px;
-    background: var(--surface2);
-    border: 1px solid var(--border-light);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
+  #setup-toggle-btn{font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace;cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:none;transition:color .15s;padding:0;}
+  #setup-toggle-btn:hover{color:var(--text-muted);}
 
-  .bookmarklet-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 20px;
-    background: var(--accent); color: #fff;
-    border-radius: 8px; font-size: 13px; font-weight: 500;
-    cursor: grab; text-decoration: none; white-space: nowrap;
-    font-family: 'Noto Sans JP', sans-serif;
-    box-shadow: 0 2px 14px rgba(29,155,240,0.3); flex-shrink: 0;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .bookmarklet-link:active { cursor: grabbing; }
-  .bookmarklet-link:hover { background: #1a8cd8; box-shadow: 0 4px 20px rgba(29,155,240,0.4); }
+  #local-warning{background:rgba(255,212,0,.07);border:1px solid rgba(255,212,0,.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:var(--yellow);line-height:1.7;display:none;}
+  #local-warning.visible{display:block;}
+  #local-warning code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,212,0,.1);padding:1px 5px;border-radius:3px;}
 
-  .drag-hint {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    line-height: 1.6;
-  }
-  .drag-hint b { color: var(--yellow); font-weight: 500; }
+  .stats-row{display:flex;gap:12px;margin-bottom:20px;}
+  .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'DM Mono',monospace;display:flex;flex-direction:column;gap:2px;flex:1;}
+  .stat-num{font-size:20px;font-weight:500;color:var(--text);}
+  .stat-label{font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;}
+  .stat-box.accent .stat-num{color:var(--accent);}
+  .stat-box.green .stat-num{color:var(--green);}
 
-  /* ── STATS ── */
-  .stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
-  .stat-box {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 18px;
-    font-family: 'DM Mono', monospace;
-    display: flex; flex-direction: column; gap: 2px; flex: 1;
-  }
-  .stat-num { font-size: 22px; font-weight: 500; color: var(--text); }
-  .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
-  .stat-box.accent .stat-num { color: var(--accent); }
-  .stat-box.green .stat-num { color: var(--green); }
+  .filters{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
+  .filter-btn{padding:5px 13px;border-radius:20px;font-size:12px;border:1px solid var(--border-light);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;font-family:'Noto Sans JP',sans-serif;}
+  .filter-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+  .filter-spacer{flex:1;}
+  .sort-select{background:var(--surface);border:1px solid var(--border-light);color:var(--text-muted);padding:5px 11px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;outline:none;}
 
-  /* ── FILTERS ── */
-  .filters { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
-  .filter-btn {
-    padding: 6px 14px; border-radius: 20px; font-size: 12px;
-    border: 1px solid var(--border-light); background: transparent;
-    color: var(--text-muted); cursor: pointer; transition: all 0.15s;
-    font-family: 'Noto Sans JP', sans-serif;
-  }
-  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
-  .filter-spacer { flex: 1; }
-  .sort-select {
-    background: var(--surface); border: 1px solid var(--border-light);
-    color: var(--text-muted); padding: 6px 12px; border-radius: 8px;
-    font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; outline: none;
-  }
+  #post-list{display:flex;flex-direction:column;gap:8px;}
+  .post-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;transition:all .2s;animation:slideIn .2s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .post-item:hover{border-color:var(--border-light);}
+  .post-item.checked{background:var(--checked-bg);border-color:rgba(0,186,124,.2);}
+  .post-meta{display:flex;flex-direction:column;gap:5px;min-width:0;}
+  .post-title{font-size:14px;font-weight:400;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .post-item.checked .post-title{color:var(--text-muted);text-decoration:line-through;text-decoration-color:var(--green);}
+  .post-url{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.7;transition:opacity .15s;}
+  .post-url:hover{opacity:1;text-decoration:underline;}
+  .post-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);}
+  .post-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;padding-top:2px;}
+  .btn-check,.btn-delete{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-light);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:var(--text-muted);}
+  .btn-check:hover,.btn-check.active{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+  .btn-delete:hover{background:var(--red-dim);border-color:var(--red);color:var(--red);}
 
-  /* ── LIST ── */
-  #post-list { display: flex; flex-direction: column; gap: 8px; }
+  .empty-state{text-align:center;padding:60px 24px;color:var(--text-dim);}
+  .empty-icon{font-size:44px;margin-bottom:14px;opacity:.3;}
+  .empty-state p{font-size:13px;line-height:1.9;}
 
-  .post-item {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px 18px;
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 12px; align-items: start; transition: all 0.2s;
-    animation: slideIn 0.2s ease;
-  }
-  @keyframes slideIn { from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)} }
-  .post-item:hover { border-color: var(--border-light); }
-  .post-item.checked { background: var(--checked-bg); border-color: rgba(0,186,124,0.2); }
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border-light);border-radius:10px;padding:11px 20px;font-size:13px;color:var(--text);transition:transform .25s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 24px rgba(0,0,0,.5);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
 
-  .post-meta { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .post-title {
-    font-size: 14px; font-weight: 400; color: var(--text);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .post-item.checked .post-title {
-    color: var(--text-muted);
-    text-decoration: line-through; text-decoration-color: var(--green);
-  }
-  .post-url {
-    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent);
-    text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    opacity: 0.7; transition: opacity 0.15s;
-  }
-  .post-url:hover { opacity: 1; text-decoration: underline; }
-  .post-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); }
-
-  .post-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; padding-top: 2px; }
-  .btn-check, .btn-delete {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1px solid var(--border-light); background: transparent;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.15s; color: var(--text-muted);
-  }
-  .btn-check:hover, .btn-check.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
-  .btn-delete:hover { background: var(--red-dim); border-color: var(--red); color: var(--red); }
-
-  /* ── EMPTY ── */
-  .empty-state { text-align: center; padding: 80px 24px; color: var(--text-dim); }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-  .empty-state p { font-size: 14px; line-height: 1.8; }
-  .empty-state strong { color: var(--text-muted); font-weight: 400; }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--surface2); border: 1px solid var(--border-light);
-    border-radius: 10px; padding: 12px 22px; font-size: 13px; color: var(--text);
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 999; white-space: nowrap; pointer-events: none;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ── SETUP COMPLETE BUTTON ── */
-  .btn-setup-done {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 20px; padding: 10px 22px;
-    background: var(--green-dim); border: 1px solid var(--green);
-    color: var(--green); border-radius: 8px;
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    font-family: 'Noto Sans JP', sans-serif; transition: all 0.15s;
-  }
-  .btn-setup-done:hover { background: rgba(0,186,124,0.2); }
-
-  .setup-toggle {
-    font-size: 11px;
-    color: var(--text-dim);
-    font-family: 'DM Mono', monospace;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    background: none; border: none;
-    transition: color 0.15s;
-    padding: 0;
-  }
-  .setup-toggle:hover { color: var(--text-muted); }
-
-  /* ── NOT GITHUB PAGES WARNING ── */
-  .warning-card {
-    background: rgba(255,212,0,0.07);
-    border: 1px solid rgba(255,212,0,0.3);
-    border-radius: 10px; padding: 16px 20px;
-    margin-bottom: 28px; font-size: 13px;
-    color: var(--yellow); line-height: 1.7;
-    display: none;
-  }
-  .warning-card.visible { display: block; }
-  .warning-card strong { font-weight: 600; }
-  .warning-card code {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    background: rgba(255,212,0,0.1); padding: 1px 6px; border-radius: 4px;
+  @media(max-width:600px){
+    header{padding:0 14px;}
+    .container{padding:20px 14px;}
+    .stats-row{gap:8px;}
+    .stat-num{font-size:18px;}
+    .form-actions{flex-direction:column;}
+    .btn{justify-content:center;}
   }
 </style>
 </head>
@@ -294,113 +138,105 @@
 
 <header>
   <div class="logo">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     Post Manager
   </div>
-  <div class="badge">合計 <span id="badge-count">0</span> 件</div>
+  <div class="header-right">
+    <button id="sync-btn">
+      <div class="sync-dot"></div>
+      <span id="sync-label">未設定</span>
+    </button>
+    <div class="badge">合計 <span id="badge-count">0</span> 件</div>
+  </div>
 </header>
 
 <div class="container">
 
-  <!-- ローカルファイル警告 -->
-  <div class="warning-card" id="local-warning">
-    ⚠️ <strong>このファイルはローカルで開かれています。</strong><br>
-    ブックマークレットは <code>https://</code> ページから <code>file://</code> へのリダイレクトをブロックするため、このままでは動作しません。<br>
-    下の手順に従って <strong>GitHub Pages にアップロード</strong>してください。
+  <div id="local-warning">
+    ⚠️ <strong>ローカルファイルとして開かれています。</strong><br>
+    ブックマークレットは動作しませんが、Gist設定・データ閲覧は可能です。<br>
+    Xからポストを保存するには <code>https://</code> でホストされたURLで開いてください。
   </div>
 
   <div id="setup-section">
-  <div class="setup-card">
-    <h2>🔧 セットアップ（初回のみ）</h2>
-    <div class="steps">
 
-      <div class="step">
-        <div class="step-num" id="sn1">1</div>
-        <div class="step-body">
-          <div class="step-title">このファイルを GitHub Pages に置く</div>
-          <div class="step-desc">
-            すでに <code>hajime085.github.io</code> をお持ちなので、リポジトリに<br>
-            このファイルを <code>x-post-manager.html</code> という名前でアップロードするだけです。<br><br>
-            アップロード後にアクセスするURL:<br>
-            <code>https://hajime085.github.io/affiliate-tool/x-post-manager.html</code><br>
-            （リポジトリ名に合わせて変更してください）
+    <div class="card yellow-top">
+      <div class="card-title">🐙 GitHub Gist 同期設定</div>
+      <div class="gist-form">
+        <div class="form-row">
+          <div class="form-label">PERSONAL ACCESS TOKEN</div>
+          <input class="form-input" id="input-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+          <div class="form-hint">
+            <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> で発行。スコープは <code>gist</code> のみでOK。
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-label">GIST ID <small style="color:var(--text-dim);font-weight:300;font-family:sans-serif;">（初回は空欄でOK・自動作成）</small></div>
+          <input class="form-input" id="input-gist-id" type="text" placeholder="空欄で自動作成 / 2台目以降は既存IDを入力">
+          <div class="form-hint">スマホなど2台目以降は、PC側で表示されたGist IDをここに入力してください。</div>
+        </div>
+        <div id="connect-status"></div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="btn-connect">🔗 保存して接続テスト</button>
+          <button class="btn btn-ghost" id="btn-clear-gist">設定を削除</button>
+        </div>
       </div>
+    </div>
 
-      <div class="step">
-        <div class="step-num" id="sn2">2</div>
-        <div class="step-body">
-          <div class="step-title">GitHub Pages のURLでページを開き、ブックマークレットをドラッグ</div>
-          <div class="step-desc">
-            GitHub Pages の URL（<code>https://</code>）でこのページを開くと、<br>
-            下のブックマークレットボタンが有効になります。<br>
-            ボタンをブックマークバーへドラッグしてください。
+    <div class="card">
+      <div class="card-title">🔖 ブックマークレット設置</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" id="sn1">1</div>
+          <div class="step-body">
+            <div class="step-title">GitHub Pages にアップロード</div>
+            <div class="step-desc"><code>hajime085.github.io/affiliate-tool/x-post-manager.html</code> にアップロードして <code>https://</code> で開く。</div>
           </div>
-          <div class="bm-area">
-            <a class="bookmarklet-link" id="bm-link" href="#" onclick="handleBmClick(event)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-              X Post を保存
-            </a>
-            <div class="drag-hint">
-              ← このボタンをブックマークバーへドラッグ<br>
-              <b>※ https:// のURLで開いているときのみ有効</b>
+        </div>
+        <div class="step">
+          <div class="step-num" id="sn2">2</div>
+          <div class="step-body">
+            <div class="step-title">ブックマークバーへドラッグ</div>
+            <div class="bm-area">
+              <a id="bm-link" href="#">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X Post を保存
+              </a>
+              <div class="drag-hint">← ブックマークバーへドラッグ<br><b>※ https:// で開いているときのみ有効</b></div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">X でポストを保存する</div>
-          <div class="step-desc">
-            X の個別ポストページ（<code>x.com/～/status/～</code>）で<br>
-            ブックマークバーの「X Post を保存」を押すと、このページに自動で追加されます。
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">スマホで見るには</div>
+            <div class="step-desc">スマホで同じURLを開き、同じGist設定を入力するだけで自動同期されます。</div>
           </div>
         </div>
       </div>
-
+      <div style="margin-top:20px;">
+        <button class="btn btn-green" id="btn-setup-done">✅ セットアップ完了 — この画面を非表示にする</button>
+      </div>
     </div>
-    <button class="btn-setup-done" onclick="completeSetup()">
-      ✅ セットアップ完了 — この画面を非表示にする
-    </button>
-  </div>
-  </div><!-- /#setup-section -->
 
-  <div style="margin-bottom:20px; margin-top:-8px;">
-    <button class="setup-toggle" id="setup-toggle-btn" onclick="toggleSetup()" style="display:none;">
-      ⚙ セットアップ手順を再表示する
-    </button>
   </div>
 
-  <!-- 統計 -->
+  <div style="margin-bottom:16px;">
+    <button id="setup-toggle-btn" style="display:none;">⚙ セットアップ画面を再表示する</button>
+  </div>
+
   <div class="stats-row">
-    <div class="stat-box accent">
-      <div class="stat-num" id="stat-total">0</div>
-      <div class="stat-label">Total</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="stat-unchecked">0</div>
-      <div class="stat-label">未チェック</div>
-    </div>
-    <div class="stat-box green">
-      <div class="stat-num" id="stat-checked">0</div>
-      <div class="stat-label">チェック済み</div>
-    </div>
+    <div class="stat-box accent"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-unchecked">0</div><div class="stat-label">未チェック</div></div>
+    <div class="stat-box green"><div class="stat-num" id="stat-checked">0</div><div class="stat-label">チェック済み</div></div>
   </div>
 
-  <!-- フィルタ -->
   <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('all',this)">すべて</button>
-    <button class="filter-btn" onclick="setFilter('unchecked',this)">未チェック</button>
-    <button class="filter-btn" onclick="setFilter('checked',this)">チェック済み</button>
+    <button class="filter-btn active" data-filter="all">すべて</button>
+    <button class="filter-btn" data-filter="unchecked">未チェック</button>
+    <button class="filter-btn" data-filter="checked">チェック済み</button>
     <div class="filter-spacer"></div>
-    <select class="sort-select" onchange="setSort(this.value)">
+    <select class="sort-select" id="sort-select">
       <option value="newest">新しい順</option>
       <option value="oldest">古い順</option>
     </select>
@@ -409,164 +245,398 @@
   <div id="post-list"></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast"></div>
 
 <script>
-  const STORAGE_KEY = 'x_post_manager_v1';
-  let currentFilter = 'all';
-  let currentSort = 'newest';
+(function() {
+  'use strict';
 
-  // ── セットアップ完了フラグ ──
-  const SETUP_KEY = 'x_post_manager_setup_done';
+  // ── キー定数 ──
+  var SK  = 'x_post_manager_v1';
+  var SUK = 'x_post_manager_setup_done';
+  var TK  = 'x_gist_token';
+  var GK  = 'x_gist_id';
+  var GF  = 'x-post-manager-data.json';
 
-  function applySetupState() {
-    const done = localStorage.getItem(SETUP_KEY) === '1';
-    document.getElementById('setup-section').style.display = done ? 'none' : 'block';
-    document.getElementById('setup-toggle-btn').style.display = done ? 'inline' : 'none';
+  var currentFilter = 'all';
+  var currentSort   = 'newest';
+  var syncing       = false;
+
+  // ── ユーティリティ ──
+  function $id(id) { return document.getElementById(id); }
+
+  function localLoad() {
+    try { return JSON.parse(localStorage.getItem(SK) || '[]'); } catch(e) { return []; }
   }
-
-  function completeSetup() {
-    localStorage.setItem(SETUP_KEY, '1');
-    applySetupState();
-    showToast('✅ セットアップ完了！いつでも再表示できます');
+  function localSave(d) {
+    localStorage.setItem(SK, JSON.stringify(d));
   }
-
-  let setupVisible = false;
-  function toggleSetup() {
-    setupVisible = !setupVisible;
-    document.getElementById('setup-section').style.display = setupVisible ? 'block' : 'none';
-    document.getElementById('setup-toggle-btn').textContent = setupVisible
-      ? '✕ セットアップ手順を閉じる'
-      : '⚙ セットアップ手順を再表示する';
-  }
-
-  // ── ローカルファイル判定 ──
-  const isLocal = location.protocol === 'file:';
-  const pageURL = location.href.split('?')[0];
-
-  if (isLocal) {
-    document.getElementById('local-warning').classList.add('visible');
-  } else {
-    // https で開かれている場合はブックマークレットを設定
-    document.getElementById('sn1').textContent = '✓';
-    document.getElementById('sn1').classList.add('done');
-    document.getElementById('sn2').textContent = '✓';
-    document.getElementById('sn2').classList.add('done');
-
-    const bmCode = `javascript:(function(){var u=location.href,t=document.title||u;if(!u.includes('x.com')&&!u.includes('twitter.com')){alert('X\u306e\u30dd\u30b9\u30c8\u30da\u30fc\u30b8\u3067\u62bc\u3057\u3066\u304f\u3060\u3055\u3044');return;}location.href='${pageURL}?action=save&url='+encodeURIComponent(u)+'&title='+encodeURIComponent(t)+'&date='+encodeURIComponent(new Date().toLocaleString('ja-JP'));})();`;
-    document.getElementById('bm-link').href = bmCode;
-  }
-
-  function handleBmClick(e) {
-    if (isLocal) {
-      e.preventDefault();
-      showToast('⚠️ GitHub Pages の https:// URLで開いてください');
-    }
-    // https の場合はドラッグ用なのでクリックでは何もしない（href が設定済み）
-  }
-
-  // ── データ操作 ──
-  function load() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-  function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-
-  function setFilter(f, el) {
-    currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    render();
-  }
-
-  function setSort(s) { currentSort = s; render(); }
-
-  function toggleCheck(id) {
-    const data = load();
-    const p = data.find(p => p.id === id);
-    if (p) { p.checked = !p.checked; save(data); render(); showToast(p.checked ? '✅ チェックしました' : '↩ 外しました'); }
-  }
-
-  function deletePost(id) {
-    save(load().filter(p => p.id !== id));
-    render();
-    showToast('🗑 削除しました');
-  }
-
-  function render() {
-    let data = load();
-    const total = data.length;
-    const checked = data.filter(p => p.checked).length;
-    document.getElementById('stat-total').textContent = total;
-    document.getElementById('stat-checked').textContent = checked;
-    document.getElementById('stat-unchecked').textContent = total - checked;
-    document.getElementById('badge-count').textContent = total;
-
-    if (currentFilter === 'checked') data = data.filter(p => p.checked);
-    if (currentFilter === 'unchecked') data = data.filter(p => !p.checked);
-    if (currentSort === 'oldest') data = [...data].reverse();
-
-    const list = document.getElementById('post-list');
-    if (data.length === 0) {
-      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${
-        total === 0
-          ? 'まだポストが保存されていません。<br><strong>上のセットアップ手順を参考に設置してください。</strong>'
-          : 'この条件のポストはありません。'
-      }</p></div>`;
-      return;
-    }
-
-    list.innerHTML = data.map(p => `
-      <div class="post-item ${p.checked ? 'checked' : ''}">
-        <div class="post-meta">
-          <div class="post-title" title="${esc(p.title)}">${esc(p.title)}</div>
-          <a class="post-url" href="${esc(p.url)}" target="_blank">${esc(p.url)}</a>
-          <div class="post-date">${esc(p.date)}</div>
-        </div>
-        <div class="post-actions">
-          <button class="btn-check ${p.checked ? 'active' : ''}" onclick="toggleCheck(${p.id})" title="${p.checked ? 'チェックを外す' : 'チェック済みにする'}">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-          <button class="btn-delete" onclick="if(confirm('削除しますか？'))deletePost(${p.id})" title="削除">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
+  function getToken()  { return localStorage.getItem(TK) || ''; }
+  function getGistId() { return localStorage.getItem(GK) || ''; }
 
   function esc(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  let toastTimer;
-  function showToast(msg) {
-    const t = document.getElementById('toast');
+  var toastTimer;
+  function toast(msg) {
+    var t = $id('toast');
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2800);
   }
 
-  // ── URLパラメータからポストを受け取って保存 ──
-  const params = new URLSearchParams(location.search);
-  if (params.get('action') === 'save') {
-    const url   = params.get('url');
-    const title = params.get('title') || url;
-    const date  = params.get('date')  || new Date().toLocaleString('ja-JP');
+  function setConnectStatus(type, msg) {
+    var el = $id('connect-status');
+    el.className = type;
+    el.textContent = msg;
+  }
+  function clearConnectStatus() {
+    var el = $id('connect-status');
+    el.className = '';
+    el.textContent = '';
+  }
+
+  function setSyncState(cls, label) {
+    var btn = $id('sync-btn');
+    btn.className = cls;
+    $id('sync-label').textContent = label;
+  }
+
+  // ── Gist API ──
+  function gistRequest(method, url, token, body) {
+    var opts = {
+      method: method,
+      headers: {
+        'Authorization': 'token ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    return fetch(url, opts).then(function(r) {
+      return r.json().then(function(j) {
+        if (!r.ok) throw new Error(j.message || 'GitHub APIエラー (HTTP ' + r.status + ')');
+        return j;
+      });
+    });
+  }
+
+  function createGist(token, data) {
+    return gistRequest('POST', 'https://api.github.com/gists', token, {
+      description: 'X Post Manager Data',
+      public: false,
+      files: { [GF]: { content: JSON.stringify(data, null, 2) } }
+    }).then(function(j) { return j.id; });
+  }
+
+  function updateGist(token, gistId, data) {
+    return gistRequest('PATCH', 'https://api.github.com/gists/' + gistId, token, {
+      files: { [GF]: { content: JSON.stringify(data, null, 2) } }
+    });
+  }
+
+  function fetchGist(token, gistId) {
+    return gistRequest('GET', 'https://api.github.com/gists/' + gistId, token, null)
+      .then(function(j) {
+        var content = j.files && j.files[GF] && j.files[GF].content;
+        if (!content) throw new Error('Gistにデータファイルが見つかりません');
+        return JSON.parse(content);
+      });
+  }
+
+  // ── 接続テスト ──
+  function saveAndConnect() {
+    var token  = $id('input-token').value.trim();
+    var gistId = $id('input-gist-id').value.trim();
+
+    if (!token) {
+      setConnectStatus('fail', '⚠️ Personal Access Token を入力してください');
+      return;
+    }
+
+    var btn = $id('btn-connect');
+    btn.disabled = true;
+    btn.textContent = '接続中...';
+    setConnectStatus('info', '🔄 GitHub に接続しています...');
+    setSyncState('syncing', '接続中...');
+
+    localStorage.setItem(TK, token);
+    if (gistId) localStorage.setItem(GK, gistId);
+
+    var p;
+    if (gistId) {
+      p = fetchGist(token, gistId).then(function(data) {
+        localSave(data);
+        render();
+        setConnectStatus('ok',
+          '✅ 接続成功！ ' + data.length + '件のポストを取得しました。\n' +
+          'Gist ID: ' + gistId
+        );
+        setSyncState('synced', '同期済み');
+      });
+    } else {
+      p = createGist(token, localLoad()).then(function(newId) {
+        localStorage.setItem(GK, newId);
+        $id('input-gist-id').value = newId;
+        setConnectStatus('ok',
+          '✅ Gist を新規作成しました！\n' +
+          'Gist ID: ' + newId + '\n' +
+          '↑ スマホで使うときにこのIDを入力してください。'
+        );
+        setSyncState('synced', '同期済み');
+      });
+    }
+
+    p.catch(function(e) {
+      setConnectStatus('fail',
+        '❌ 接続失敗: ' + e.message + '\n\n' +
+        '確認ポイント:\n' +
+        '・トークンが正しいか（ghp_ で始まる文字列）\n' +
+        '・トークンに gist スコープがチェックされているか\n' +
+        '・Gist IDが正しいか（間違いなければ空欄にして再試行）'
+      );
+      setSyncState('error', 'エラー');
+    }).finally(function() {
+      btn.disabled = false;
+      btn.textContent = '🔗 保存して接続テスト';
+    });
+  }
+
+  function clearGistSettings() {
+    if (!confirm('Gist設定を削除しますか？\nローカルのポストデータは残ります。')) return;
+    localStorage.removeItem(TK);
+    localStorage.removeItem(GK);
+    $id('input-token').value  = '';
+    $id('input-gist-id').value = '';
+    clearConnectStatus();
+    setSyncState('', '未設定');
+    toast('🗑 設定を削除しました');
+  }
+
+  // ── 同期 ──
+  function syncNow() {
+    var token  = getToken();
+    var gistId = getGistId();
+    if (!token || !gistId || syncing) return;
+    syncing = true;
+    setSyncState('syncing', '同期中...');
+    fetchGist(token, gistId).then(function(data) {
+      localSave(data);
+      render();
+      setSyncState('synced', '同期済み');
+    }).catch(function(e) {
+      setSyncState('error', 'エラー');
+      toast('❌ 同期失敗: ' + e.message);
+    }).finally(function() { syncing = false; });
+  }
+
+  function saveAndSync(data) {
+    localSave(data);
+    render();
+    var token  = getToken();
+    var gistId = getGistId();
+    if (!token || !gistId) return Promise.resolve();
+    setSyncState('syncing', '同期中...');
+    return updateGist(token, gistId, data).then(function() {
+      setSyncState('synced', '同期済み');
+    }).catch(function(e) {
+      setSyncState('error', 'エラー');
+      toast('❌ Gist同期失敗: ' + e.message);
+    });
+  }
+
+  // ── CRUD ──
+  function toggleCheck(id) {
+    var data = localLoad();
+    var p = data.find(function(x){ return x.id === id; });
+    if (!p) return;
+    p.checked = !p.checked;
+    saveAndSync(data);
+    toast(p.checked ? '✅ チェックしました' : '↩ チェックを外しました');
+  }
+
+  function deletePost(id) {
+    if (!confirm('削除しますか？')) return;
+    saveAndSync(localLoad().filter(function(x){ return x.id !== id; }));
+    toast('🗑 削除しました');
+  }
+
+  // ── 描画 ──
+  function render() {
+    var data    = localLoad();
+    var total   = data.length;
+    var checked = data.filter(function(p){ return p.checked; }).length;
+    $id('stat-total').textContent     = total;
+    $id('stat-checked').textContent   = checked;
+    $id('stat-unchecked').textContent = total - checked;
+    $id('badge-count').textContent    = total;
+
+    var view = data.slice();
+    if (currentFilter === 'checked')   view = view.filter(function(p){ return p.checked; });
+    if (currentFilter === 'unchecked') view = view.filter(function(p){ return !p.checked; });
+    if (currentSort   === 'oldest')    view.reverse();
+
+    var list = $id('post-list');
+    if (!view.length) {
+      list.innerHTML =
+        '<div class="empty-state"><div class="empty-icon">📭</div><p>' +
+        (total === 0 ? 'まだポストが保存されていません。<br>セットアップを完了してブックマークレットを設置してください。'
+                     : 'この条件のポストはありません。') +
+        '</p></div>';
+      return;
+    }
+    list.innerHTML = view.map(function(p) {
+      return '<div class="post-item' + (p.checked ? ' checked' : '') + '" data-id="' + p.id + '">' +
+        '<div class="post-meta">' +
+          '<div class="post-title" title="' + esc(p.title) + '">' + esc(p.title) + '</div>' +
+          '<a class="post-url" href="' + esc(p.url) + '" target="_blank">' + esc(p.url) + '</a>' +
+          '<div class="post-date">' + esc(p.date) + '</div>' +
+        '</div>' +
+        '<div class="post-actions">' +
+          '<button class="btn-check' + (p.checked ? ' active' : '') + '" data-action="check" title="チェック">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '</button>' +
+          '<button class="btn-delete" data-action="delete" title="削除">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── セットアップ表示制御 ──
+  function applySetupState() {
+    var done = localStorage.getItem(SUK) === '1';
+    $id('setup-section').style.display    = done ? 'none' : 'block';
+    $id('setup-toggle-btn').style.display = done ? 'inline' : 'none';
+  }
+
+  // ── ブックマークレット設定 ──
+  var isLocal = location.protocol === 'file:';
+  var pageURL = location.href.split('?')[0];
+
+  function initBookmarklet() {
+    if (isLocal) {
+      $id('local-warning').classList.add('visible');
+    } else {
+      $id('sn1').textContent = '✓'; $id('sn1').classList.add('done');
+      $id('sn2').textContent = '✓'; $id('sn2').classList.add('done');
+      var bm = "javascript:(function(){" +
+        "var u=location.href,t=document.title||u;" +
+        "if(!u.includes('x.com')&&!u.includes('twitter.com')){alert('X\u306e\u30dd\u30b9\u30c8\u30da\u30fc\u30b8\u3067\u62bc\u3057\u3066\u304f\u3060\u3055\u3044');return;}" +
+        "location.href='" + pageURL + "?action=save'" +
+        "+'&url='+encodeURIComponent(u)" +
+        "+'&title='+encodeURIComponent(t)" +
+        "+'&date='+encodeURIComponent(new Date().toLocaleString('ja-JP'));" +
+        "})();";
+      $id('bm-link').href = bm;
+    }
+  }
+
+  // ── URLパラメータ受信 ──
+  function handleUrlParams() {
+    var params = new URLSearchParams(location.search);
+    if (params.get('action') !== 'save') return;
+    var url   = params.get('url');
+    var title = params.get('title') || url;
+    var date  = params.get('date')  || new Date().toLocaleString('ja-JP');
     if (url) {
-      const data = load();
-      if (!data.some(p => p.url === url)) {
-        data.unshift({ id: Date.now(), url, title, date, checked: false });
-        save(data);
-        showToast('✅ 保存しました！');
+      var data = localLoad();
+      if (!data.some(function(p){ return p.url === url; })) {
+        data.unshift({ id: Date.now(), url: url, title: title, date: date, checked: false });
+        saveAndSync(data).then(function(){ toast('✅ 保存しました！'); });
       } else {
-        showToast('⚠️ このポストはすでに保存されています');
+        toast('⚠️ このポストはすでに保存されています');
       }
     }
     history.replaceState({}, '', location.pathname);
   }
 
-  applySetupState();
+  // ══════════════════════════════
+  //  イベント登録（DOMContentLoaded）
+  // ══════════════════════════════
+  document.addEventListener('DOMContentLoaded', function() {
 
-  render();
+    // Gist設定ボタン
+    $id('btn-connect').addEventListener('click', saveAndConnect);
+    $id('btn-clear-gist').addEventListener('click', clearGistSettings);
+
+    // 入力変更でステータスクリア
+    $id('input-token').addEventListener('input', clearConnectStatus);
+    $id('input-gist-id').addEventListener('input', clearConnectStatus);
+
+    // セットアップ完了
+    $id('btn-setup-done').addEventListener('click', function() {
+      localStorage.setItem(SUK, '1');
+      applySetupState();
+      toast('✅ 完了！いつでも再表示できます');
+    });
+
+    // セットアップ再表示トグル
+    var setupVisible = false;
+    $id('setup-toggle-btn').addEventListener('click', function() {
+      setupVisible = !setupVisible;
+      $id('setup-section').style.display = setupVisible ? 'block' : 'none';
+      this.textContent = setupVisible ? '✕ セットアップを閉じる' : '⚙ セットアップ画面を再表示する';
+    });
+
+    // ヘッダー同期ボタン
+    $id('sync-btn').addEventListener('click', syncNow);
+
+    // フィルタボタン（イベント委譲）
+    document.querySelector('.filters').addEventListener('click', function(e) {
+      var btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      currentFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      render();
+    });
+
+    // ソート
+    $id('sort-select').addEventListener('change', function() {
+      currentSort = this.value;
+      render();
+    });
+
+    // ポストリスト（イベント委譲）
+    $id('post-list').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var item = btn.closest('.post-item');
+      if (!item) return;
+      var id = Number(item.dataset.id);
+      if (btn.dataset.action === 'check')  toggleCheck(id);
+      if (btn.dataset.action === 'delete') deletePost(id);
+    });
+
+    // ブックマークレットリンクのクリック防止（localのみ）
+    $id('bm-link').addEventListener('click', function(e) {
+      if (isLocal) { e.preventDefault(); toast('⚠️ https:// のURLで開いてください'); }
+    });
+
+    // 初期化
+    var savedToken  = getToken();
+    var savedGistId = getGistId();
+    if (savedToken)  $id('input-token').value   = savedToken;
+    if (savedGistId) $id('input-gist-id').value = savedGistId;
+
+    if      (savedToken && savedGistId) setSyncState('synced', '同期済み');
+    else if (savedToken)                setSyncState('', 'Gist未設定');
+    else                                setSyncState('', '未設定');
+
+    initBookmarklet();
+    applySetupState();
+    handleUrlParams();
+    render();
+
+    // 起動時に最新データを取得
+    if (savedToken && savedGistId) syncNow();
+  });
+
+})();
 </script>
 </body>
 </html>
