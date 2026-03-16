@@ -35,18 +35,16 @@ ul.features li::before { content:'✅'; }
   <h1>📦 Amazon → ツール 送信ボタン</h1>
   <p class="sub">Amazonの商品ページを開いたままワンクリックで、アフィリエイト記事作成ツールに情報を送れます。</p>
 
-  <!-- 何ができるか -->
   <div class="card">
     <h2>⚡ できること</h2>
     <ul class="features">
       <li>ASIN・商品名・価格・ポイントを自動抽出</li>
-      <li>アフィリエイト記事作成ツールを新タブで開いて自動入力</li>
+      <li>アフィリエイト記事作成ツールを開いて自動入力</li>
       <li>商品画像URLも自動セット</li>
-      <li>クリック1回で完了（コピペ不要）</li>
+      <li>/dp/ と /gp/product/ 両方のURLに対応</li>
     </ul>
   </div>
 
-  <!-- インストール手順 -->
   <div class="card">
     <h2>🔧 インストール手順</h2>
 
@@ -85,7 +83,6 @@ ul.features li::before { content:'✅'; }
     </div>
   </div>
 
-  <!-- 手動インストール -->
   <div class="card">
     <h2>🛠️ 手動インストール <span class="badge">ドラッグが効かない場合</span></h2>
 
@@ -110,43 +107,42 @@ ul.features li::before { content:'✅'; }
 </div>
 
 <script>
-// ===== ブックマークレット本体 =====
 var TOOL_URL = 'https://hajime085.github.io/affiliate-tool/';
 
-var bookmarkletCode = `javascript:(function(){
-  var m=location.href.match(new RegExp('/dp/([A-Z0-9]{10})','i'))||location.href.match(new RegExp('/gp/product/([A-Z0-9]{10})','i'));
-  if(!m){alert('Amazon商品ページで実行してください');return;}
-  var asin=m[1].toUpperCase();
-  var title='';
-  var tel=document.getElementById('productTitle');
-  if(tel)title=tel.textContent.trim().replace(/\\s+/g,' ').substring(0,120);
-  var sale='';
-  var sels=['#corePriceDisplay_desktop_feature_div .a-price:not([data-a-strike]) .a-offscreen','#corePrice_feature_div .a-price:not([data-a-strike]) .a-offscreen','#priceblock_ourprice','#price_inside_buybox'];
-  for(var i=0;i<sels.length;i++){var el=document.querySelector(sels[i]);if(el){sale=el.textContent.replace(/[^\\d]/g,'');break;}}
-  var orig='';
-  var osels=['.basisPrice .a-offscreen','.a-text-price[data-a-strike="true"] .a-offscreen','#priceblock_listprice','.a-price[data-a-strike="true"] .a-offscreen'];
-  for(var j=0;j<osels.length;j++){var oel=document.querySelector(osels[j]);if(oel){orig=oel.textContent.replace(/[^\\d]/g,'');break;}}
-  var pt='';
-  var pels=['#loyalty-points .a-color-price','#pointsInsideBuyBox_feature_div .a-color-price','.loyalty-points .a-color-price'];
-  for(var k=0;k<pels.length;k++){var pel=document.querySelector(pels[k]);if(pel){pt=pel.textContent.replace(/[^\\d]/g,'');break;}}
-  var img='';
-  var imgEl=document.getElementById('landingImage')||document.querySelector('#imgBlkFront');
-  if(imgEl)img=imgEl.getAttribute('data-old-hires')||imgEl.getAttribute('data-a-dynamic-image')?Object.keys(JSON.parse(imgEl.getAttribute('data-a-dynamic-image')||'{}')).sort(function(a,b){return b.length-a.length;})[0]||imgEl.src:imgEl.src;
-  var p=new URLSearchParams({asin:asin,name:encodeURIComponent(title),sale:sale,orig:orig,pt:pt,img:encodeURIComponent(img)});
-  window.open('${TOOL_URL}?'+p.toString(),'_blank');
-})();`;
+// ブックマークレット本体
+// window.open()ではなくlocation.hrefを使用（ポップアップブロック対策）
+var code = 'javascript:(function(){'
+  + 'var url=location.href;'
+  + 'var m=url.match(/\\/dp\\/([A-Z0-9]{10})/i)||url.match(/\\/gp\\/product\\/([A-Z0-9]{10})/i);'
+  + 'if(!m){alert("Amazon\u5546\u54c1\u30da\u30fc\u30b8\u3067\u5b9f\u884c\u3057\u3066\u304f\u3060\u3055\u3044");return;}'
+  + 'var asin=m[1].toUpperCase();'
+  + 'var title="";'
+  + 'var tel=document.getElementById("productTitle");'
+  + 'if(tel)title=tel.textContent.trim().replace(/\\s+/g," ").substring(0,120);'
+  + 'var sale="";'
+  + 'var sels=["#corePriceDisplay_desktop_feature_div .a-price:not([data-a-strike]) .a-offscreen","#corePrice_feature_div .a-price:not([data-a-strike]) .a-offscreen","#priceblock_ourprice","#price_inside_buybox"];'
+  + 'for(var i=0;i<sels.length;i++){var el=document.querySelector(sels[i]);if(el){sale=el.textContent.replace(/[^\\d]/g,"");break;}}'
+  + 'var orig="";'
+  + 'var osels=[".basisPrice .a-offscreen","#priceblock_listprice",".a-price[data-a-strike=\\"true\\"] .a-offscreen"];'
+  + 'for(var j=0;j<osels.length;j++){var oel=document.querySelector(osels[j]);if(oel){orig=oel.textContent.replace(/[^\\d]/g,"");break;}}'
+  + 'var pt="";'
+  + 'var pels=["#loyalty-points .a-color-price","#pointsInsideBuyBox_feature_div .a-color-price",".loyalty-points .a-color-price"];'
+  + 'for(var k=0;k<pels.length;k++){var pel=document.querySelector(pels[k]);if(pel){pt=pel.textContent.replace(/[^\\d]/g,"");break;}}'
+  + 'var img="";'
+  + 'var imgEl=document.getElementById("landingImage")||document.querySelector("#imgBlkFront");'
+  + 'if(imgEl){var dyn=imgEl.getAttribute("data-a-dynamic-image");if(dyn){try{img=Object.keys(JSON.parse(dyn)).sort(function(a,b){return b.length-a.length;})[0]||"";}catch(e){}}if(!img)img=imgEl.getAttribute("data-old-hires")||imgEl.src||"";}'
+  + 'var qs="asin="+encodeURIComponent(asin)+"&name="+encodeURIComponent(title)+"&sale="+encodeURIComponent(sale)+"&orig="+encodeURIComponent(orig)+"&pt="+encodeURIComponent(pt)+"&img="+encodeURIComponent(img);'
+  + 'location.href="' + TOOL_URL + '?"+qs;'
+  + '})();';
 
-// ボタンのhrefをセット
-document.getElementById('bmBtn').href = bookmarkletCode;
-
-// コードボックスに表示
-document.getElementById('codeBox').textContent = bookmarkletCode;
+document.getElementById('bmBtn').href = code;
+document.getElementById('codeBox').textContent = code;
 
 function copyCode() {
-  navigator.clipboard.writeText(bookmarkletCode).then(function(){
+  navigator.clipboard.writeText(code).then(function(){
     var btn = event.target;
-    btn.textContent = '✅ コピーしました！';
-    setTimeout(function(){ btn.textContent = '📋 コードをコピー'; }, 2000);
+    btn.textContent = '\u2705 \u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\uff01';
+    setTimeout(function(){ btn.textContent = '\ud83d\udccb \u30b3\u30fc\u30c9\u3092\u30b3\u30d4\u30fc'; }, 2000);
   });
 }
 </script>
