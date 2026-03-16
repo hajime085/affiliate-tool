@@ -114,7 +114,7 @@ ul.features li::before { content:'✅'; }
 var TOOL_URL = 'https://hajime085.github.io/affiliate-tool/';
 
 var bookmarkletCode = `javascript:(function(){
-  var m=location.href.match(/\/dp\/([A-Z0-9]{10})/i);
+  var m=location.href.match(/\/dp\/([A-Z0-9]{10})/i)||location.href.match(/\/gp\/product\/([A-Z0-9]{10})/i);
   if(!m){alert('Amazon商品ページで実行してください');return;}
   var asin=m[1].toUpperCase();
   var title='';
