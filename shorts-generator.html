@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ショート動画台本ジェネレーター｜お得スポット</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bg: #080808;
+    --surface: #111;
+    --surface2: #181818;
+    --border: #222;
+    --text: #f0f0f0;
+    --muted: #666;
+    --accent: #FF9900;
+    --accent2: #ff6b00;
+    --red: #ff3b3b;
+    --green: #00d97e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ヘッダー */
+  .header {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1000 100%);
+    border-bottom: 1px solid #1e1e00;
+    padding: 28px 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,153,0,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner { max-width: 720px; margin: 0 auto; }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,153,0,.12); border: 1px solid rgba(255,153,0,.3);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px; font-weight: 800;
+    color: #fff; line-height: 1.2; margin-bottom: 8px;
+  }
+  .header h1 span { color: var(--accent); }
+  .header p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* メインコンテナ */
+  .container { max-width: 720px; margin: 0 auto; padding: 24px 16px 0; }
+
+  /* ステップカード */
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .step-label {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--accent); color: #000;
+    border-radius: 50%; font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; flex-shrink: 0;
+  }
+  .step-title { font-size: 14px; font-weight: 700; color: #fff; }
+
+  label { display: block; font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 7px; margin-top: 16px; }
+  label:first-of-type { margin-top: 0; }
+
+  input[type="url"], input[type="text"], select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,153,0,.1);
+  }
+  textarea { resize: vertical; line-height: 1.7; }
+
+  /* スタイル選択 */
+  .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .style-btn {
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+    line-height: 1.4;
+  }
+  .style-btn:hover { border-color: #444; color: #fff; }
+  .style-btn.active { background: rgba(255,153,0,.1); border-color: var(--accent); color: var(--accent); }
+
+  /* 時間選択 */
+  .duration-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .dur-btn {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+  }
+  .dur-btn:hover { border-color: #444; color: #fff; }
+  .dur-btn.active { background: rgba(255,153,0,.1); border-color: var(--accent); color: var(--accent); }
+
+  /* 生成ボタン */
+  .generate-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #000;
+    font-size: 15px;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    letter-spacing: .04em;
+    margin-top: 4px;
+  }
+  .generate-btn:hover { opacity: .9; transform: translateY(-1px); }
+  .generate-btn:active { transform: translateY(0); }
+  .generate-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* 出力エリア */
+  .output-section { display: none; }
+
+  .output-tabs {
+    display: flex; gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
+    padding: 6px;
+    border-bottom: none;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 9px 8px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .tab-btn:hover { color: #fff; background: var(--surface2); }
+  .tab-btn.active { background: var(--accent); color: #000; }
+
+  .tab-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0 0 16px 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .tab-content.active { display: block; }
+
+  /* 台本エリア */
+  .script-hook {
+    background: rgba(255,153,0,.08);
+    border: 1px solid rgba(255,153,0,.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .script-hook-label { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+  .script-hook-text { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.6; }
+
+  .script-body { font-size: 14px; line-height: 1.8; color: #ddd; white-space: pre-wrap; word-break: break-word; margin-bottom: 16px; }
+
+  .cta-box {
+    background: rgba(0,217,126,.08);
+    border: 1px solid rgba(0,217,126,.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .cta-label { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+  .cta-text { font-size: 13px; color: #ccc; line-height: 1.6; }
+
+  /* スライド構成 */
+  .slide-list { display: flex; flex-direction: column; gap: 10px; }
+  .slide-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .slide-num {
+    width: 32px; height: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--accent);
+    font-family: 'Syne', sans-serif; flex-shrink: 0;
+  }
+  .slide-info {}
+  .slide-duration { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .06em; margin-bottom: 4px; }
+  .slide-text-main { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.5; margin-bottom: 4px; }
+  .slide-text-sub { font-size: 12px; color: #888; line-height: 1.5; }
+  .slide-note { font-size: 11px; color: var(--accent); margin-top: 6px; font-style: italic; }
+
+  /* ハッシュタグ */
+  .hashtag-area { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .hashtag-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .hashtag-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .hashtag-chip.selected { background: rgba(255,153,0,.1); border-color: var(--accent); color: var(--accent); }
+
+  /* アクションボタン */
+  .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .action-btn {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .action-btn:hover { border-color: #555; background: #222; }
+  .action-btn.success { border-color: var(--green); color: var(--green); }
+
+  /* CapCut手順 */
+  .how-to { background: var(--surface2); border-radius: 10px; padding: 16px; margin-top: 16px; }
+  .how-to-title { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px; }
+  .how-to-step { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .how-to-num {
+    width: 22px; height: 22px; flex-shrink: 0;
+    background: var(--accent); color: #000;
+    border-radius: 50%; font-size: 10px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; margin-top: 1px;
+  }
+  .how-to-text { font-size: 12px; color: #999; line-height: 1.6; }
+
+  /* ローディング */
+  .loading-overlay {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .loading-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--muted); line-height: 1.8; }
+  .loading-step { font-size: 12px; color: var(--accent); margin-top: 8px; }
+
+  /* エラー */
+  .error-box {
+    background: rgba(255,59,59,.08);
+    border: 1px solid rgba(255,59,59,.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ff8a8a;
+    display: none;
+    margin-top: 12px;
+  }
+
+  /* TIP */
+  .tip {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+  .tip strong { color: #aaa; }
+
+  @media (max-width: 480px) {
+    .style-grid { grid-template-columns: repeat(2, 1fr); }
+    .action-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-badge">🎬 YouTube Shorts Generator</div>
+    <h1>ブログ記事を<br><span>ショート動画</span>に変換</h1>
+    <p>URLを入力するだけで台本・CapCut用スライド構成を自動生成。作業時間5分でYouTube Shortsに投稿できます。</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Step 1: URL入力 -->
+  <div class="step-card">
+    <div class="step-label">
+      <div class="step-num">1</div>
+      <div class="step-title">ブログ記事のURLを入力</div>
+    </div>
+    <label>記事URL（otkspot.com）</label>
+    <input type="url" id="blogUrl" placeholder="https://www.otkspot.com/entry/2026/03/..." />
+    <div class="tip"><strong>対応URL：</strong>otkspot.comの記事ページ。記事内の画像・テキストを自動で取得して台本を生成します。</div>
+  </div>
+
+  <!-- Step 2: 動画スタイル -->
+  <div class="step-card">
+    <div class="step-label">
+      <div class="step-num">2</div>
+      <div class="step-title">動画スタイルを選択</div>
+    </div>
+    <div class="style-grid">
+      <div class="style-btn active" data-style="tips">💡 お役立ち<br>Tips系</div>
+      <div class="style-btn" data-style="ranking">🏆 ランキング<br>紹介系</div>
+      <div class="style-btn" data-style="news">🔥 速報・<br>セール情報</div>
+      <div class="style-btn" data-style="howto">📖 ハウツー<br>解説系</div>
+      <div class="style-btn" data-style="story">📝 体験談<br>ストーリー</div>
+      <div class="style-btn" data-style="compare">⚖️ 比較・<br>検証系</div>
+    </div>
+  </div>
+
+  <!-- Step 3: 動画の長さ -->
+  <div class="step-card">
+    <div class="step-label">
+      <div class="step-num">3</div>
+      <div class="step-title">動画の長さを選択</div>
+    </div>
+    <div class="duration-grid">
+      <div class="dur-btn active" data-dur="30">⚡ 30秒<br><span style="font-size:10px;font-weight:400">スピード重視</span></div>
+      <div class="dur-btn" data-dur="60">📱 60秒<br><span style="font-size:10px;font-weight:400">標準ショート</span></div>
+      <div class="dur-btn" data-dur="90">🎬 90秒<br><span style="font-size:10px;font-weight:400">情報量多め</span></div>
+    </div>
+  </div>
+
+  <!-- 生成ボタン -->
+  <button class="generate-btn" id="generateBtn" onclick="generate()">
+    🎬 台本・スライド構成を生成する
+  </button>
+
+  <!-- ローディング -->
+  <div class="loading-overlay" id="loadingArea">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">記事を解析して台本を生成しています<br>少々お待ちください...</div>
+    <div class="loading-step" id="loadingStep">🔍 記事テキストを取得中...</div>
+  </div>
+
+  <!-- エラー -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- 出力セクション -->
+  <div class="output-section" id="outputSection">
+
+    <div class="output-tabs">
+      <button class="tab-btn active" onclick="switchTab('script')">📝 台本</button>
+      <button class="tab-btn" onclick="switchTab('slides')">🎞️ スライド構成</button>
+      <button class="tab-btn" onclick="switchTab('hashtags')">＃ ハッシュタグ</button>
+      <button class="tab-btn" onclick="switchTab('capcut')">✂️ CapCut手順</button>
+    </div>
+
+    <!-- 台本タブ -->
+    <div class="tab-content active" id="tab-script">
+      <div class="script-hook">
+        <div class="script-hook-label">🎯 フック（冒頭0〜3秒）</div>
+        <div class="script-hook-text" id="hookText">—</div>
+      </div>
+      <div class="script-body" id="scriptBody">—</div>
+      <div class="cta-box">
+        <div class="cta-label">📣 CTA（締め・ブログ誘導）</div>
+        <div class="cta-text" id="ctaText">—</div>
+      </div>
+      <div class="action-row">
+        <button class="action-btn" onclick="copyScript()">📋 台本をコピー</button>
+        <button class="action-btn" onclick="regenScript()">🔄 台本を再生成</button>
+      </div>
+    </div>
+
+    <!-- スライド構成タブ -->
+    <div class="tab-content" id="tab-slides">
+      <div class="slide-list" id="slideList"></div>
+      <div class="action-row">
+        <button class="action-btn" onclick="copySlides()">📋 構成をコピー</button>
+        <button class="action-btn" onclick="regenSlides()">🔄 再生成</button>
+      </div>
+    </div>
+
+    <!-- ハッシュタグタブ -->
+    <div class="tab-content" id="tab-hashtags">
+      <div class="hashtag-area" id="hashtagArea"></div>
+      <div class="action-row" style="grid-template-columns:1fr">
+        <button class="action-btn" onclick="copyHashtags()">📋 選択したタグをコピー</button>
+      </div>
+      <div class="tip"><strong>YouTube Shortsのコツ：</strong>ハッシュタグは3〜5個が効果的です。#Shorts は必ず入れてください。</div>
+    </div>
+
+    <!-- CapCut手順タブ -->
+    <div class="tab-content" id="tab-capcut">
+      <div class="how-to">
+        <div class="how-to-title">CapCutでの作成手順（約5分）</div>
+        <div class="how-to-step">
+          <div class="how-to-num">1</div>
+          <div class="how-to-text">CapCutアプリを開き「新しいプロジェクト」→「テンプレート」から縦型（9:16）を選択</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">2</div>
+          <div class="how-to-text">「スライド構成」タブの各スライドテキストをCapCutのテキストレイヤーに貼り付ける</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">3</div>
+          <div class="how-to-text">記事内の商品画像・アイキャッチをダウンロードして背景画像として配置</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">4</div>
+          <div class="how-to-text">BGMを追加（CapCutの著作権フリー音楽から「明るい」「テンポよい」で検索）</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">5</div>
+          <div class="how-to-text">各スライドの表示時間を「スライド構成」の秒数に合わせて調整</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">6</div>
+          <div class="how-to-text">書き出し（1080×1920、30fps）→ YouTubeアプリからショートとしてアップロード</div>
+        </div>
+        <div class="how-to-step">
+          <div class="how-to-num">7</div>
+          <div class="how-to-text">説明欄にブログ記事のURLとアフィリエイトリンクを貼り付けて公開</div>
+        </div>
+      </div>
+      <div class="tip"><strong>画像の取得方法：</strong>ブログ記事を開いて商品画像を長押し保存。Amazon商品画像はアソシエイトリンクからスクショでもOK。</div>
+    </div>
+
+  </div><!-- /output-section -->
+
+</div><!-- /container -->
+
+<script>
+const WORKER_URL = 'https://amazon-sale-api.popo-1215.workers.dev';
+
+let selectedStyle = 'tips';
+let selectedDuration = '30';
+let generatedData = null;
+let selectedHashtags = new Set(['#Shorts', '#Amazon', '#お得情報']);
+
+// スタイルボタン
+document.querySelectorAll('.style-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedStyle = btn.dataset.style;
+  });
+});
+
+// 時間ボタン
+document.querySelectorAll('.dur-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedDuration = btn.dataset.dur;
+  });
+});
+
+// タブ切り替え
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const tabs = ['script', 'slides', 'hashtags', 'capcut'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+const styleLabels = {
+  tips: 'お役立ちTips系（「知らないと損！」「〇〇するだけで節約できる」という切り口）',
+  ranking: 'ランキング紹介系（「第3位から発表！」のような順位形式）',
+  news: '速報・セール情報系（「今すぐチェック！」「限定セール中！」の緊急感ある切り口）',
+  howto: 'ハウツー解説系（「〇〇の方法を3ステップで解説」のような手順形式）',
+  story: '体験談ストーリー系（「実は去年失敗して〜」一人称の共感ストーリー）',
+  compare: '比較・検証系（「AとBを比べてみた」「買う前に知っておくべき違い」）'
+};
+
+async function generate() {
+  const url = document.getElementById('blogUrl').value.trim();
+  if (!url || !url.includes('otkspot.com')) {
+    showError('otkspot.comの記事URLを入力してください');
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  document.getElementById('loadingArea').style.display = 'block';
+  document.getElementById('outputSection').style.display = 'none';
+  document.getElementById('errorBox').style.display = 'none';
+
+  // ローディングステップ表示
+  const steps = [
+    '🔍 記事テキストを取得中...',
+    '🧠 内容を分析中...',
+    '✍️ 台本を生成中...',
+    '🎞️ スライド構成を作成中...',
+    '＃ ハッシュタグを選定中...'
+  ];
+  let stepIdx = 0;
+  const stepInterval = setInterval(() => {
+    stepIdx = (stepIdx + 1) % steps.length;
+    document.getElementById('loadingStep').textContent = steps[stepIdx];
+  }, 1800);
+
+  try {
+    // 記事コンテンツを取得
+    const fetchResp = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5',
+        max_tokens: 3000,
+        messages: [{
+          role: 'user',
+          content: `以下のURLのブログ記事を参考に、YouTube Shorts用の台本とスライド構成を生成してください。
+
+記事URL: ${url}
+動画スタイル: ${styleLabels[selectedStyle]}
+動画の長さ: ${selectedDuration}秒
+
+※URLから記事の内容（タイトル、主要ポイント、商品情報など）を推測して台本を作成してください。
+※記事がAmazonアフィリエイトブログ「お得スポット」のものであることを前提にしてください。
+
+以下のJSON形式で出力してください。他の文章は一切不要です。
+
+{
+  "hook": "冒頭0〜3秒のフックテキスト（視聴者を引きつける一言。疑問形・数字・衝撃的な事実など）",
+  "script": "本編の台本テキスト（ナレーション形式。改行を活用。${selectedDuration}秒分）",
+  "cta": "締めのCTA（「詳しくはプロフのリンクから」「ブログで詳細を確認してね」など自然な誘導）",
+  "slides": [
+    {
+      "num": 1,
+      "duration": "秒数（例：3秒）",
+      "main": "大きく表示するメインテキスト（短く・インパクト重視）",
+      "sub": "小さく表示するサブテキスト（補足説明）",
+      "note": "CapCutでの編集メモ（使う画像・エフェクトのヒント）"
+    }
+  ],
+  "hashtags": ["#Shorts", "#Amazon", "記事内容に合った5〜8個のハッシュタグ"]
+}`
+        }]
+      })
+    });
+
+    const data = await fetchResp.json();
+    const raw = data.content[0].text;
+    const clean = raw.replace(/```json|```/g, '').trim();
+    generatedData = JSON.parse(clean);
+
+    clearInterval(stepInterval);
+    renderOutput(generatedData);
+
+  } catch (e) {
+    clearInterval(stepInterval);
+    showError('生成に失敗しました。URLを確認して再度お試しください。\n' + e.message);
+    console.error(e);
+  }
+
+  document.getElementById('loadingArea').style.display = 'none';
+  btn.disabled = false;
+}
+
+function renderOutput(data) {
+  // 台本
+  document.getElementById('hookText').textContent = data.hook || '—';
+  document.getElementById('scriptBody').textContent = data.script || '—';
+  document.getElementById('ctaText').textContent = data.cta || '—';
+
+  // スライド
+  const slideList = document.getElementById('slideList');
+  slideList.innerHTML = '';
+  (data.slides || []).forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'slide-item';
+    div.innerHTML = `
+      <div class="slide-num">${s.num}</div>
+      <div class="slide-info">
+        <div class="slide-duration">⏱ ${s.duration}</div>
+        <div class="slide-text-main">${s.main}</div>
+        <div class="slide-text-sub">${s.sub}</div>
+        ${s.note ? `<div class="slide-note">💡 ${s.note}</div>` : ''}
+      </div>
+    `;
+    slideList.appendChild(div);
+  });
+
+  // ハッシュタグ
+  const hashtagArea = document.getElementById('hashtagArea');
+  hashtagArea.innerHTML = '';
+  (data.hashtags || []).forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'hashtag-chip' + (selectedHashtags.has(tag) ? ' selected' : '');
+    chip.textContent = tag;
+    chip.addEventListener('click', () => {
+      if (selectedHashtags.has(tag)) {
+        selectedHashtags.delete(tag);
+        chip.classList.remove('selected');
+      } else {
+        selectedHashtags.add(tag);
+        chip.classList.add('selected');
+      }
+    });
+    hashtagArea.appendChild(chip);
+  });
+
+  document.getElementById('outputSection').style.display = 'block';
+  document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+
+function copyScript() {
+  if (!generatedData) return;
+  const text = `【フック】\n${generatedData.hook}\n\n【本編】\n${generatedData.script}\n\n【CTA】\n${generatedData.cta}`;
+  copyToClipboard(text, 'copyScript');
+}
+
+function copySlides() {
+  if (!generatedData) return;
+  const text = (generatedData.slides || []).map(s =>
+    `【スライド${s.num}】${s.duration}\nメイン：${s.main}\nサブ：${s.sub}${s.note ? '\n編集メモ：' + s.note : ''}`
+  ).join('\n\n');
+  copyToClipboard(text, 'copySlides');
+}
+
+function copyHashtags() {
+  const text = Array.from(selectedHashtags).join(' ');
+  copyToClipboard(text, 'copyHashtags');
+}
+
+function copyToClipboard(text, btnId) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('.action-btn');
+    btns.forEach(b => {
+      if (b.textContent.includes('コピー')) {
+        const orig = b.textContent;
+        b.textContent = '✅ コピーしました';
+        b.classList.add('success');
+        setTimeout(() => {
+          b.textContent = orig;
+          b.classList.remove('success');
+        }, 2000);
+      }
+    });
+  });
+}
+
+function regenScript() { generate(); }
+function regenSlides() { generate(); }
+</script>
+
+</body>
+</html>
