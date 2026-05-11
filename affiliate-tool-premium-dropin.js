@@ -53,6 +53,13 @@
     return '<div class="otk-section-title" style="margin:30px 0 14px;padding:11px 14px;border-left:4px solid #4d8dcc;background:#f7f9fc;color:#263a66;font-size:19px;line-height:1.45;font-weight:800">' + text + '</div>';
   }
 
+  function disclosureLabel() {
+    return '<div class="otk-pr-disclosure" style="display:flex;align-items:flex-start;gap:8px;border:1px solid #f3d6a3;background:#fff8ea;color:#5c3b00;border-radius:10px;padding:10px 12px;margin:0 0 16px;font-size:13px;line-height:1.65">' +
+      '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:22px;border-radius:999px;background:#ff9900;color:#171717;font-size:11px;font-weight:800;letter-spacing:.04em">PR</span>' +
+      '<span>この記事には広告・アフィリエイトリンクを含みます。掲載している価格や在庫状況は記事作成時点の情報です。</span>' +
+      '</div>';
+  }
+
   window.makeBl = function makeBl(p) {
     var title = titleFor(p);
     p.postTitle = title;
@@ -91,12 +98,14 @@
       '・本文に商品画像は入れない。WordPressのアイキャッチ画像と重複させない。\n' +
       '・レビュー、使ってみた、実感、検証など体験表現は禁止。\n' +
       '・セール速報として、価格、買い時、向いている人、注意点を短く整理する。\n' +
+      '・記事冒頭に広告・アフィリエイトリンクを含むことが分かるPR表記を入れる。\n' +
       '・「適しています」「良好です」「対応できそう」など機械的な語尾を避ける。\n' +
       '・自然な文体の例: 「部活やキャンプ用の保冷バッグを探しているなら、候補に入れやすい価格です。」\n' +
       '・h2タグは絶対に使わない。見出しはdiv class="otk-section-title"を使う。\n' +
       '・見出しは「セールの要点」「どんな人におすすめ？」「購入前に確認したいこと」「まとめ」の4つだけ。\n' +
       '・煽りすぎず、メディア記事として自然に。\n' +
       '\n【以下のテンプレートの（）だけを自然な文章に置き換えて出力】\n' +
+      disclosureLabel() + '\n\n' +
       '<p class="otk-lead">（商品名、価格、割引率、向いている人が一文で伝わるリード文。90〜130文字）</p>\n\n' +
       '<div class="otk-deal-summary" style="border:1px solid #e8ebf2;border-radius:12px;background:#fff;padding:20px 22px;margin:20px 0 24px;box-shadow:0 10px 26px rgba(21,26,36,.04)">' +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
@@ -130,7 +139,7 @@
       sectionTitle('まとめ') + '\n' +
       '<p>（価格メリットとおすすめ対象を2文で締める。「今すぐ買うべき」ではなく「候補に入れやすい」くらいの温度感にする）</p>\n\n' +
       '<p style="text-align:center;margin:26px 0">' + amazonButton(p.link) + '</p>\n' +
-      '<p style="font-size:12px;color:#777;line-height:1.7">※価格・在庫・ポイント還元は記事作成時点の情報です。最新情報はAmazonの商品ページでご確認ください。この記事にはアフィリエイトリンクを含みます。</p>\n' +
+      '<p style="font-size:12px;color:#777;line-height:1.7">※価格・在庫・ポイント還元は記事作成時点の情報です。最新情報はAmazonの商品ページでご確認ください。</p>\n' +
       '\n【厳守ルール】HTMLのみ。h1、h2、h3、商品画像は出力しない。テンプレート外のセクションを追加しない。体験談は禁止。'
     , 2200);
   };
@@ -195,6 +204,6 @@
 
   var style = document.createElement('style');
   style.textContent =
-    '.entry-content .otk-deal-summary{overflow:hidden}.entry-content .otk-deal-facts li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #f0f2f6;line-height:1.55}.entry-content .otk-deal-facts li:last-child{border-bottom:0}.entry-content .otk-deal-facts strong{color:#39497a;font-weight:800}.entry-content .otk-deal-facts span{text-align:right;color:#20283a}.entry-content .otk-sale-note{border-left:4px solid #ff9900;background:#fff8ed;padding:10px 14px;border-radius:0 8px 8px 0;color:#544333;font-size:.92rem}.entry-content .otk-section-title{box-shadow:inset 0 -1px 0 rgba(77,141,204,.18)}.entry-content .otk-amazon-btn:hover{filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 14px 28px rgba(255,153,0,.30)!important}.entry-content .otk-amazon-btn{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}.entry-content .otk-amazon-btn:visited{color:#171717}@media(max-width:600px){.entry-content .otk-deal-facts li{display:block}.entry-content .otk-deal-facts span{display:block;text-align:left;margin-top:2px}.entry-content .otk-amazon-btn{width:100%;min-width:0}}';
+    '.entry-content .otk-pr-disclosure{box-shadow:0 6px 18px rgba(180,83,9,.05)}.entry-content .otk-deal-summary{overflow:hidden}.entry-content .otk-deal-facts li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #f0f2f6;line-height:1.55}.entry-content .otk-deal-facts li:last-child{border-bottom:0}.entry-content .otk-deal-facts strong{color:#39497a;font-weight:800}.entry-content .otk-deal-facts span{text-align:right;color:#20283a}.entry-content .otk-sale-note{border-left:4px solid #ff9900;background:#fff8ed;padding:10px 14px;border-radius:0 8px 8px 0;color:#544333;font-size:.92rem}.entry-content .otk-section-title{box-shadow:inset 0 -1px 0 rgba(77,141,204,.18)}.entry-content .otk-amazon-btn:hover{filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 14px 28px rgba(255,153,0,.30)!important}.entry-content .otk-amazon-btn{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}.entry-content .otk-amazon-btn:visited{color:#171717}@media(max-width:600px){.entry-content .otk-pr-disclosure{font-size:12px}.entry-content .otk-deal-facts li{display:block}.entry-content .otk-deal-facts span{display:block;text-align:left;margin-top:2px}.entry-content .otk-amazon-btn{width:100%;min-width:0}}';
   document.head.appendChild(style);
 })();
