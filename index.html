@@ -515,6 +515,21 @@ window.addEventListener('DOMContentLoaded',function(){
   if(last.url)onUrlInput();
   renderRankSlots();
   renderRankStockList();
+  // URLパラメーターからの自動入力（ブックマークレット連携）
+  (function(){
+    var p=new URLSearchParams(window.location.search);
+    if(!p.get('asin'))return;
+    document.getElementById('qUrl').value=p.get('asin')||'';
+    document.getElementById('qName').value=p.get('name')||'';
+    document.getElementById('qSale').value=p.get('sale')||'';
+    document.getElementById('qOrig').value=p.get('orig')||'';
+    document.getElementById('qPoint').value=p.get('pt')||'';
+    onUrlInput();calcQ();onNameInput();
+    var img=p.get('img')||'';
+    if(img){document.getElementById('qImgUrl').value=img;applyManualImg();}
+    setTimeout(function(){toast('✅ Amazonから商品情報を読み込みました！');},300);
+    window.history.replaceState({},'',window.location.pathname);
+  })();
 });
 
 function toast(msg,err){
