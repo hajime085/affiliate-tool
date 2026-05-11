@@ -25,6 +25,14 @@
     return '¥' + fmt(n);
   }
 
+  function amazonButton(url, label) {
+    return '<a class="otk-amazon-btn" href="' + url + '" target="_blank" rel="noopener sponsored" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(180deg,#ffb13b 0%,#ff9900 100%);color:#111827;font-weight:800;text-decoration:none;border-radius:10px;padding:13px 24px;box-shadow:0 10px 22px rgba(255,153,0,.24);border:1px solid rgba(180,83,9,.18);letter-spacing:.01em"><span style="font-size:15px">Amazonでセール価格を確認</span><span aria-hidden="true" style="font-size:16px;line-height:1">→</span></a>';
+  }
+
+  function sectionTitle(text) {
+    return '<div class="otk-section-title" style="margin:28px 0 14px;padding:12px 14px;border-left:4px solid #4d8dcc;background:#f6f9fd;color:#263a66;font-size:20px;line-height:1.45;font-weight:800">' + text + '</div>';
+  }
+
   window.makeBl = function makeBl(p) {
     var title = titleFor(p);
     p.postTitle = title;
@@ -63,7 +71,8 @@
       '・本文に商品画像は入れない。WordPressのアイキャッチ画像と重複させない。\n' +
       '・レビュー、使ってみた、実感、検証など体験表現は禁止。\n' +
       '・セール速報として、価格、買い時、向いている人、注意点を短く整理する。\n' +
-      '・h2は「セールの要点」「どんな人におすすめ？」「購入前に確認したいこと」「まとめ」の4つだけ。\n' +
+      '・h2タグは絶対に使わない。見出しはdiv class="otk-section-title"を使う。\n' +
+      '・見出しは「セールの要点」「どんな人におすすめ？」「購入前に確認したいこと」「まとめ」の4つだけ。\n' +
       '・煽りすぎず、メディア記事として自然に。\n' +
       '\n【以下のテンプレートの（）だけを自然な文章に置き換えて出力】\n' +
       '<p class="otk-lead">（商品名、価格、割引率、向いている人が一文で伝わるリード文。90〜130文字）</p>\n\n' +
@@ -71,7 +80,7 @@
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
       '<div><div style="display:inline-block;background:#e53935;color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;margin-bottom:8px">' + (p.badge || 'SALE') + '</div>' +
       '<div style="font-size:30px;line-height:1.15;color:#e53935;font-weight:800">' + yen(p.sale) + origLine + '</div>' + saveLine + '</div>' +
-      '<p style="margin:4px 0 0"><a href="' + p.link + '" target="_blank" rel="noopener sponsored" style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;text-decoration:none;border-radius:8px;padding:12px 22px">Amazonで価格を確認する</a></p>' +
+      '<p style="margin:4px 0 0">' + amazonButton(p.link) + '</p>' +
       '</div>' +
       '<ul class="otk-deal-facts" style="list-style:none;padding:14px 0 0;margin:14px 0 0;border-top:1px solid #edf0f5">' +
       '<li><strong>セール価格</strong><span>' + yen(p.sale) + '</span></li>' +
@@ -81,26 +90,26 @@
       '<li><strong>ASIN</strong><span>' + p.asin + '</span></li>' +
       '</ul></div>\n\n' +
       noteLine + '\n\n' +
-      '<h2>セールの要点</h2>\n' +
+      sectionTitle('セールの要点') + '\n' +
       '<p>（今回の価格条件を2文で説明。参考価格、割引率、ポイントがある場合は実質価格にも触れる）</p>\n\n' +
-      '<h2>どんな人におすすめ？</h2>\n' +
+      sectionTitle('どんな人におすすめ？') + '\n' +
       '<p>（この商品が合いそうな人を1文で説明）</p>\n' +
       '<ul>\n' +
       '<li>（おすすめ対象1を具体的に）</li>\n' +
       '<li>（おすすめ対象2を具体的に）</li>\n' +
       '<li>（おすすめ対象3を具体的に）</li>\n' +
       '</ul>\n\n' +
-      '<h2>購入前に確認したいこと</h2>\n' +
+      sectionTitle('購入前に確認したいこと') + '\n' +
       '<ul>\n' +
       '<li>価格、在庫、ポイント還元は変動するため、購入前にAmazonの商品ページで最新条件を確認してください。</li>\n' +
       '<li>型番、サイズ、カラー、付属品が希望の商品と合っているか確認してください。</li>\n' +
       '<li>配送予定日や販売元はタイミングによって変わる場合があります。</li>\n' +
       '</ul>\n\n' +
-      '<h2>まとめ</h2>\n' +
+      sectionTitle('まとめ') + '\n' +
       '<p>（価格メリットとおすすめ対象を2文で締める。断定や煽りを避ける）</p>\n\n' +
-      '<p style="text-align:center;margin:24px 0"><a href="' + p.link + '" target="_blank" rel="noopener sponsored" style="display:inline-block;background:#ff9900;color:#fff;font-weight:700;text-decoration:none;border-radius:8px;padding:14px 28px">Amazonでセール価格を確認する</a></p>\n' +
+      '<p style="text-align:center;margin:26px 0">' + amazonButton(p.link) + '</p>\n' +
       '<p style="font-size:12px;color:#777;line-height:1.7">※価格・在庫・ポイント還元は記事作成時点の情報です。最新情報はAmazonの商品ページでご確認ください。この記事にはアフィリエイトリンクを含みます。</p>\n' +
-      '\n【厳守ルール】HTMLのみ。h1と商品画像は出力しない。テンプレート外のセクションを追加しない。体験談は禁止。'
+      '\n【厳守ルール】HTMLのみ。h1、h2、h3、商品画像は出力しない。テンプレート外のセクションを追加しない。体験談は禁止。'
     , 2200);
   };
 
@@ -112,6 +121,6 @@
 
   var style = document.createElement('style');
   style.textContent =
-    '.entry-content .otk-deal-facts li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid #f0f2f6}.entry-content .otk-deal-facts li:last-child{border-bottom:0}.entry-content .otk-deal-facts strong{color:#39497a}.entry-content .otk-deal-facts span{text-align:right}.entry-content .otk-sale-note{border-left:4px solid #ff9900;background:#fff8ed;padding:10px 14px;border-radius:0 8px 8px 0;color:#544333;font-size:.92rem}@media(max-width:600px){.entry-content .otk-deal-facts li{display:block}.entry-content .otk-deal-facts span{display:block;text-align:left;margin-top:2px}}';
+    '.entry-content .otk-deal-facts li{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px solid #f0f2f6}.entry-content .otk-deal-facts li:last-child{border-bottom:0}.entry-content .otk-deal-facts strong{color:#39497a}.entry-content .otk-deal-facts span{text-align:right}.entry-content .otk-sale-note{border-left:4px solid #ff9900;background:#fff8ed;padding:10px 14px;border-radius:0 8px 8px 0;color:#544333;font-size:.92rem}.entry-content .otk-amazon-btn:hover{filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 14px 28px rgba(255,153,0,.30)!important}.entry-content .otk-amazon-btn{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}@media(max-width:600px){.entry-content .otk-deal-facts li{display:block}.entry-content .otk-deal-facts span{display:block;text-align:left;margin-top:2px}.entry-content .otk-amazon-btn{width:100%}}';
   document.head.appendChild(style);
 })();
