@@ -46,8 +46,7 @@
   }
 
   function amazonButton(url, label) {
-  return '<style>@keyframes otk-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.2);opacity:0}}.otk-btn{display:inline-flex;align-items:center;gap:12px;background:#e53935;color:#fff;font-size:15px;font-weight:500;padding:13px 24px;border-radius:8px;text-decoration:none;border:none;max-width:480px;width:100%;box-sizing:border-box}.otk-btn:hover{background:#c62828}.otk-dot{width:9px;height:9px;border-radius:50%;background:#fff;flex-shrink:0;position:relative}.otk-dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(255,255,255,.55);animation:otk-pulse 1.6s ease-out infinite}.otk-btn-text{flex:1}.otk-btn-sub{font-size:10px;color:rgba(255,255,255,.8);letter-spacing:.05em;display:block;margin-bottom:2px}.otk-btn-main{font-size:15px;font-weight:500;color:#fff;display:block}.otk-arrow{margin-left:auto;font-size:17px;color:rgba(255,255,255,.85)}</style>' +
-    '<a class="otk-btn" href="' + url + '" target="_blank" rel="noopener sponsored">' +
+  return '<a class="otk-btn" href="' + url + '" target="_blank" rel="noopener sponsored">' +
     '<div class="otk-dot"></div>' +
     '<div class="otk-btn-text"><span class="otk-btn-sub">セール開催中</span><span class="otk-btn-main">Amazonでセール価格を確認する</span></div>' +
     '<span class="otk-arrow">→</span></a>';
