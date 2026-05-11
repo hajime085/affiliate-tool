@@ -645,9 +645,24 @@ async function uploadImageToWP(imageUrl){
   if(!imageUrl)return null;
   try{
     var imgRes=await fetch(imageUrl);
-    if(!imgRes.ok)return null;
-    var blob=await imgRes.blob();
-    var filename='amazon-'+Date.now()+'.jpg';
+  if(!imgRes.ok)return null;
+  var blob=await (async function(){
+  var raw=await imgRes.blob();
+  return new Promise(function(resolve){
+    var img=new Image(),url=URL.createObjectURL(raw);
+    img.onload=function(){
+      var MAX=1200,w=img.width,h=img.height;
+      if(w<=MAX&&h<=MAX){resolve(raw);URL.revokeObjectURL(url);return;}
+      var scale=MAX/Math.max(w,h),canvas=document.createElement('canvas');
+      canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      canvas.toBlob(function(b){resolve(b);},'image/jpeg',0.85);
+      URL.revokeObjectURL(url);
+    };
+    img.src=url;
+  });
+})();
+var filename='amazon-'+Date.now()+'.jpg';
     var formData=new FormData();
     formData.append('file',blob,filename);
     var r=await fetch(s.url+'/wp-json/wp/v2/media',{
