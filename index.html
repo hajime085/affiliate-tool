@@ -923,33 +923,51 @@ function makeTw(p){
 }
 
 function makeBl(p){
-  var title=p.selTitle||'【'+(p.disc>0?p.disc+'%OFF':'セール')+'】'+(p.name||'（商品名を簡潔に）');
+  var title='【'+(p.disc>0?p.disc+'%OFF':'セール')+'】'+(p.name||'（商品名）');
   var ptBlock=p.pt>0?
-    '<div style="background:#f3faf7;border:2px solid #00897b;border-radius:10px;padding:16px 20px;margin:12px 0">'+
-    '<div>🪙 <strong>獲得ポイント</strong>: <span style="color:#FF9900;font-weight:bold;font-size:18px">+'+fmt(p.pt)+'pt</span></div>'+
-    '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #b2dfdb">実質価格: <strong style="font-size:22px;color:#e53935">¥'+fmt(p.eff)+'</strong></div></div>':'';
+    '<div style="background:linear-gradient(135deg,#e8f5e9,#f3faf7);border:2px solid #00897b;border-radius:12px;padding:18px 22px;margin:16px 0">'+
+    '<p style="margin:0 0 8px;font-size:14px;color:#333">🪙 <strong>獲得ポイント</strong>: <span style="color:#FF9900;font-weight:bold;font-size:20px">+'+fmt(p.pt)+'pt</span></p>'+
+    '<p style="margin:0;padding-top:10px;border-top:1px solid #b2dfdb;font-size:14px;color:#333">実質価格: <strong style="font-size:24px;color:#e53935">¥'+fmt(p.eff)+'</strong></p></div>':'';
   return callAI(
-    'WordPressアフィリエイト記事をHTML形式で作成してください。Markdownは使用禁止。HTMLタグのみで構成すること。\n'+
-    'ASIN:'+p.asin+'\n商品名:'+(p.name||'（ASINから推測）')+'\n請求額:¥'+fmt(p.sale)+
+    'WordPress用のAmazonセール速報記事をHTML形式で作成してください。Markdownは使用禁止。HTMLタグのみで構成すること。\n'+
+    '\n【商品情報】\nASIN:'+p.asin+'\n商品名:'+(p.name||'（ASINから推測）')+'\n請求額:¥'+fmt(p.sale)+
     '\n定価:'+(p.orig?'¥'+fmt(p.orig):'不明')+'\n割引:'+(p.disc>0?p.disc+'%OFF':'不明')+
     '\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+'\n実質:'+(p.eff?'¥'+fmt(p.eff):'なし')+
-    '\n画像URL:'+p.iUrl+'\nアフィリエイトリンク:'+p.link+'\n補足:'+(p.note||'なし')+'\n作成日:'+p.date+'\n\n'+
-    '【記事タイトル】\n'+title+'\n\n【必須構成（HTMLのみ・h2は3つのみ）】\n'+
-    '<p>（リード文：この商品がなぜ今買いなのか、読者が得する理由を100文字以内で）</p>\n\n'+
+    '\n画像URL:'+p.iUrl+'\nアフィリエイトリンク:'+p.link+'\n補足:'+(p.note||'なし')+'\n作成日:'+p.date+
+    '\n\n【記事タイトル（変更禁止）】\n'+title+
+    '\n\n以下のHTMLテンプレートの（）内の指示を実際の内容に置き換えて出力すること。テンプレート外のh2やセクションは絶対に追加しない。\n\n'+
+    '--- テンプレート開始 ---\n'+
+    '<p style="font-size:15px;line-height:1.8;color:#333">（リード文1文：「商品名が今なら○%OFFの¥○○で購入可能。○○な方に特におすすめ。」のような簡潔な1文）</p>\n\n'+
+    '<div style="text-align:center;margin:20px 0"><a href="'+p.link+'" target="_blank" rel="noopener"><img src="'+p.iUrl+'" alt="'+p.name+'" style="max-width:320px;width:100%;display:block;margin:0 auto;border-radius:8px"></a></div>\n\n'+
     '<h2>💰 価格情報</h2>\n\n'+
-    '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">'+
-    '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.badge||'SALE')+'</span>'+
-    '<span style="font-size:26px;font-weight:bold;color:#e53935">¥'+fmt(p.sale)+'</span></div>'+
-    (p.orig>0?'<div style="margin-top:6px"><span style="color:#888;text-decoration:line-through">¥'+fmt(p.orig)+'</span></div>':'')+
-    (p.save>0?'<div style="margin-top:6px;color:#00897b;font-weight:bold">✅ ¥'+fmt(p.save)+'お得！</div>':'')+
+    '<div style="background:linear-gradient(135deg,#fff5f5,#fff0f0);border:2px solid #e53935;border-radius:12px;padding:20px 24px;margin:16px 0">'+
+    '<p style="margin:0 0 6px"><span style="background:#e53935;color:#fff;font-weight:bold;padding:4px 14px;border-radius:20px;font-size:13px;margin-right:10px">'+(p.badge||'SALE')+'</span>'+
+    '<span style="font-size:28px;font-weight:800;color:#e53935">¥'+fmt(p.sale)+'</span></p>'+
+    (p.orig>0?'<p style="margin:4px 0 0;font-size:14px"><span style="color:#999;text-decoration:line-through">¥'+fmt(p.orig)+'</span>'+
+    (p.save>0?' <span style="color:#00897b;font-weight:bold;margin-left:8px">¥'+fmt(p.save)+'お得！</span>':'')+'</p>':'')+
     '</div>\n\n'+ptBlock+
+    '<div style="text-align:center;margin:20px 0"><a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#ff9900,#ffad33);color:#fff;font-weight:bold;font-size:16px;padding:16px 40px;border-radius:10px;text-decoration:none;box-shadow:0 4px 12px rgba(255,153,0,0.3)">🛒 Amazonで今すぐチェック →</a></div>\n\n'+
     '<h2>✅ おすすめポイント</h2>\n'+
-    '<ul>\n<li>（この商品のスペック・特徴・買うべき理由を箇条書き5〜7点。「こんな人に向いている」「ここが便利」「コスパが良い理由」を混ぜて具体的に）</li>\n</ul>\n\n'+
+    '<p style="font-size:14px;color:#555;margin-bottom:12px">（この商品が選ばれる理由を1文で簡潔に）</p>\n'+
+    '<ul style="line-height:2">\n'+
+    '<li><strong>（ポイント1のキーワード）</strong>：（具体的な説明1文）</li>\n'+
+    '<li><strong>（ポイント2のキーワード）</strong>：（具体的な説明1文）</li>\n'+
+    '<li><strong>（ポイント3のキーワード）</strong>：（具体的な説明1文）</li>\n'+
+    '<li><strong>（ポイント4のキーワード）</strong>：（具体的な説明1文）</li>\n'+
+    '<li><strong>（ポイント5のキーワード）</strong>：（具体的な説明1文）</li>\n'+
+    '</ul>\n\n'+
     '<h2>まとめ</h2>\n'+
-    '<p>（2〜3文。商品の魅力と今が買い時の理由を簡潔に締める）</p>\n\n'+
-    '<p><a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:16px;padding:14px 32px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a></p>\n\n'+
-    '【ルール】・h2は「💰 価格情報」「✅ おすすめポイント」「まとめ」の3つのみ。それ以外のh2は絶対に追加しない ・「実機レビュー」「使用感」「徹底検証」「〇〇してみた」など体験を示す表現は一切使わない ・カタログ情報・スペック・価格・おすすめ理由のみ ・HTMLのみ。Markdownは使用禁止'
-  ,1500);
+    '<p style="font-size:15px;line-height:1.8;color:#333">（2〜3文で商品の魅力と「今が買い時」の理由を締める）</p>\n\n'+
+    '<div style="text-align:center;margin:24px 0"><a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#ff9900,#ffad33);color:#fff;font-weight:bold;font-size:18px;padding:18px 48px;border-radius:12px;text-decoration:none;box-shadow:0 4px 16px rgba(255,153,0,0.35)">🛒 Amazonでセール価格を確認する →</a></div>\n\n'+
+    '--- テンプレート終了 ---\n\n'+
+    '【厳守ルール】\n'+
+    '・h2は「💰 価格情報」「✅ おすすめポイント」「まとめ」の3つのみ。絶対にh2を追加しない\n'+
+    '・テンプレート内のHTMLタグ・リンク・画像URL・スタイルは一切変更しない\n'+
+    '・（）内の指示文だけを実際のテキストに置き換える\n'+
+    '・「実機レビュー」「使用感」「徹底検証」「使ってみた」など体験を示す表現は禁止\n'+
+    '・商品のカタログ情報・スペック・価格メリットのみで構成する\n'+
+    '・HTMLのみ出力。Markdownは使用禁止'
+  ,2000);
 }
 
 function updBl(){document.getElementById('blCount').textContent=document.getElementById('blOut').textContent.length+'文字';}
