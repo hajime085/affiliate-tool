@@ -207,6 +207,13 @@
 
   var style = document.createElement('style');
   style.textContent =
-    '.entry-content .otk-pr-disclosure{box-shadow:0 6px 18px rgba(180,83,9,.05)}.entry-content .otk-deal-summary{overflow:hidden}.entry-content .otk-deal-facts li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #f0f2f6;line-height:1.55}.entry-content .otk-deal-facts li:last-child{border-bottom:0}.entry-content .otk-deal-facts strong{color:#39497a;font-weight:800}.entry-content .otk-deal-facts span{text-align:right;color:#20283a}.entry-content .otk-sale-note{border-left:4px solid #ff9900;background:#fff8ed;padding:10px 14px;border-radius:0 8px 8px 0;color:#544333;font-size:.92rem}.entry-content .otk-section-title{box-shadow:inset 0 -1px 0 rgba(77,141,204,.18)}.entry-content .otk-amazon-btn:hover{filter:brightness(1.03);transform:translateY(-1px);box-shadow:0 14px 28px rgba(255,153,0,.30)!important}.entry-content .otk-amazon-btn{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}.entry-content .otk-amazon-btn:visited{color:#171717}@media(max-width:600px){.entry-content .otk-pr-disclosure{font-size:12px}.entry-content .otk-deal-facts li{display:block}.entry-content .otk-deal-facts span{display:block;text-align:left;margin-top:2px}.entry-content .otk-amazon-btn{width:100%;min-width:0}}';
-  document.head.appendChild(style);
-})();
+  '@keyframes otk-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.2);opacity:0}}' +
+  '.otk-btn{display:inline-flex;align-items:center;gap:12px;background:#e53935;color:#fff;font-size:15px;font-weight:500;padding:13px 24px;border-radius:8px;text-decoration:none;border:none;max-width:480px;width:100%;box-sizing:border-box}' +
+  '.otk-btn:hover{background:#c62828}' +
+  '.otk-dot{width:9px;height:9px;border-radius:50%;background:#fff;flex-shrink:0;position:relative}' +
+  '.otk-dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(255,255,255,.55);animation:otk-pulse 1.6s ease-out infinite}' +
+  '.otk-btn-text{flex:1}.otk-btn-sub{font-size:10px;color:rgba(255,255,255,.8);letter-spacing:.05em;display:block;margin-bottom:2px}' +
+  '.otk-btn-main{font-size:15px;font-weight:500;color:#fff;display:block}' +
+  '.otk-btn-arrow{margin-left:auto;font-size:17px;color:rgba(255,255,255,.85)}' +
+  // 既存のCSSはそのまま残す
+  '.entry-content .otk-pr-disclosure{box-shadow:0 6px 18px rgba(180,83,9,.05)}...';
