@@ -919,9 +919,8 @@ function makeBl(p){
     '\n定価:'+(p.orig?'¥'+fmt(p.orig):'不明')+'\n割引:'+(p.disc>0?p.disc+'%OFF':'不明')+
     '\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+'\n実質:'+(p.eff?'¥'+fmt(p.eff):'なし')+
     '\n画像URL:'+p.iUrl+'\nアフィリエイトリンク:'+p.link+'\n補足:'+(p.note||'なし')+'\n作成日:'+p.date+'\n\n'+
-    '【記事タイトル】\n'+title+'\n\n【必須構成（HTMLのみ）】\n'+
-    '<!-- no_rtoc -->\n\n'+
-    '<p>（リード文：読者が得する理由を120文字で）</p>\n\n'+
+    '【記事タイトル】\n'+title+'\n\n【必須構成（HTMLのみ・h2は3つのみ）】\n'+
+    '<p>（リード文：この商品がなぜ今買いなのか、読者が得する理由を100文字以内で）</p>\n\n'+
     '<h2>💰 価格情報</h2>\n\n'+
     '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">'+
     '<div><span style="background:#e53935;color:#fff;font-weight:bold;padding:3px 12px;border-radius:20px;margin-right:10px">'+(p.badge||'SALE')+'</span>'+
@@ -929,12 +928,12 @@ function makeBl(p){
     (p.orig>0?'<div style="margin-top:6px"><span style="color:#888;text-decoration:line-through">¥'+fmt(p.orig)+'</span></div>':'')+
     (p.save>0?'<div style="margin-top:6px;color:#00897b;font-weight:bold">✅ ¥'+fmt(p.save)+'お得！</div>':'')+
     '</div>\n\n'+ptBlock+
-    '<h2>こんな人におすすめ</h2>\n<ul>\n<li>（箇条書き5点）</li>\n</ul>\n\n'+
-    '<h2>スペック・特徴</h2>\n<ul>\n<li>（箇条書き）</li>\n</ul>\n\n'+
-    '<h2>😊 ここが嬉しいポイント</h2>\n<ul>\n<li>（セリングポイントを5点。前向きな表現で）</li>\n</ul>\n\n'+
-    '<h2>まとめ</h2>\n<p>（まとめ2〜3文。購入を後押しする文章）</p>\n\n'+
+    '<h2>✅ おすすめポイント</h2>\n'+
+    '<ul>\n<li>（この商品のスペック・特徴・買うべき理由を箇条書き5〜7点。「こんな人に向いている」「ここが便利」「コスパが良い理由」を混ぜて具体的に）</li>\n</ul>\n\n'+
+    '<h2>まとめ</h2>\n'+
+    '<p>（2〜3文。商品の魅力と今が買い時の理由を簡潔に締める）</p>\n\n'+
     '<p><a href="'+p.link+'" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#fff;font-weight:bold;font-size:16px;padding:14px 32px;border-radius:8px;text-decoration:none;margin:8px 0">🛒 Amazonでセール価格を確認する →</a></p>\n\n'+
-    '【ルール】・タイトル「'+title+'」をそのまま使うこと ・「実機レビュー」「使用感」「徹底検証」「〇〇してみた」など体験を示す表現は一切使わない ・カタログ情報・スペック・価格・おすすめ理由のみ ・HTMLのみ。Markdownは使用禁止'
+    '【ルール】・h2は「💰 価格情報」「✅ おすすめポイント」「まとめ」の3つのみ。それ以外のh2は絶対に追加しない ・「実機レビュー」「使用感」「徹底検証」「〇〇してみた」など体験を示す表現は一切使わない ・カタログ情報・スペック・価格・おすすめ理由のみ ・HTMLのみ。Markdownは使用禁止'
   ,1500);
 }
 
