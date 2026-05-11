@@ -221,22 +221,7 @@ textarea{resize:vertical}
         <div class="f"><span class="lbl">ひとこと補足<span class="lbl-hint">任意</span></span><input id="qNote" placeholder="例: タイムセール！在庫わずか"></div>
       </div>
 
-      <div class="f">
-        <span class="lbl">カテゴリー<span class="lbl-hint">商品名から自動判定・手動変更可</span></span>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <select id="qCat" style="flex:1;min-width:160px">
-            <option value="食品・日用品">食品・日用品</option>
-            <option value="家電・ガジェット">家電・ガジェット</option>
-            <option value="ファッション">ファッション</option>
-            <option value="生活用品">生活用品</option>
-            <option value="美容・健康">美容・健康</option>
-            <option value="スポーツ・アウトドア">スポーツ・アウトドア</option>
-            <option value="セール情報">セール情報</option>
-            <option value="その他">その他</option>
-          </select>
-          <span id="catAutoLabel" style="font-size:11px;color:var(--gr)"></span>
-        </div>
-      </div>
+      <div style="display:none"><select id="qCat"><option value="セール情報" selected>セール情報</option></select></div>
 
       <div class="f">
         <span class="lbl">タグ<span class="lbl-hint">カンマ区切り・任意</span></span>
@@ -300,23 +285,12 @@ textarea{resize:vertical}
       </div>
     </div>
 
-    <!-- タイトル候補 -->
-    <div class="card">
-      <div class="card-title">🏷️ 記事タイトル候補</div>
-      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <button class="btn bs" onclick="genTitles()" id="titleBtn">💡 AIでタイトル候補を生成</button>
-        <span style="font-size:11px;color:var(--mu)">クリックして使いたいタイトルを選択</span>
-      </div>
-      <div id="titleGrid" class="title-grid" style="display:none"></div>
-    </div>
+    <!-- 隠しフィールド（タイトル選択） -->
+    <div style="display:none"><input id="selectedTitle"></div>
 
     <!-- 記事生成 -->
     <div class="card">
       <div class="card-title">🤖 記事生成</div>
-      <div class="f" id="selectedTitleRow" style="display:none">
-        <span class="lbl">選択中のタイトル</span>
-        <input id="selectedTitle" style="border-color:var(--am)">
-      </div>
       <button class="btn bp btn-full" id="genBtn" onclick="genAll()">🤖 X投稿文・ブログ記事を一括生成</button>
     </div>
 
@@ -581,8 +555,7 @@ function onNameInput(){
   var sale=parseFloat(document.getElementById('qSale').value)||0;
   var disc=(orig>0&&sale<orig)?Math.round((1-sale/orig)*100):0;
   var cat=guessCategory(name,disc);
-  var sel=document.getElementById('qCat'),lbl=document.getElementById('catAutoLabel');
-  if(sel){sel.value=cat;if(lbl)lbl.textContent='🤖 自動判定: '+cat;}
+  // カテゴリはセール情報固定
 }
 function getSelectedCat(){var sel=document.getElementById('qCat');return sel?sel.value:guessCategory(document.getElementById('qName').value.trim(),0);}
 async function callAI(prompt,maxTokens){
@@ -887,7 +860,7 @@ async function genAll(){
   var pt=parseFloat(document.getElementById('qPoint').value)||0;
   var name=document.getElementById('qName').value.trim();
   var note=document.getElementById('qNote').value.trim();
-  var selTitle=document.getElementById('selectedTitle').value.trim();
+  var selTitle='';
   if(!urlVal){toast('URLまたはASINを入力してください',1);return;}
   if(!sale){toast('ご請求額を入力してください',1);return;}
   var asin=getAsin(urlVal);
@@ -947,8 +920,7 @@ function makeBl(p){
     '\nPt:'+(p.pt>0?fmt(p.pt)+'pt':'なし')+'\n実質:'+(p.eff?'¥'+fmt(p.eff):'なし')+
     '\n画像URL:'+p.iUrl+'\nアフィリエイトリンク:'+p.link+'\n補足:'+(p.note||'なし')+'\n作成日:'+p.date+'\n\n'+
     '【記事タイトル】\n'+title+'\n\n【必須構成（HTMLのみ）】\n'+
-    '<h2>'+title+'</h2>\n\n'+
-    '<figure><a href="'+p.link+'" target="_blank" rel="noopener"><img src="'+p.iUrl+'" alt="'+p.name+'" style="max-width:100%;display:block;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;padding:8px;background:#fff"></a></figure>\n\n'+
+    '<!-- no_rtoc -->\n\n'+
     '<p>（リード文：読者が得する理由を120文字で）</p>\n\n'+
     '<h2>💰 価格情報</h2>\n\n'+
     '<div style="background:#fff8f8;border:2px solid #e53935;border-radius:10px;padding:16px 20px;margin:12px 0">'+
