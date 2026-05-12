@@ -98,7 +98,6 @@
       '・見出しは「セールの要点」「どんな人におすすめ？」「購入前に確認したいこと」「まとめ」の4つだけ。\n' +
       '・煽りすぎず、メディア記事として自然に。\n' +
       '\n【以下のテンプレートの（）だけを自然な文章に置き換えて出力】\n' +
-      disclosureLabel() + '\n\n' +
       '<p class="otk-lead">（商品名、価格、割引率、向いている人が一文で伝わるリード文。90〜130文字）</p>\n\n' +
       '<div class="otk-deal-summary" style="border:1px solid #e8ebf2;border-radius:12px;background:#fff;padding:20px 22px;margin:20px 0 24px;box-shadow:0 10px 26px rgba(21,26,36,.04)">' +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
