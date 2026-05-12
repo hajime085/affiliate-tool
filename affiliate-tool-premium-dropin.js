@@ -53,13 +53,6 @@
     return '<div class="otk-section-title" style="margin:30px 0 14px;padding:11px 14px;border-left:4px solid #4d8dcc;background:#f7f9fc;color:#263a66;font-size:19px;line-height:1.45;font-weight:800">' + text + '</div>';
   }
 
-  function disclosureLabel() {
-    return '<div class="otk-pr-disclosure" style="display:flex;align-items:flex-start;gap:8px;border:1px solid #f3d6a3;background:#fff8ea;color:#5c3b00;border-radius:10px;padding:10px 12px;margin:0 0 16px;font-size:13px;line-height:1.65">' +
-      '<span style="display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:22px;border-radius:999px;background:#ff9900;color:#171717;font-size:11px;font-weight:800;letter-spacing:.04em">PR</span>' +
-      '<span>この記事には広告・アフィリエイトリンクを含みます。掲載している価格や在庫状況は記事作成時点の情報です。</span>' +
-      '</div>';
-  }
-
   window.makeBl = function makeBl(p) {
     var title = titleFor(p);
     p.postTitle = title;
