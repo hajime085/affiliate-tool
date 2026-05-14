@@ -686,7 +686,19 @@ async function postToWordPress(status){
   if(!s.url||!s.user||!s.pass){toast('WordPress設定タブで接続情報を入力してください',1);swTab('wp',document.getElementById('btn-wp'));return;}
   var body=document.getElementById('blOut').textContent;
   if(!body){toast('先に記事を生成してください',1);return;}
-  if(!cur){toast('商品情報がありません',1);return;}
+  if(!cur){
+  // 手動入力モード用：curが空でも最低限の情報でセット
+  var asin = getAsin(document.getElementById('qUrl').value || '');
+  var assocId = document.getElementById('assocId').value.trim() || 'popo1215-22';
+  cur = {
+    asin: asin,
+    name: document.getElementById('qName').value.trim() || '商品',
+    postTitle: document.getElementById('manualTitle') ? document.getElementById('manualTitle').value.trim() : '',
+    iUrl: asin ? imgUrl(asin) : '',
+    cat: 'セール情報',
+    link: asin ? 'https://www.amazon.co.jp/dp/' + asin + '?tag=' + assocId : ''
+  };
+}
   var title=cur.selTitle||document.getElementById('blOut').textContent.split('\n')[0].replace(/<[^>]+>/g,'').replace(/^#+\s*/,'').trim();
   var btn=status==='publish'?document.getElementById('wpPublishBtn'):document.getElementById('wpPostBtn');
   btn.disabled=true;btn.innerHTML='<span class="sp"></span>'+(status==='publish'?'公開中...':'保存中...');
