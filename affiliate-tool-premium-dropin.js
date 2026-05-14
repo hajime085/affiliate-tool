@@ -156,10 +156,19 @@
         toast('先に記事を生成してください', 1);
         return;
       }
-      if (!cur) {
-        toast('商品情報がありません', 1);
-        return;
-      }
+     if (!cur) {
+  var asin = getAsin(document.getElementById('qUrl').value || '');
+  var assocId = document.getElementById('assocId').value.trim() || 'popo1215-22';
+  var manTitle = document.getElementById('manualTitle');
+  cur = {
+    asin: asin,
+    name: (document.getElementById('qName').value || '').trim() || '商品',
+    postTitle: manTitle ? manTitle.value.trim() : '',
+    iUrl: asin ? 'https://images-na.ssl-images-amazon.com/images/P/' + asin + '.jpg' : '',
+    cat: 'セール情報',
+    link: asin ? 'https://www.amazon.co.jp/dp/' + asin + '?tag=' + assocId : ''
+  };
+}
 
       var title = cur.postTitle || titleFor(cur);
       var btn = status === 'publish' ? document.getElementById('wpPublishBtn') : document.getElementById('wpPostBtn');
